@@ -35,14 +35,38 @@ const standings = [
       </span>
     </div>
 
-    <h2 class="docs-heading">Live-Demo</h2>
+    <div class="wcag wcag--info" style="margin-bottom:1.5rem;">
+      <span class="wcag__icon">ℹ️</span>
+      <span>Jede Mannschaft bekommt ihre eigene <code>StatsTable</code>-Instanz — die Daten kommen jeweils aus dem entsprechenden iCal-Feed.</span>
+    </div>
+
+    <h2 class="docs-heading">Herren 1 — 2. Regionalliga Süd</h2>
     <div class="demo">
-      <div class="demo__label">2. Regionalliga Süd (Herren)</div>
+      <div class="demo__label">Herren 1 (8 Teams)</div>
       <div class="demo__canvas demo__canvas--full">
         <StatsTable
           standings={standings}
-          title="Tabelle"
+          title="Herren 1"
           league="2. Regionalliga Süd"
+        />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Herren 2 — Bezirksliga Oberpfalz</h2>
+    <div class="demo">
+      <div class="demo__label">Herren 2 (6 Teams)</div>
+      <div class="demo__canvas demo__canvas--full">
+        <StatsTable
+          standings={[
+            { rank: 1, team: 'TSV Regensburg Basketball', games: 12, wins: 10, losses: 2,  pointsFor: 982, pointsAgainst: 841, points: 22 },
+            { rank: 2, team: 'Fibalon Baskets NM II',     games: 12, wins: 9,  losses: 3,  pointsFor: 954, pointsAgainst: 867, points: 21, isFBNM: true },
+            { rank: 3, team: 'SV Neutraubling',            games: 12, wins: 7,  losses: 5,  pointsFor: 901, pointsAgainst: 888, points: 19 },
+            { rank: 4, team: 'BC Lupburg',                 games: 12, wins: 6,  losses: 6,  pointsFor: 865, pointsAgainst: 890, points: 18 },
+            { rank: 5, team: 'MTV Ingolstadt II',          games: 12, wins: 4,  losses: 8,  pointsFor: 812, pointsAgainst: 921, points: 16 },
+            { rank: 6, team: 'TV Cham',                    games: 12, wins: 2,  losses: 10, pointsFor: 754, pointsAgainst: 961, points: 14 },
+          ]}
+          title="Herren 2"
+          league="Bezirksliga Oberpfalz"
         />
       </div>
     </div>
