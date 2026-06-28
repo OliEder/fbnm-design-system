@@ -1,37 +1,61 @@
 /* ======================================================
    FBNM Design Tokens
    Fibalon Baskets Neumarkt – Brand Manual 2024
+
+   WCAG 2.2 CONTRAST RULES:
+   ✓ AAA (7:1+) on white: --fbnm-blue-900 (15:1), --fbnm-blue-800 (10.3:1),
+                           --fbnm-blue-700 (9.1:1), --fbnm-black (19:1),
+                           --fbnm-color-accent-text (#005a87, 7.6:1)
+   ✓ AA  (4.5:1+) on white: all blues above
+   ✕ DECORATIVE ONLY (never as text on white/light):
+       --fbnm-cyan-500 (#009fe3, 3.0:1) FAIL
+       --fbnm-cyan-400 (#00a9e6, 2.8:1) FAIL
+       --fbnm-gray-500 (#818080, 4.0:1) FAIL AA
+
+   Cyan usage on dark backgrounds:
+   ✓ AA on --fbnm-blue-900 (#002751): 5.0:1
+   ✕ FAIL on --fbnm-blue-800 (#004174): 3.2:1 (large text >= 24px only)
    ====================================================== */
 
 :root {
-  /* --- Colors: Blue Scale --- */
-  --fbnm-blue-900: #002751;   /* Dunkelblau 2 */
-  --fbnm-blue-800: #004174;   /* FBNM Dunkelblau (Hauptfarbe, Pantone PMS 654 C) */
-  --fbnm-blue-700: #1a4b76;   /* Dunkelblau 3 */
+  /* --- Colors: Blue Scale (all pass AAA on white) --- */
+  --fbnm-blue-900: #002751;   /* Dunkelblau 2 | 15.2:1 on white | AAA */
+  --fbnm-blue-800: #004174;   /* FBNM Dunkelblau (Pantone PMS 654 C) | 10.3:1 | AAA */
+  --fbnm-blue-700: #1a4b76;   /* Dunkelblau 3 | 9.1:1 on white | AAA */
 
-  /* --- Colors: Cyan Scale --- */
-  --fbnm-cyan-500: #009fe3;   /* Cyan (Pantone Process Cyan C) */
-  --fbnm-cyan-400: #00a9e6;   /* Cyan 2 */
+  /* --- Colors: Cyan Scale (DECORATIVE ONLY on white/light backgrounds) --- */
+  --fbnm-cyan-500: #009fe3;   /* Cyan (Pantone Process Cyan C) | 3.0:1 ✕ text on white */
+  --fbnm-cyan-400: #00a9e6;   /* Cyan 2 | 2.8:1 ✕ text on white */
 
   /* --- Colors: Neutral --- */
-  --fbnm-gray-500:  #818080;  /* Grau (Pantone PMS 179-9 C) */
-  --fbnm-black:     #1d1d1b;  /* Schwarz (Pantone Process Black C) */
+  --fbnm-gray-500:  #818080;  /* Grau (Pantone PMS 179-9 C) | 4.0:1 ✕ text on white */
+  --fbnm-black:     #1d1d1b;  /* Schwarz (Pantone Process Black C) | 19:1 | AAA */
   --fbnm-white:     #ffffff;
 
   /* --- Semantic Color Aliases --- */
   --fbnm-color-primary:         var(--fbnm-blue-800);
   --fbnm-color-primary-dark:    var(--fbnm-blue-900);
   --fbnm-color-primary-light:   var(--fbnm-blue-700);
-  --fbnm-color-accent:          var(--fbnm-cyan-500);
-  --fbnm-color-accent-light:    var(--fbnm-cyan-400);
-  --fbnm-color-neutral:         var(--fbnm-gray-500);
-  --fbnm-color-text:            var(--fbnm-black);
+  --fbnm-color-accent:          var(--fbnm-cyan-500);  /* decorative/bg use only */
+  --fbnm-color-accent-light:    var(--fbnm-cyan-400);  /* decorative/bg use only */
+  --fbnm-color-text:            var(--fbnm-black);     /* 19:1 AAA */
   --fbnm-color-text-inverse:    var(--fbnm-white);
-  --fbnm-color-text-muted:      var(--fbnm-gray-500);
+
+  /* WCAG FIX: muted text must be 4.5:1 (AA) / 7:1 (AAA) on white.        */
+  /* Old value var(--fbnm-gray-500) = #818080 only achieved 4.0:1 (FAIL).  */
+  --fbnm-color-text-muted:      #545454;  /* 7.14:1 on white | AAA */
+
+  /* Accessible cyan-hue text on white: use instead of --fbnm-cyan-500 */
+  --fbnm-color-accent-text:     #005a87;  /* 7.55:1 on white | AAA */
+
   --fbnm-color-background:      var(--fbnm-white);
   --fbnm-color-background-dark: var(--fbnm-blue-900);
   --fbnm-color-surface:         var(--fbnm-white);
-  --fbnm-color-border:          color-mix(in srgb, var(--fbnm-blue-800) 20%, transparent);
+
+  /* WCAG 1.4.11 Non-text Contrast: UI borders need 3:1 against adjacent color. */
+  /* border-ui uses blue-700 (9.1:1 on white) for form inputs.                  */
+  --fbnm-color-border:          color-mix(in srgb, var(--fbnm-blue-700) 25%, transparent); /* decorative */
+  --fbnm-color-border-ui:       var(--fbnm-blue-700); /* form inputs, 9.1:1 on white */
 
   /* --- Typography: Font Families --- */
   --fbnm-font-display: 'INSOLENT', 'Arial Black', sans-serif;  /* Headlines */
@@ -40,41 +64,42 @@
   --fbnm-font-mono:    'Courier New', monospace;
 
   /* --- Typography: Size Scale --- */
-  --fbnm-text-xs:   0.75rem;    /*  12px – Caption (Montserrat Light 8pt) */
+  --fbnm-text-xs:   0.75rem;    /*  12px – Caption */
   --fbnm-text-sm:   0.875rem;   /*  14px */
-  --fbnm-text-base: 1rem;       /*  16px – Body (Aller Regular) */
+  --fbnm-text-base: 1rem;       /*  16px – Body */
   --fbnm-text-lg:   1.125rem;   /*  18px */
-  --fbnm-text-xl:   1.25rem;    /*  20px – Headline XS (INSOLENT 20pt) */
+  --fbnm-text-xl:   1.25rem;    /*  20px */
   --fbnm-text-2xl:  1.5rem;     /*  24px */
   --fbnm-text-3xl:  1.875rem;   /*  30px */
   --fbnm-text-4xl:  2.25rem;    /*  36px */
   --fbnm-text-5xl:  3rem;       /*  48px – Hero */
   --fbnm-text-6xl:  3.75rem;    /*  60px – Display */
 
-  /* --- Typography: Line Heights --- */
-  --fbnm-leading-tight:   1.2;  /* INSOLENT Headlines */
+  /* --- Typography: Line Heights ---
+     WCAG 1.4.12 Text Spacing: body line-height must be >= 1.5x (AA)    */
+  --fbnm-leading-tight:   1.2;  /* INSOLENT Headlines (display, not body) */
   --fbnm-leading-snug:    1.375;
-  --fbnm-leading-normal:  1.5;  /* Aller Body */
-  --fbnm-leading-caption: 1.2;  /* Montserrat Light 8pt / 9.6 Leading ≈ 1.2 */
+  --fbnm-leading-normal:  1.5;  /* Aller Body - meets WCAG 1.4.12 */
+  --fbnm-leading-caption: 1.5;  /* Was 1.2, now 1.5 to meet WCAG 1.4.12 */
 
   /* --- Typography: Font Weights --- */
   --fbnm-weight-regular: 400;
   --fbnm-weight-bold:    700;
 
   /* --- Spacing Scale (8px base) --- */
-  --fbnm-space-1:  0.25rem;   /*   4px */
-  --fbnm-space-2:  0.5rem;    /*   8px */
-  --fbnm-space-3:  0.75rem;   /*  12px */
-  --fbnm-space-4:  1rem;      /*  16px */
-  --fbnm-space-5:  1.25rem;   /*  20px */
-  --fbnm-space-6:  1.5rem;    /*  24px */
-  --fbnm-space-8:  2rem;      /*  32px */
-  --fbnm-space-10: 2.5rem;    /*  40px */
-  --fbnm-space-12: 3rem;      /*  48px */
-  --fbnm-space-16: 4rem;      /*  64px */
-  --fbnm-space-20: 5rem;      /*  80px */
-  --fbnm-space-24: 6rem;      /*  96px */
-  --fbnm-space-32: 8rem;      /* 128px */
+  --fbnm-space-1:  0.25rem;
+  --fbnm-space-2:  0.5rem;
+  --fbnm-space-3:  0.75rem;
+  --fbnm-space-4:  1rem;
+  --fbnm-space-5:  1.25rem;
+  --fbnm-space-6:  1.5rem;
+  --fbnm-space-8:  2rem;
+  --fbnm-space-10: 2.5rem;
+  --fbnm-space-12: 3rem;
+  --fbnm-space-16: 4rem;
+  --fbnm-space-20: 5rem;
+  --fbnm-space-24: 6rem;
+  --fbnm-space-32: 8rem;
 
   /* --- Border Radius --- */
   --fbnm-radius-sm:   0.25rem;
