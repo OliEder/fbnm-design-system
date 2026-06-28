@@ -2,6 +2,8 @@
 import DocsLayout from '../../../layouts/DocsLayout.astro'
 import Navigation from '@ds/components/Navigation/Navigation.astro'
 
+const logoSrc = (import.meta.env.BASE_URL ?? '/') + 'images/logo.svg'
+
 const links = [
   { label: 'Startseite', href: '#' },
   { label: 'Spielplan', href: '#', active: true },
@@ -33,11 +35,11 @@ const links = [
       </span>
     </div>
 
-    <h2 class="docs-heading">Live-Demo</h2>
+    <h2 class="docs-heading">Live-Demo (mit Logo)</h2>
     <div class="demo">
-      <div class="demo__label">Navigation (interaktiv)</div>
+      <div class="demo__label">Navigation mit FBNM-Logo und aktivem Link</div>
       <div class="demo__canvas demo__canvas--full">
-        <Navigation links={links} currentTeam="Herren 1" />
+        <Navigation links={links} logoSrc={logoSrc} />
       </div>
     </div>
 
@@ -53,9 +55,12 @@ const links = [
   { label: 'Team',       href: '/team/' },
   { label: 'News',       href: '/news/' },
 ]
+
+// Produktion: Logo aus basketball-bund.net CDN
+// const logoSrc = 'https://www.basketball-bund.net/media/team/{teamId}/logo'
 ---
 
-<Navigation links={links} currentTeam="Herren 1" />`} />
+<Navigation links={links} logoSrc="/images/logo.svg" />`} />
     </div>
 
     <h2 class="docs-heading">Props</h2>
@@ -64,9 +69,9 @@ const links = [
         <tr><th>Prop</th><th>Typ</th><th>Standard</th><th>Beschreibung</th></tr>
       </thead>
       <tbody>
-        <tr><td>links</td><td>Array&lt;&#123;label, href, active?&#125;&gt;</td><td>–</td><td>Navigationspunkte</td></tr>
-        <tr><td>currentTeam</td><td>string</td><td>–</td><td>Wird als Sub-Label angezeigt</td></tr>
-        <tr><td>class</td><td>string</td><td>–</td><td>Zusätzliche CSS-Klassen</td></tr>
+        <tr><td>links</td><td>Array&lt;&#123;label, href, active?&#125;&gt;</td><td>Default-Menü</td><td>Navigationspunkte; <code>active: true</code> hebt den aktiven Link hervor</td></tr>
+        <tr><td>items</td><td>Array&lt;&#123;label, href&#125;&gt;</td><td>–</td><td>Alias für <code>links</code> (Rückwärtskompatibilität)</td></tr>
+        <tr><td>logoSrc</td><td>string</td><td>'/images/logo.svg'</td><td>Logo-URL — in Docs mit BASE_URL-Prefix setzen; Produktion: BBB-CDN URL</td></tr>
       </tbody>
     </table>
   </div>
