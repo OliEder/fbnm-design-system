@@ -16,7 +16,7 @@
 
 <style>
 .fbnm-live-ticker {
-  background: #dc2626;
+  background: #991b1b;
   color: var(--fbnm-white);
   padding: var(--fbnm-space-2) 0;
 }
@@ -40,8 +40,14 @@
   height: 8px;
   border-radius: 50%;
   background: var(--fbnm-white);
-  animation: fbnm-blink 1.5s infinite;
   flex-shrink: 0;
+}
+
+/* WCAG 2.3.3 AAA: suppress non-essential blinking for motion-sensitive users */
+@media (prefers-reduced-motion: no-preference) {
+  .fbnm-live-ticker__dot {
+    animation: fbnm-blink 1.5s infinite;
+  }
 }
 
 .fbnm-live-ticker__label {

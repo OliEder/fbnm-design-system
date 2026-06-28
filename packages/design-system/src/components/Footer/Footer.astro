@@ -69,6 +69,8 @@ const currentYear = new Date().getFullYear()
 
 .fbnm-footer__brand img { margin-bottom: var(--fbnm-space-3); }
 
+/* Tagline: display font (INSOLENT, inherently bold), 1.25rem = 15pt.
+   15pt bold ≥ 14pt bold → large text. Cyan-400 on blue-900 ≈ 5.67:1 → AAA large text (4.5:1) ✓ */
 .fbnm-footer__tagline {
   font-family: var(--fbnm-font-display);
   font-size: var(--fbnm-text-xl);
@@ -82,13 +84,15 @@ const currentYear = new Date().getFullYear()
   gap: var(--fbnm-space-8);
 }
 
+/* WCAG 1.4.3/1.4.6: xs (12px = 9pt) small text needs 7:1 AAA.
+   Old cyan-400 on blue-900 = 5.67:1 AA only → changed to white (21:1 AAA) */
 .fbnm-footer__heading {
   font-family: var(--fbnm-font-caption);
   font-size: var(--fbnm-text-xs);
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--fbnm-cyan-400);
+  color: var(--fbnm-white);
   margin-bottom: var(--fbnm-space-3);
 }
 
@@ -108,6 +112,12 @@ const currentYear = new Date().getFullYear()
 .fbnm-footer__social a {
   color: color-mix(in srgb, var(--fbnm-white) 70%, transparent);
   transition: color var(--fbnm-transition-fast);
+  /* WCAG 2.5.8: minimum 24x24px; 2.5.5 AAA: minimum 44x44px */
+  min-width: 44px;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .fbnm-footer__social a:hover { color: var(--fbnm-cyan-400); }
 

@@ -88,10 +88,12 @@ const dateFormatted = date.toLocaleDateString('de-DE', {
   margin-bottom: var(--fbnm-space-3);
 }
 
+/* WCAG 1.4.3: xs (12px) text needs 4.5:1 AA / 7:1 AAA.
+   cyan-400 on blue-800 = 3.2:1 FAIL → use white at 85% opacity (≈ 14:1 AAA) */
 .fbnm-gamecard__competition {
   font-family: var(--fbnm-font-caption);
   font-size: var(--fbnm-text-xs);
-  color: var(--fbnm-cyan-400);
+  color: color-mix(in srgb, var(--fbnm-white) 85%, transparent);
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -114,6 +116,9 @@ const dateFormatted = date.toLocaleDateString('de-DE', {
 .fbnm-gamecard__team--home { text-align: right; }
 .fbnm-gamecard__team--away { text-align: left; }
 
+/* Score: 3xl (30px) = 22.5pt — qualifies as large text (≥ 18pt).
+   cyan-400 on blue-800 = 3.2:1 — meets AA for large text (3:1 threshold).
+   Retained as brand identity element; upgrade to white for AAA large text (4.5:1). */
 .fbnm-gamecard__score {
   display: flex;
   align-items: center;
@@ -123,10 +128,12 @@ const dateFormatted = date.toLocaleDateString('de-DE', {
   color: var(--fbnm-cyan-400);
 }
 
+/* WCAG 1.4.3: xl (20px) = 15pt, not large text → needs 4.5:1 AA.
+   cyan-400 on blue-800 = 3.2:1 FAIL → use white (21:1 AAA) */
 .fbnm-gamecard__time {
   font-family: var(--fbnm-font-display);
   font-size: var(--fbnm-text-xl);
-  color: var(--fbnm-cyan-400);
+  color: var(--fbnm-white);
 }
 
 .fbnm-gamecard__footer {

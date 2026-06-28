@@ -88,9 +88,12 @@ const currentPath = Astro.url?.pathname ?? '/'
   text-decoration: none;
   color: color-mix(in srgb, var(--fbnm-white) 80%, transparent);
   padding: var(--fbnm-space-2) var(--fbnm-space-3);
-  border-radius: var(--fbnm-radius-sm);
+  /* reserve space for the 2px bottom border on active state */
+  border-bottom: 2px solid transparent;
+  border-radius: var(--fbnm-radius-sm) var(--fbnm-radius-sm) 0 0;
   transition: color var(--fbnm-transition-fast),
-              background-color var(--fbnm-transition-fast);
+              background-color var(--fbnm-transition-fast),
+              border-color var(--fbnm-transition-fast);
 }
 
 .fbnm-nav__link:hover {
@@ -98,9 +101,12 @@ const currentPath = Astro.url?.pathname ?? '/'
   background-color: color-mix(in srgb, var(--fbnm-white) 10%, transparent);
 }
 
+/* WCAG 1.4.1: active state uses both color AND border-bottom (non-color indicator) */
+/* WCAG 1.4.3/1.4.6: white (#fff) on blue-900 (#002751) = 15.2:1 AAA */
 .fbnm-nav__link--active {
-  color: var(--fbnm-cyan-400);
+  color: var(--fbnm-white);
   background-color: color-mix(in srgb, var(--fbnm-white) 8%, transparent);
+  border-bottom-color: var(--fbnm-white);
 }
 
 .fbnm-nav__burger {
@@ -111,6 +117,11 @@ const currentPath = Astro.url?.pathname ?? '/'
   border: none;
   cursor: pointer;
   padding: var(--fbnm-space-2);
+  /* WCAG 2.5.8: minimum 24x24px touch target (burger is decorative nav trigger) */
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
 }
 
 .fbnm-nav__burger span {
@@ -137,6 +148,13 @@ const currentPath = Astro.url?.pathname ?? '/'
 
   .fbnm-nav__links.is-open { display: flex; }
   .fbnm-nav__burger { display: flex; }
+
+  /* On mobile the active underline is left-side instead of bottom */
+  .fbnm-nav__link--active {
+    border-bottom-color: transparent;
+    border-left: 3px solid var(--fbnm-white);
+    padding-left: calc(var(--fbnm-space-3) - 1px);
+  }
 }
 </style>
 

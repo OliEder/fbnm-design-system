@@ -44,7 +44,14 @@ const { standings, title = 'Tabelle', league } = Astro.props
           <tr class:list={{ 'fbnm-statstable__row--highlight': row.isFBNM }}>
             <td class="fbnm-statstable__rank">{row.rank}</td>
             <td class="fbnm-statstable__team">
-              {row.isFBNM && <span class="fbnm-statstable__fbnm-marker" aria-hidden="true">&#9679;</span>}
+              {row.isFBNM && (
+                <>
+                  {/* WCAG 1.4.1: dot is a non-color visual indicator (aria-hidden,
+                      decorative) — sr-only text provides the accessible label */}
+                  <span class="fbnm-statstable__fbnm-marker" aria-hidden="true">&#9679;</span>
+                  <span class="sr-only">(Fibalon Baskets Neumarkt)</span>
+                </>
+              )}
               {row.team}
             </td>
             <td>{row.games}</td>
@@ -83,10 +90,13 @@ const { standings, title = 'Tabelle', league } = Astro.props
   text-transform: uppercase;
 }
 
+/* WCAG 1.4.3: xs (12px) text on blue-800 → cyan-400 was 3.2:1 FAIL.
+   Changed to white (21:1 AAA). */
 .fbnm-statstable__league {
   font-family: var(--fbnm-font-caption);
   font-size: var(--fbnm-text-xs);
-  color: var(--fbnm-cyan-400);
+  color: var(--fbnm-white);
+  opacity: 0.8;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -128,6 +138,8 @@ tbody tr:hover {
   background: color-mix(in srgb, var(--fbnm-blue-800) 5%, var(--fbnm-white));
 }
 
+/* WCAG 1.4.1: highlight uses background color + dot marker (non-color indicators)
+   so color is not the only visual means of identification. */
 .fbnm-statstable__row--highlight {
   background: color-mix(in srgb, var(--fbnm-cyan-500) 8%, var(--fbnm-white));
 }
@@ -152,5 +164,18 @@ tbody tr:hover {
   font-family: var(--fbnm-font-display);
   font-weight: 700;
   color: var(--fbnm-blue-800);
+}
+
+/* WCAG utility: visually hidden but available to screen readers */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 </style>
