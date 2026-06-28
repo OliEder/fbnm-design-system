@@ -1,0 +1,130 @@
+---
+const currentYear = new Date().getFullYear()
+---
+
+<footer class="fbnm-footer">
+  <div class="fbnm-footer__inner">
+    <div class="fbnm-footer__brand">
+      <img src="/images/logo.svg" alt="Fibalon Baskets Neumarkt" width="100" height="40" />
+      <p class="fbnm-footer__tagline">#ONETEAM</p>
+    </div>
+
+    <nav class="fbnm-footer__nav" aria-label="Footer Navigation">
+      <div class="fbnm-footer__col">
+        <h3 class="fbnm-footer__heading">Verein</h3>
+        <ul>
+          <li><a href="/ueber-uns/">Ueber uns</a></li>
+          <li><a href="/mitglied-werden/">Mitglied werden</a></li>
+          <li><a href="/kontakt/">Kontakt</a></li>
+        </ul>
+      </div>
+      <div class="fbnm-footer__col">
+        <h3 class="fbnm-footer__heading">Sport</h3>
+        <ul>
+          <li><a href="/team/">Teams</a></li>
+          <li><a href="/spielplan/">Spielplan</a></li>
+          <li><a href="/tabelle/">Tabelle</a></li>
+          <li><a href="/ergebnisse/">Ergebnisse</a></li>
+        </ul>
+      </div>
+      <div class="fbnm-footer__col">
+        <h3 class="fbnm-footer__heading">Rechtliches</h3>
+        <ul>
+          <li><a href="/impressum/">Impressum</a></li>
+          <li><a href="/datenschutz/">Datenschutz</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="fbnm-footer__social">
+      <a href="https://www.facebook.com/fibalonbaskets" aria-label="Facebook" target="_blank" rel="noopener noreferrer">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="fbnm-footer__bottom">
+    <p>&copy; {currentYear} FIBALON Baskets Neumarkt e.V. &middot; Schwenningerstrasse 2 &middot; 92318 Neumarkt i.d.Opf.</p>
+  </div>
+</footer>
+
+<style>
+.fbnm-footer {
+  background-color: var(--fbnm-blue-900);
+  color: var(--fbnm-white);
+  margin-top: auto;
+}
+
+.fbnm-footer__inner {
+  max-width: var(--fbnm-container-max);
+  margin: 0 auto;
+  padding: var(--fbnm-space-16) var(--fbnm-container-padding);
+  display: grid;
+  grid-template-columns: 1fr 2fr auto;
+  gap: var(--fbnm-space-12);
+  align-items: start;
+}
+
+.fbnm-footer__brand img { margin-bottom: var(--fbnm-space-3); }
+
+.fbnm-footer__tagline {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xl);
+  color: var(--fbnm-cyan-400);
+  text-transform: uppercase;
+}
+
+.fbnm-footer__nav {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--fbnm-space-8);
+}
+
+.fbnm-footer__heading {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--fbnm-cyan-400);
+  margin-bottom: var(--fbnm-space-3);
+}
+
+.fbnm-footer__col ul { display: flex; flex-direction: column; gap: var(--fbnm-space-2); }
+
+.fbnm-footer__col a {
+  font-size: var(--fbnm-text-sm);
+  color: color-mix(in srgb, var(--fbnm-white) 70%, transparent);
+  text-decoration: none;
+  transition: color var(--fbnm-transition-fast);
+}
+
+.fbnm-footer__col a:hover { color: var(--fbnm-white); }
+
+.fbnm-footer__social { display: flex; gap: var(--fbnm-space-3); }
+
+.fbnm-footer__social a {
+  color: color-mix(in srgb, var(--fbnm-white) 70%, transparent);
+  transition: color var(--fbnm-transition-fast);
+}
+.fbnm-footer__social a:hover { color: var(--fbnm-cyan-400); }
+
+.fbnm-footer__bottom {
+  border-top: 1px solid color-mix(in srgb, var(--fbnm-white) 15%, transparent);
+  padding: var(--fbnm-space-4) var(--fbnm-container-padding);
+  text-align: center;
+  font-size: var(--fbnm-text-xs);
+  color: color-mix(in srgb, var(--fbnm-white) 50%, transparent);
+  font-family: var(--fbnm-font-caption);
+}
+
+@media (max-width: 768px) {
+  .fbnm-footer__inner {
+    grid-template-columns: 1fr;
+    gap: var(--fbnm-space-8);
+  }
+  .fbnm-footer__nav { grid-template-columns: repeat(2, 1fr); }
+}
+</style>
