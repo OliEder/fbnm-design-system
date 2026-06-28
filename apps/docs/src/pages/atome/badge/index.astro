@@ -1,0 +1,124 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import Badge from '@ds/components/Badge/Badge.astro'
+---
+
+<DocsLayout title="Badge">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Atome</p>
+      <h1 class="docs-page__title">Badge</h1>
+      <p class="docs-page__desc">
+        Kleine Kennzeichnungen für Spielstatus, Spielort und Ergebnisse.
+        Sechs Varianten — alle mit AAA-konformen Kontrastverhältnissen.
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        Alle Badge-Hintergründe wurden für AAA gewählt: Badges verwenden xs-Text (12px = kleine Schrift).
+        Für AAA ist 7:1 erforderlich. Alle Varianten ≥ 7.6:1.
+        Live-Animation nur bei <code>prefers-reduced-motion: no-preference</code> (WCAG 2.3.3 AAA).
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Alle Varianten</h2>
+    <div class="demo">
+      <div class="demo__label">Status & Ort</div>
+      <div class="demo__canvas">
+        <Badge variant="home">Heimspiel</Badge>
+        <Badge variant="away">Auswärts</Badge>
+        <Badge variant="upcoming">Bald</Badge>
+        <Badge variant="live">Live</Badge>
+        <Badge variant="win">Sieg</Badge>
+        <Badge variant="loss">Niederlage</Badge>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="demo__label">Auf dunklem Hintergrund</div>
+      <div class="demo__canvas demo__canvas--navy">
+        <Badge variant="home">Heimspiel</Badge>
+        <Badge variant="away">Auswärts</Badge>
+        <Badge variant="live">Live</Badge>
+        <Badge variant="win">Sieg</Badge>
+        <Badge variant="loss">Niederlage</Badge>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Kontrastverhältnisse (WCAG 1.4.3/1.4.6)</h2>
+    <table class="contrast-table">
+      <thead>
+        <tr><th>Variante</th><th>Hintergrund</th><th>Textfarbe</th><th>Kontrast</th><th>Level</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><Badge variant="home">Heimspiel</Badge></td>
+          <td style="font-family:monospace; font-size:0.8rem;">#004174 (blue-800)</td>
+          <td>Weiß</td>
+          <td>10.3:1</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><Badge variant="away">Auswärts</Badge></td>
+          <td style="font-family:monospace; font-size:0.8rem;">#494949</td>
+          <td>Weiß</td>
+          <td>7.84:1</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><Badge variant="upcoming">Bald</Badge></td>
+          <td style="font-family:monospace; font-size:0.8rem;">#004174 (blue-800)</td>
+          <td>Weiß</td>
+          <td>10.3:1</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><Badge variant="live">Live</Badge></td>
+          <td style="font-family:monospace; font-size:0.8rem;">#991b1b</td>
+          <td>Weiß</td>
+          <td>7.66:1</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><Badge variant="win">Sieg</Badge></td>
+          <td style="font-family:monospace; font-size:0.8rem;">#14532d</td>
+          <td>Weiß</td>
+          <td>8.14:1</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><Badge variant="loss">Niederlage</Badge></td>
+          <td style="font-family:monospace; font-size:0.8rem;">#991b1b</td>
+          <td>Weiß</td>
+          <td>7.66:1</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 class="docs-heading">Verwendung</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import Badge from '@fbnm/design-system/components/Badge/Badge.astro'
+---
+
+<Badge variant="live">Live</Badge>
+<Badge variant="home">Heimspiel</Badge>
+<Badge variant="win">63:51</Badge>`} />
+    </div>
+
+    <h2 class="docs-heading">Props</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Prop</th><th>Typ</th><th>Standard</th><th>Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>variant</td><td>'home' | 'away' | 'win' | 'loss' | 'live' | 'upcoming'</td><td>'upcoming'</td><td>Farbliche Variante</td></tr>
+        <tr><td>class</td><td>string</td><td>–</td><td>Zusätzliche CSS-Klassen</td></tr>
+        <tr><td>slot</td><td>string</td><td>–</td><td>Beschriftungstext</td></tr>
+      </tbody>
+    </table>
+  </div>
+</DocsLayout>

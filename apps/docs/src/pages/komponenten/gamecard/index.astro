@@ -1,0 +1,133 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import GameCard from '@ds/components/GameCard/GameCard.astro'
+
+const upcoming = {
+  homeTeam: 'Fibalon Baskets NM',
+  awayTeam: 'TSV Ansbach',
+  date: new Date('2025-02-15'),
+  time: '19:30',
+  location: 'Mehrzweckhalle NM',
+  competition: '2. Regionalliga Süd',
+  isHome: true,
+  href: '#',
+}
+
+const live = {
+  homeTeam: 'Fibalon Baskets NM',
+  awayTeam: 'BBC Coburg',
+  date: new Date('2025-02-08'),
+  time: '18:00',
+  location: 'Mehrzweckhalle NM',
+  competition: '2. Regionalliga Süd',
+  homeScore: 54,
+  awayScore: 48,
+  isLive: true,
+  isHome: true,
+  href: '#',
+}
+
+const result = {
+  homeTeam: 'TV Leinburg',
+  awayTeam: 'Fibalon Baskets NM',
+  date: new Date('2025-02-01'),
+  time: '18:00',
+  location: 'Sporthalle Leinburg',
+  competition: '2. Regionalliga Süd',
+  homeScore: 61,
+  awayScore: 74,
+  isHome: false,
+  href: '#',
+}
+---
+
+<DocsLayout title="GameCard">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Komponenten</p>
+      <h1 class="docs-page__title">GameCard</h1>
+      <p class="docs-page__desc">
+        Spielkarte für Anstehende Spiele, Live-Partien und Ergebnisse.
+        Integriert Badge-Komponente für Status-Kennzeichnung.
+        Immer als klickbare <code>&lt;a&gt;</code> gerendert.
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        Competition-Text (xs/12px): rgba(255,255,255,0.85) ≈ 14:1 (AAA) ·
+        Zeit-Text (xl/24px): weiß = 21:1 (AAA) ·
+        Score (3xl/48px, Large Text): cyan-400 = 3.2:1 (≥ 3:1 AA Large) ·
+        Hover: Hintergrund hellt sich auf (kein Farb-Only-Indikator).
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Anstehendes Spiel</h2>
+    <div class="demo">
+      <div class="demo__label">status: upcoming (isHome: true)</div>
+      <div class="demo__canvas demo__canvas--gray" style="max-width:400px; margin:0 auto; display:block; padding:1.5rem;">
+        <GameCard {...upcoming} />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Live-Spiel</h2>
+    <div class="demo">
+      <div class="demo__label">isLive: true + Spielstand</div>
+      <div class="demo__canvas demo__canvas--gray" style="max-width:400px; margin:0 auto; display:block; padding:1.5rem;">
+        <GameCard {...live} />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Ergebnis (Auswärtsspiel)</h2>
+    <div class="demo">
+      <div class="demo__label">Auswärtssieg (isHome: false)</div>
+      <div class="demo__canvas demo__canvas--gray" style="max-width:400px; margin:0 auto; display:block; padding:1.5rem;">
+        <GameCard {...result} />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Verwendung</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import GameCard from '@fbnm/design-system/components/GameCard/GameCard.astro'
+
+// Daten kommen aus Basketball-Bund iCal-Feed (bbb-ical.ts)
+const games = await fetchGamesFromIcal(process.env.ICAL_URL_HERREN)
+---
+
+{games.map(game => (
+  <GameCard
+    homeTeam={game.homeTeam}
+    awayTeam={game.awayTeam}
+    date={game.date}
+    time={game.time}
+    location={game.location}
+    competition={game.competition}
+    isHome={game.isHome}
+    href={\`/spieltag/\${game.id}/\`}
+  />
+))}`} />
+    </div>
+
+    <h2 class="docs-heading">Props</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Prop</th><th>Typ</th><th>Standard</th><th>Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>homeTeam</td><td>string</td><td>–</td><td>Heimmannschaft</td></tr>
+        <tr><td>awayTeam</td><td>string</td><td>–</td><td>Gastmannschaft</td></tr>
+        <tr><td>date</td><td>Date</td><td>–</td><td>Spieltermin</td></tr>
+        <tr><td>time</td><td>string</td><td>–</td><td>Uhrzeit (z.B. "19:30")</td></tr>
+        <tr><td>location</td><td>string</td><td>–</td><td>Spielort / Halle</td></tr>
+        <tr><td>competition</td><td>string</td><td>–</td><td>Liga / Wettbewerb</td></tr>
+        <tr><td>homeScore</td><td>number</td><td>–</td><td>Heimtore (für Live & Ergebnis)</td></tr>
+        <tr><td>awayScore</td><td>number</td><td>–</td><td>Gasttore (für Live & Ergebnis)</td></tr>
+        <tr><td>isLive</td><td>boolean</td><td>false</td><td>Zeigt Live-Badge und pulsierendes Indikator</td></tr>
+        <tr><td>isHome</td><td>boolean</td><td>true</td><td>Heimspiel-Indikator für Badge</td></tr>
+        <tr><td>href</td><td>string</td><td>'#'</td><td>Link zur Spieldetailseite</td></tr>
+      </tbody>
+    </table>
+  </div>
+</DocsLayout>

@@ -1,0 +1,102 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import Button from '@ds/components/Button/Button.astro'
+---
+
+<DocsLayout title="Button">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Atome</p>
+      <h1 class="docs-page__title">Button</h1>
+      <p class="docs-page__desc">
+        Drei Varianten: Primary (Hauptaktion), Secondary (Nebenaction), Ghost (tertiär/outline).
+        Rendert als <code>&lt;button&gt;</code> oder <code>&lt;a&gt;</code> — je nach Verwendung.
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        Alle Buttons: min 44×44 px (WCAG 2.5.5 AAA) · Kontrast ≥ 10:1 AAA auf Weiß ·
+        Sichtbarer Fokusrahmen (2.4.11) · Hover-Zustand visuell unterscheidbar.
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Varianten</h2>
+    <div class="demo">
+      <div class="demo__label">Auf weißem Hintergrund</div>
+      <div class="demo__canvas">
+        <Button variant="primary">Spielplan ansehen</Button>
+        <Button variant="secondary">Mehr erfahren</Button>
+        <Button variant="ghost">Alle Ergebnisse</Button>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="demo__label">Auf dunklem Hintergrund</div>
+      <div class="demo__canvas demo__canvas--navy">
+        <Button variant="primary">Spielplan ansehen</Button>
+        <Button variant="secondary">Mehr erfahren</Button>
+        <Button variant="ghost">Alle Ergebnisse</Button>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Größen</h2>
+    <div class="demo">
+      <div class="demo__label">sm / md / lg</div>
+      <div class="demo__canvas" style="align-items:center;">
+        <Button variant="primary" size="sm">Klein</Button>
+        <Button variant="primary" size="md">Mittel</Button>
+        <Button variant="primary" size="lg">Groß</Button>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Als Link (href)</h2>
+    <div class="demo">
+      <div class="demo__label">Rendert als &lt;a&gt;</div>
+      <div class="demo__canvas">
+        <Button variant="primary" href="#">Zur Webseite →</Button>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Deaktiviert</h2>
+    <div class="demo">
+      <div class="demo__label">disabled-Attribut</div>
+      <div class="demo__canvas">
+        <Button variant="primary" disabled>Nicht verfügbar</Button>
+        <Button variant="ghost" disabled>Nicht verfügbar</Button>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Verwendung</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import Button from '@fbnm/design-system/components/Button/Button.astro'
+---
+
+<!-- Primäraktion -->
+<Button variant="primary">Spielplan ansehen</Button>
+
+<!-- Link-Button -->
+<Button variant="primary" href="/spielplan/">Spielplan →</Button>
+
+<!-- Formular-Submit -->
+<Button variant="primary" type="submit">Senden</Button>`} />
+    </div>
+
+    <h2 class="docs-heading">Props</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Prop</th><th>Typ</th><th>Standard</th><th>Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>variant</td><td>'primary' | 'secondary' | 'ghost'</td><td>'primary'</td><td>Visuelle Variante</td></tr>
+        <tr><td>size</td><td>'sm' | 'md' | 'lg'</td><td>'md'</td><td>Schaltflächengröße</td></tr>
+        <tr><td>href</td><td>string</td><td>–</td><td>Rendert als &lt;a&gt; statt &lt;button&gt;</td></tr>
+        <tr><td>type</td><td>'button' | 'submit' | 'reset'</td><td>'button'</td><td>HTML-Typ für &lt;button&gt;</td></tr>
+        <tr><td>disabled</td><td>boolean</td><td>false</td><td>Deaktiviert die Schaltfläche</td></tr>
+        <tr><td>class</td><td>string</td><td>–</td><td>Zusätzliche CSS-Klassen</td></tr>
+      </tbody>
+    </table>
+  </div>
+</DocsLayout>

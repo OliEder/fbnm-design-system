@@ -1,0 +1,51 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="Datenschutz" noIndex={true}>
+  <div class="page-header">
+    <h1>Datenschutzerklaerung</h1>
+  </div>
+
+  <div class="container legal-content">
+    <h2>1. Verantwortlicher</h2>
+    <p>FIBALON Baskets Neumarkt e.V., Schweningerstrasse 2, 92318 Neumarkt i.d.Opf.<br />
+    E-Mail: vorstand@fibalon-baskets.de</p>
+
+    <h2>2. Erhobene Daten</h2>
+    <p>Beim Besuch dieser Website werden durch den Webserver Zugriffsdaten (Server-Log-Files)
+    verarbeitet: Browser-Typ, Betriebssystem, Referrer-URL, Hostname, Uhrzeit der Serveranfrage.
+    Diese Daten sind nicht bestimmten Personen zuordenbar.</p>
+
+    <h2>3. Kontaktformular</h2>
+    <p>Wenn Sie uns per Kontaktformular kontaktieren, werden Ihre Angaben zwecks Bearbeitung
+    der Anfrage gespeichert. Diese Daten geben wir nicht weiter.</p>
+
+    <h2>4. Externe Schriftarten</h2>
+    <p>Diese Website laedt die Schriftart Montserrat von Google Fonts. Dabei wird Ihre IP-Adresse
+    an Google uebertragen. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.
+    Alternative: Lokale Schriftdateien (empfohlen fuer vollstaendige DSGVO-Konformitaet).</p>
+
+    <h2>5. Ihre Rechte</h2>
+    <p>Sie haben das Recht auf Auskunft, Berichtigung, Loeschung, Einschraenkung der Verarbeitung
+    sowie Datenuebertragbarkeit. Wenden Sie sich an: vorstand@fibalon-baskets.de</p>
+  </div>
+</BaseLayout>
+
+<style>
+.legal-content {
+  padding: var(--fbnm-space-8) var(--fbnm-container-padding) var(--fbnm-space-16);
+  max-width: 768px;
+}
+
+.legal-content h2 {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xl);
+  text-transform: uppercase;
+  color: var(--fbnm-blue-800);
+  margin-top: var(--fbnm-space-8);
+  margin-bottom: var(--fbnm-space-3);
+}
+
+.legal-content p { line-height: var(--fbnm-leading-normal); margin-bottom: var(--fbnm-space-4); }
+</style>

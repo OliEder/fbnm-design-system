@@ -1,0 +1,128 @@
+---
+import Navigation from '../../../packages/design-system/src/components/Navigation/Navigation.astro'
+import Footer from '../../../packages/design-system/src/components/Footer/Footer.astro'
+import LiveTicker from '../../../packages/design-system/src/components/LiveTicker/LiveTicker.astro'
+import '../../../packages/design-system/src/styles/index.css'
+
+interface Props {
+  title: string
+  description?: string
+  ogImage?: string
+  noIndex?: boolean
+}
+
+const {
+  title,
+  description = 'Fibalon Baskets Neumarkt - Der erste eigenstaendige Basketballverein in Neumarkt i.d.Opf.',
+  ogImage = '/images/og-default.jpg',
+  noIndex = false,
+} = Astro.props
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site)
+---
+
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    {noIndex && <meta name="robots" content="noindex, nofollow" />}
+
+    <title>{title} | FBNM Fibalon Baskets Neumarkt</title>
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={new URL(ogImage, Astro.site)} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content="FBNM Fibalon Baskets Neumarkt" />
+    <meta property="og:locale" content="de_DE" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={new URL(ogImage, Astro.site)} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <!-- Montserrat (caption font) - replace with self-hosted version for full DSGVO compliance -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <a href="#main" class="skip-link">Zum Inhalt springen</a>
+    <LiveTicker />
+    <Navigation />
+    <main id="main">
+      <slot />
+    </main>
+    <Footer />
+  </body>
+</html>
+
+<style is:global>
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  main { flex: 1; }
+
+  .skip-link {
+    position: absolute;
+    top: -100%;
+    left: var(--fbnm-space-4);
+    background: var(--fbnm-cyan-500);
+    color: var(--fbnm-white);
+    padding: var(--fbnm-space-2) var(--fbnm-space-4);
+    z-index: var(--fbnm-z-toast);
+    border-radius: 0 0 var(--fbnm-radius-sm) var(--fbnm-radius-sm);
+    font-family: var(--fbnm-font-caption);
+    font-weight: 600;
+    text-decoration: none;
+    transition: top var(--fbnm-transition-fast);
+  }
+
+  .skip-link:focus { top: 0; }
+
+  .container {
+    max-width: var(--fbnm-container-max);
+    margin: 0 auto;
+    padding: 0 var(--fbnm-container-padding);
+  }
+
+  .page-header {
+    padding: var(--fbnm-space-12) var(--fbnm-container-padding) var(--fbnm-space-8);
+    max-width: var(--fbnm-container-max);
+    margin: 0 auto;
+    border-bottom: 3px solid var(--fbnm-cyan-500);
+    margin-bottom: var(--fbnm-space-8);
+  }
+
+  .fbnm-section {
+    padding: var(--fbnm-space-16) 0;
+  }
+
+  .fbnm-section--dark {
+    background: var(--fbnm-blue-900);
+    color: var(--fbnm-white);
+  }
+
+  .fbnm-section__title {
+    font-family: var(--fbnm-font-display);
+    font-size: var(--fbnm-text-3xl);
+    text-transform: uppercase;
+    margin-bottom: var(--fbnm-space-8);
+  }
+
+  .game-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: var(--fbnm-space-4);
+  }
+</style>

@@ -1,0 +1,176 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Button from '../../../../packages/design-system/src/components/Button/Button.astro'
+import { fetchGamesFromIcal, getNextGame } from '../../../../packages/design-system/src/lib/bbb-ical'
+
+const herrenUrl = import.meta.env.ICAL_URL_HERREN
+let nextGame: Awaited<ReturnType<typeof getNextGame>> = undefined
+
+try {
+  if (herrenUrl) {
+    const games = await fetchGamesFromIcal(herrenUrl, 'Fibalon Baskets')
+    nextGame = getNextGame(games)
+  }
+} catch (e) {
+  console.warn('iCal feed nicht verfuegbar:', e)
+}
+
+const dateStr = nextGame?.date.toLocaleDateString('de-DE', {
+  weekday: 'long', day: '2-digit', month: 'long', year: 'numeric'
+})
+---
+
+<BaseLayout title="Spieltag" description="Spieltag-Infos der Fibalon Baskets Neumarkt - Live-Ticker, Einlass, Bewirtung">
+  <!-- Live-Ticker is already in BaseLayout (polls automatically) -->
+
+  <div class="page-header">
+    <h1>Spieltag</h1>
+    {nextGame && <p class="next-game-meta">{nextGame.competition} &middot; {dateStr} &middot; {nextGame.time} Uhr</p>}
+  </div>
+
+  <div class="container spieltag-layout">
+    {nextGame ? (
+      <section class="spieltag-info">
+        <div class="matchup">
+          <span class="matchup__team">{nextGame.homeTeam}</span>
+          <span class="matchup__vs">vs</span>
+          <span class="matchup__team">{nextGame.awayTeam}</span>
+        </div>
+        <dl class="game-details">
+          <div>
+            <dt>Datum</dt>
+            <dd>{dateStr}</dd>
+          </div>
+          <div>
+            <dt>Uhrzeit</dt>
+            <dd>{nextGame.time} Uhr</dd>
+          </div>
+          <div>
+            <dt>Ort</dt>
+            <dd>{nextGame.location}</dd>
+          </div>
+          <div>
+            <dt>Wettbewerb</dt>
+            <dd>{nextGame.competition}</dd>
+          </div>
+        </dl>
+      </section>
+    ) : (
+      <p>Kein naechstes Spiel gefunden.</p>
+    )}
+
+    <section class="spieltag-hints">
+      <h2>Heimspiel-Infos</h2>
+      <ul class="hints-list">
+        <li>Einlass ab 60 Minuten vor Spielbeginn</li>
+        <li>Bewirtung mit Speisen und Getraenken</li>
+        <li>Eintritt frei / Spende erbeten</li>
+        <li>Parkplaetze vor der Halle verfuegbar</li>
+      </ul>
+      <Button href="/kontakt/" variant="secondary">Fragen? Schreib uns</Button>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+.spieltag-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--fbnm-space-12);
+  padding: var(--fbnm-space-8) var(--fbnm-container-padding) var(--fbnm-space-16);
+  align-items: start;
+}
+
+.next-game-meta {
+  font-family: var(--fbnm-font-caption);
+  color: var(--fbnm-cyan-500);
+  margin-top: var(--fbnm-space-2);
+  font-size: var(--fbnm-text-lg);
+}
+
+.matchup {
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-4);
+  background: var(--fbnm-blue-800);
+  color: var(--fbnm-white);
+  border-radius: var(--fbnm-radius-md);
+  padding: var(--fbnm-space-8);
+  margin-bottom: var(--fbnm-space-6);
+}
+
+.matchup__team {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-2xl);
+  text-transform: uppercase;
+  flex: 1;
+}
+
+.matchup__team:last-child { text-align: right; }
+
+.matchup__vs {
+  font-family: var(--fbnm-font-caption);
+  color: var(--fbnm-cyan-400);
+  font-size: var(--fbnm-text-xl);
+}
+
+.game-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--fbnm-space-4);
+}
+
+.game-details > div {
+  background: color-mix(in srgb, var(--fbnm-blue-800) 6%, var(--fbnm-white));
+  border-radius: var(--fbnm-radius-sm);
+  padding: var(--fbnm-space-4);
+}
+
+.game-details dt {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  text-transform: uppercase;
+  color: var(--fbnm-color-text-muted);
+  margin-bottom: var(--fbnm-space-1);
+}
+
+.game-details dd { font-weight: var(--fbnm-weight-bold); }
+
+.spieltag-hints h2 {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-2xl);
+  text-transform: uppercase;
+  color: var(--fbnm-blue-800);
+  margin-bottom: var(--fbnm-space-4);
+}
+
+.hints-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fbnm-space-3);
+  margin-bottom: var(--fbnm-space-6);
+}
+
+.hints-list li {
+  padding-left: var(--fbnm-space-4);
+  position: relative;
+  line-height: var(--fbnm-leading-normal);
+}
+
+.hints-list li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.6em;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--fbnm-cyan-500);
+}
+
+@media (max-width: 768px) {
+  .spieltag-layout { grid-template-columns: 1fr; }
+  .matchup { flex-direction: column; text-align: center; }
+  .matchup__team:last-child { text-align: center; }
+}
+</style>

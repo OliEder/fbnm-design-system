@@ -1,0 +1,46 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import GameCard from '../../../../packages/design-system/src/components/GameCard/GameCard.astro'
+import { fetchGamesFromIcal, getPastGames } from '../../../../packages/design-system/src/lib/bbb-ical'
+
+const herrenUrl = import.meta.env.ICAL_URL_HERREN
+let herrenResults: Awaited<ReturnType<typeof getPastGames>> = []
+
+try {
+  if (herrenUrl) {
+    const games = await fetchGamesFromIcal(herrenUrl, 'Fibalon Baskets')
+    herrenResults = getPastGames(games, 20)
+  }
+} catch (e) {
+  console.warn('iCal feed nicht verfuegbar:', e)
+}
+---
+
+<BaseLayout title="Ergebnisse" description="Ergebnisse der Fibalon Baskets Neumarkt">
+  <div class="page-header">
+    <h1>Ergebnisse</h1>
+  </div>
+
+  <div class="container" style="padding-bottom: var(--fbnm-space-16);">
+    {herrenResults.length > 0
+      ? (
+        <div class="game-grid">
+          {herrenResults.map(game => (
+            <GameCard
+              homeTeam={game.homeTeam}
+              awayTeam={game.awayTeam}
+              date={game.date}
+              time={game.time}
+              location={game.location}
+              competition={game.competition}
+              homeScore={game.homeScore}
+              awayScore={game.awayScore}
+              isHome={game.isHome}
+            />
+          ))}
+        </div>
+      )
+      : <p>Noch keine Ergebnisse vorhanden.</p>
+    }
+  </div>
+</BaseLayout>

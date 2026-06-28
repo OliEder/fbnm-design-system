@@ -1,0 +1,98 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import Card from '@ds/components/Card/Card.astro'
+---
+
+<DocsLayout title="Card">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Atome</p>
+      <h1 class="docs-page__title">Card</h1>
+      <p class="docs-page__desc">
+        Generischer Container mit drei Varianten. Rendert als <code>&lt;div&gt;</code>
+        oder — mit <code>href</code> — als klickbare <code>&lt;a&gt;</code>.
+      </p>
+    </header>
+
+    <div class="wcag wcag--warn">
+      <span class="wcag__icon">⚠️</span>
+      <span>
+        <strong>accent-Variante:</strong> Cyan (#009fe3) als Hintergrundfarbe.
+        Weiß auf Cyan ergibt 3.0:1 — ausreichend für dekorative Flächen und Large Text (≥ 24px),
+        <strong>nicht</strong> für normalen Fließtext (≥ 4.5:1 AA). Keine kleinen Texte auf accent-Cards!
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Varianten</h2>
+    <div class="demo">
+      <div class="demo__label">default / dark / accent</div>
+      <div class="demo__canvas demo__canvas--grid demo__canvas--gray">
+        <Card variant="default">
+          <div style="padding:1.25rem;">
+            <h3 style="margin:0 0 0.5rem; font-family:var(--fbnm-font-display,sans-serif); text-transform:uppercase; color:var(--fbnm-blue-800,#004174);">Default Card</h3>
+            <p style="margin:0; font-size:0.875rem; color:#475569;">Weißer Hintergrund, dezente Umrandung. Ideal für Inhalte auf grauem Seitenhintergrund.</p>
+          </div>
+        </Card>
+        <Card variant="dark">
+          <div style="padding:1.25rem;">
+            <h3 style="margin:0 0 0.5rem; font-family:var(--fbnm-font-display,sans-serif); text-transform:uppercase; color:#fff;">Dark Card</h3>
+            <p style="margin:0; font-size:0.875rem; color:rgba(255,255,255,0.8);">Dunkelblauer Hintergrund für hervorgehobene Inhalte.</p>
+          </div>
+        </Card>
+        <Card variant="accent">
+          <div style="padding:1.25rem;">
+            <h3 style="margin:0 0 0.5rem; font-family:var(--fbnm-font-display,sans-serif); text-transform:uppercase; color:#fff; font-size:1.25rem;">Accent</h3>
+            <p style="margin:0; font-size:0.875rem; color:rgba(255,255,255,0.9);">Nur für Großtext und Dekoration. Kein kleiner Fließtext!</p>
+          </div>
+        </Card>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Als Link (hover-Effekt)</h2>
+    <div class="demo">
+      <div class="demo__label">href-Prop → rendert als &lt;a&gt;</div>
+      <div class="demo__canvas demo__canvas--gray">
+        <Card variant="default" href="#">
+          <div style="padding:1.25rem;">
+            <p style="margin:0; font-size:0.875rem; color:#475569;">Hover über mich → sanftes anheben + Schatten</p>
+          </div>
+        </Card>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Verwendung</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import Card from '@fbnm/design-system/components/Card/Card.astro'
+---
+
+<!-- Statisch -->
+<Card variant="dark">
+  <div style="padding: 1.5rem;">
+    <h2>Titel</h2>
+    <p>Inhalt...</p>
+  </div>
+</Card>
+
+<!-- Klickbar -->
+<Card variant="default" href="/news/artikel/">
+  <img src="..." alt="..." />
+  <div style="padding: 1rem;">
+    <h3>News-Titel</h3>
+  </div>
+</Card>`} />
+    </div>
+
+    <h2 class="docs-heading">Props</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Prop</th><th>Typ</th><th>Standard</th><th>Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>variant</td><td>'default' | 'dark' | 'accent'</td><td>'default'</td><td>Farbliche Variante</td></tr>
+        <tr><td>href</td><td>string</td><td>–</td><td>Rendert als &lt;a&gt; mit Hover-Effekt</td></tr>
+        <tr><td>class</td><td>string</td><td>–</td><td>Zusätzliche CSS-Klassen</td></tr>
+      </tbody>
+    </table>
+  </div>
+</DocsLayout>

@@ -1,0 +1,136 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+import Hero from '../../../packages/design-system/src/components/Hero/Hero.astro'
+import Button from '../../../packages/design-system/src/components/Button/Button.astro'
+import GameCard from '../../../packages/design-system/src/components/GameCard/GameCard.astro'
+import { fetchGamesFromIcal, getUpcomingGames, getPastGames } from '../../../packages/design-system/src/lib/bbb-ical'
+
+const herrenUrl = import.meta.env.ICAL_URL_HERREN
+const damenUrl = import.meta.env.ICAL_URL_DAMEN
+
+let upcomingHerren: Awaited<ReturnType<typeof getUpcomingGames>> = []
+let recentResults: Awaited<ReturnType<typeof getPastGames>> = []
+
+try {
+  if (herrenUrl) {
+    const games = await fetchGamesFromIcal(herrenUrl, 'Fibalon Baskets')
+    upcomingHerren = getUpcomingGames(games, 3)
+    recentResults = getPastGames(games, 3)
+  }
+} catch (e) {
+  console.warn('iCal feed nicht verfuegbar:', e)
+}
+---
+
+<BaseLayout
+  title="Home"
+  description="Fibalon Baskets Neumarkt - #ONETEAM. Basketball in Neumarkt i.d.Opf."
+>
+  <Hero
+    title="Fibalon Baskets Neumarkt"
+    subtitle="#ONETEAM - #FBNM EVERYWHERE"
+    backgroundImage="/images/hero-bg.jpg"
+  >
+    <Button href="/spielplan/" variant="primary">Spielplan</Button>
+    <Button href="/team/" variant="ghost">Unser Team</Button>
+  </Hero>
+
+  {upcomingHerren.length > 0 && (
+    <section class="fbnm-section">
+      <div class="container">
+        <h2 class="fbnm-section__title">Naechste Spiele</h2>
+        <div class="game-grid">
+          {upcomingHerren.map(game => (
+            <GameCard
+              homeTeam={game.homeTeam}
+              awayTeam={game.awayTeam}
+              date={game.date}
+              time={game.time}
+              location={game.location}
+              competition={game.competition}
+              isHome={game.isHome}
+              href="/spielplan/"
+            />
+          ))}
+        </div>
+        <div style="margin-top: var(--fbnm-space-8); display: flex; justify-content: center;">
+          <Button href="/spielplan/" variant="secondary">Alle Spiele</Button>
+        </div>
+      </div>
+    </section>
+  )}
+
+  {recentResults.length > 0 && (
+    <section class="fbnm-section fbnm-section--dark">
+      <div class="container">
+        <h2 class="fbnm-section__title">Letzte Ergebnisse</h2>
+        <div class="game-grid">
+          {recentResults.map(game => (
+            <GameCard
+              homeTeam={game.homeTeam}
+              awayTeam={game.awayTeam}
+              date={game.date}
+              time={game.time}
+              location={game.location}
+              competition={game.competition}
+              homeScore={game.homeScore}
+              awayScore={game.awayScore}
+              isHome={game.isHome}
+              href="/ergebnisse/"
+            />
+          ))}
+        </div>
+        <div style="margin-top: var(--fbnm-space-8); display: flex; justify-content: center;">
+          <Button href="/ergebnisse/" variant="primary">Alle Ergebnisse</Button>
+        </div>
+      </div>
+    </section>
+  )}
+
+  <section class="fbnm-section">
+    <div class="container">
+      <div class="fbnm-cta-grid">
+        <div class="fbnm-cta-card">
+          <h2>Mitglied werden</h2>
+          <p>Werde Teil des ersten eigenstaendigen Basketballvereins in Neumarkt. 245 Mitglieder freuen sich auf dich!</p>
+          <Button href="/mitglied-werden/" variant="primary">Jetzt beitreten</Button>
+        </div>
+        <div class="fbnm-cta-card fbnm-cta-card--dark">
+          <h2>Spieltag-Infos</h2>
+          <p>Alle Infos zu Heimspielen, Einlass, Bewirtung und Live-Ticker.</p>
+          <Button href="/spieltag/" variant="ghost">Zum Spieltag</Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+.fbnm-cta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--fbnm-space-6);
+}
+
+.fbnm-cta-card {
+  background: color-mix(in srgb, var(--fbnm-blue-800) 8%, var(--fbnm-white));
+  border: 1px solid var(--fbnm-color-border);
+  border-radius: var(--fbnm-radius-md);
+  padding: var(--fbnm-space-8);
+  display: flex;
+  flex-direction: column;
+  gap: var(--fbnm-space-4);
+}
+
+.fbnm-cta-card--dark {
+  background: var(--fbnm-blue-800);
+  color: var(--fbnm-white);
+  border-color: transparent;
+}
+
+.fbnm-cta-card h2 {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-2xl);
+  text-transform: uppercase;
+}
+</style>

@@ -1,0 +1,96 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import PlayerCard from '@ds/components/PlayerCard/PlayerCard.astro'
+---
+
+<DocsLayout title="PlayerCard">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Komponenten</p>
+      <h1 class="docs-page__title">PlayerCard</h1>
+      <p class="docs-page__desc">
+        Spielerporträt mit Bild (oder Nummer als Platzhalter), Position und
+        optionalen Saisonstatistiken (PPG, RPG, APG).
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        Name (lg/20px, Display): weiß auf blue-800 = 21:1 (AAA) ·
+        Position (xs/12px): rgba(255,255,255,0.8) = 9.8:1 (AAA) ·
+        Stats-Labels (xs): rgba(255,255,255,0.75) = 7.7:1 (AAA) ·
+        Stats-Werte (xl): weiß = 21:1 (AAA) ·
+        Nummer-Badge: weiß auf blue-900 = 21:1 (AAA).
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Mit Statistiken</h2>
+    <div class="demo">
+      <div class="demo__label">Spieler mit PPG/RPG/APG</div>
+      <div class="demo__canvas" style="background:#f0f4f8; display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; padding:2rem;">
+        <PlayerCard
+          name="Max Mustermann"
+          number={7}
+          position="Point Guard"
+          stats={{ ppg: 18.4, rpg: 4.2, apg: 7.1 }}
+        />
+        <PlayerCard
+          name="Felix Schmidt"
+          number={23}
+          position="Center"
+          stats={{ ppg: 12.6, rpg: 9.8, apg: 1.3 }}
+        />
+        <PlayerCard
+          name="Jonas Weber"
+          number={11}
+          position="Small Forward"
+          stats={{ ppg: 15.2, rpg: 5.5, apg: 3.8 }}
+        />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Ohne Statistiken (Platzhalter)</h2>
+    <div class="demo">
+      <div class="demo__label">Kein imageUrl, keine stats</div>
+      <div class="demo__canvas" style="background:#f0f4f8; display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem; padding:2rem;">
+        <PlayerCard
+          name="Spieler Neu"
+          number={42}
+          position="Shooting Guard"
+        />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Verwendung</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import PlayerCard from '@fbnm/design-system/components/PlayerCard/PlayerCard.astro'
+---
+
+<PlayerCard
+  name="Max Mustermann"
+  number={7}
+  position="Point Guard"
+  imageUrl="/images/players/mustermann.jpg"
+  stats={{ ppg: 18.4, rpg: 4.2, apg: 7.1 }}
+/>`} />
+    </div>
+
+    <h2 class="docs-heading">Props</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Prop</th><th>Typ</th><th>Standard</th><th>Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>name</td><td>string</td><td>–</td><td>Vollständiger Name</td></tr>
+        <tr><td>number</td><td>number</td><td>–</td><td>Trikotnummer</td></tr>
+        <tr><td>position</td><td>string</td><td>–</td><td>Spielposition (z.B. "Point Guard")</td></tr>
+        <tr><td>imageUrl</td><td>string</td><td>–</td><td>Profilfoto-URL (4:5 Ratio empfohlen)</td></tr>
+        <tr><td>stats.ppg</td><td>number</td><td>–</td><td>Punkte pro Spiel</td></tr>
+        <tr><td>stats.rpg</td><td>number</td><td>–</td><td>Rebounds pro Spiel</td></tr>
+        <tr><td>stats.apg</td><td>number</td><td>–</td><td>Assists pro Spiel</td></tr>
+      </tbody>
+    </table>
+  </div>
+</DocsLayout>

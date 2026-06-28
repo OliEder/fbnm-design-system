@@ -1,0 +1,102 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import GameCard from '../../../../packages/design-system/src/components/GameCard/GameCard.astro'
+import { fetchGamesFromIcal, getUpcomingGames } from '../../../../packages/design-system/src/lib/bbb-ical'
+
+const herrenUrl = import.meta.env.ICAL_URL_HERREN
+const damenUrl = import.meta.env.ICAL_URL_DAMEN
+
+let herrenGames: Awaited<ReturnType<typeof getUpcomingGames>> = []
+let damenGames: Awaited<ReturnType<typeof getUpcomingGames>> = []
+
+try {
+  if (herrenUrl) {
+    const games = await fetchGamesFromIcal(herrenUrl, 'Fibalon Baskets')
+    herrenGames = getUpcomingGames(games, 30)
+  }
+  if (damenUrl) {
+    const games = await fetchGamesFromIcal(damenUrl, 'Fibalon Baskets')
+    damenGames = getUpcomingGames(games, 30)
+  }
+} catch (e) {
+  console.warn('iCal feed nicht verfuegbar:', e)
+}
+---
+
+<BaseLayout title="Spielplan" description="Spielplan der Fibalon Baskets Neumarkt - alle Heim- und Auswaertsspiele">
+  <div class="page-header">
+    <h1>Spielplan</h1>
+  </div>
+
+  {herrenGames.length > 0 && (
+    <section class="container fbnm-league-section">
+      <h2>1. Herren <span class="league-badge">2. Regionalliga Sued</span></h2>
+      <div class="game-grid">
+        {herrenGames.map(game => (
+          <GameCard
+            homeTeam={game.homeTeam}
+            awayTeam={game.awayTeam}
+            date={game.date}
+            time={game.time}
+            location={game.location}
+            competition={game.competition}
+            isHome={game.isHome}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {damenGames.length > 0 && (
+    <section class="container fbnm-league-section">
+      <h2>Damen <span class="league-badge">Bayernliga</span></h2>
+      <div class="game-grid">
+        {damenGames.map(game => (
+          <GameCard
+            homeTeam={game.homeTeam}
+            awayTeam={game.awayTeam}
+            date={game.date}
+            time={game.time}
+            location={game.location}
+            competition={game.competition}
+            isHome={game.isHome}
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  {herrenGames.length === 0 && damenGames.length === 0 && (
+    <div class="container" style="padding: var(--fbnm-space-16) 0; text-align: center;">
+      <p>Spielplan wird geladen oder ist noch nicht verfuegbar.</p>
+      <p style="color: var(--fbnm-color-text-muted); font-size: var(--fbnm-text-sm); margin-top: var(--fbnm-space-2);">
+        Bitte iCal-URLs in der .env Datei konfigurieren.
+      </p>
+    </div>
+  )}
+</BaseLayout>
+
+<style>
+.fbnm-league-section {
+  padding: var(--fbnm-space-8) var(--fbnm-container-padding);
+}
+
+.fbnm-league-section h2 {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-2xl);
+  text-transform: uppercase;
+  color: var(--fbnm-blue-800);
+  margin-bottom: var(--fbnm-space-6);
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-3);
+}
+
+.league-badge {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-sm);
+  font-weight: 600;
+  color: var(--fbnm-cyan-500);
+  text-transform: none;
+}
+</style>

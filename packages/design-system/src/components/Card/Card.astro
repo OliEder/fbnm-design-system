@@ -1,0 +1,49 @@
+---
+interface Props {
+  variant?: 'default' | 'dark' | 'accent'
+  href?: string
+  class?: string
+}
+
+const { variant = 'default', href, class: className } = Astro.props
+const Tag = href ? 'a' : 'div'
+---
+
+<Tag
+  class:list={['fbnm-card', `fbnm-card--${variant}`, className]}
+  {href}
+>
+  <slot />
+</Tag>
+
+<style>
+.fbnm-card {
+  border-radius: var(--fbnm-radius-md);
+  overflow: hidden;
+  box-shadow: var(--fbnm-shadow-sm);
+  text-decoration: none;
+  display: block;
+  transition: box-shadow var(--fbnm-transition-fast),
+              transform var(--fbnm-transition-fast);
+}
+
+a.fbnm-card:hover {
+  box-shadow: var(--fbnm-shadow-md);
+  transform: translateY(-2px);
+}
+
+.fbnm-card--default {
+  background-color: var(--fbnm-white);
+  border: 1px solid var(--fbnm-color-border);
+}
+
+.fbnm-card--dark {
+  background-color: var(--fbnm-blue-800);
+  color: var(--fbnm-white);
+}
+
+.fbnm-card--accent {
+  background-color: var(--fbnm-cyan-500);
+  color: var(--fbnm-white);
+}
+</style>

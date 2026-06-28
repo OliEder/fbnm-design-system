@@ -1,0 +1,104 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import StatsTable from '@ds/components/StatsTable/StatsTable.astro'
+
+const standings = [
+  { rank: 1, team: 'TV 1880 Augsburg',       games: 14, wins: 12, losses: 2,  pointsFor: 1124, pointsAgainst: 943,  points: 26 },
+  { rank: 2, team: 'BBC Coburg',              games: 14, wins: 11, losses: 3,  pointsFor: 1087, pointsAgainst: 960,  points: 25 },
+  { rank: 3, team: 'Fibalon Baskets NM',      games: 14, wins: 9,  losses: 5,  pointsFor: 1052, pointsAgainst: 991,  points: 23, isFBNM: true },
+  { rank: 4, team: 'TSV Ansbach Basketball',  games: 14, wins: 8,  losses: 6,  pointsFor: 1010, pointsAgainst: 998,  points: 22 },
+  { rank: 5, team: 'FC Bayern Basketball II', games: 14, wins: 7,  losses: 7,  pointsFor: 998,  pointsAgainst: 1023, points: 21 },
+  { rank: 6, team: 'TV Leinburg',             games: 14, wins: 5,  losses: 9,  pointsFor: 942,  pointsAgainst: 1035, points: 19 },
+  { rank: 7, team: 'BSC Regensburg',          games: 14, wins: 3,  losses: 11, pointsFor: 876,  pointsAgainst: 1089, points: 17 },
+  { rank: 8, team: 'TSV 1904 Fürth',         games: 14, wins: 1,  losses: 13, pointsFor: 821,  pointsAgainst: 1131, points: 15 },
+]
+---
+
+<DocsLayout title="StatsTable">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Komponenten</p>
+      <h1 class="docs-page__title">StatsTable</h1>
+      <p class="docs-page__desc">
+        Ligatabelle mit FBNM-Hervorhebung. Daten kommen zur Build-Zeit aus dem
+        Basketball-Bund iCal-Feed oder der BBV-API. Scrollfähig auf mobilen Geräten.
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        FBNM-Zeile: farbige Hinterlegung <strong>und</strong> Punkt-Marker <strong>und</strong>
+        <code>sr-only</code>-Text "(Fibalon Baskets Neumarkt)" — WCAG 1.4.1 erfüllt ·
+        Header: blau auf hellblau-grau = 7.5:1 (AAA) ·
+        Tabellenwerte: FBNM-Schwarz auf Weiß = 19:1 (AAA).
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Live-Demo</h2>
+    <div class="demo">
+      <div class="demo__label">2. Regionalliga Süd (Herren)</div>
+      <div class="demo__canvas demo__canvas--full">
+        <StatsTable
+          standings={standings}
+          title="Tabelle"
+          league="2. Regionalliga Süd"
+        />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Barrierefreiheit: FBNM-Zeile</h2>
+    <p style="font-size:0.9rem; color:#475569; line-height:1.65;">
+      Die FBNM-Zeile wird <em>dreifach</em> ausgezeichnet:
+    </p>
+    <ol style="font-size:0.9rem; color:#475569; line-height:1.8; padding-left:1.25rem;">
+      <li><strong>Hintergrundfarbe</strong> (cyan-tinted) — visuell</li>
+      <li><strong>Punkt-Marker</strong> (&#9679;) — nicht farbabhängiger Indikator</li>
+      <li><strong>sr-only Text</strong> "(Fibalon Baskets Neumarkt)" — für Screenreader</li>
+    </ol>
+
+    <h2 class="docs-heading">Verwendung</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import StatsTable from '@fbnm/design-system/components/StatsTable/StatsTable.astro'
+import { fetchStandings } from '../lib/basketball-bund-api'
+
+// Zur Build-Zeit abgerufen (SSG)
+const standings = await fetchStandings(import.meta.env.LEAGUE_ID_HERREN)
+---
+
+<StatsTable
+  standings={standings}
+  title="Tabelle"
+  league="2. Regionalliga Süd"
+/>`} />
+    </div>
+
+    <h2 class="docs-heading">Props</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Prop</th><th>Typ</th><th>Standard</th><th>Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>standings</td><td>Standing[]</td><td>–</td><td>Tabellenzeilen (s.u.)</td></tr>
+        <tr><td>title</td><td>string</td><td>'Tabelle'</td><td>Tabellenüberschrift</td></tr>
+        <tr><td>league</td><td>string</td><td>–</td><td>Liga-Bezeichnung im Header</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="docs-heading">Standing-Typ</h2>
+    <div class="code-block">
+      <pre set:text={`interface Standing {
+  rank:          number   // Tabellenplatz
+  team:          string   // Teamname
+  games:         number   // Spiele gesamt
+  wins:          number   // Siege
+  losses:        number   // Niederlagen
+  pointsFor:     number   // Erzielte Punkte
+  pointsAgainst: number   // Gegenpunkte
+  points:        number   // Ligapunkte
+  isFBNM?:       boolean  // Hebt die Zeile hervor
+}`} />
+    </div>
+  </div>
+</DocsLayout>

@@ -1,0 +1,169 @@
+---
+interface NavItem {
+  label: string
+  href: string
+}
+
+interface Props {
+  items?: NavItem[]
+}
+
+const defaultItems: NavItem[] = [
+  { label: 'Home', href: '/' },
+  { label: 'Teams', href: '/team/' },
+  { label: 'Spielplan', href: '/spielplan/' },
+  { label: 'Tabelle', href: '/tabelle/' },
+  { label: 'News', href: '/news/' },
+  { label: 'Spieltag', href: '/spieltag/' },
+  { label: 'Verein', href: '/ueber-uns/' },
+  { label: 'Kontakt', href: '/kontakt/' },
+]
+
+const { items = defaultItems } = Astro.props
+const currentPath = Astro.url?.pathname ?? '/'
+---
+
+<header class="fbnm-nav">
+  <div class="fbnm-nav__inner">
+    <a href="/" class="fbnm-nav__logo" aria-label="FBNM Startseite">
+      <img src="/images/logo.svg" alt="Fibalon Baskets Neumarkt" width="120" height="48" />
+    </a>
+
+    <nav class="fbnm-nav__links" id="fbnm-nav-links" aria-label="Hauptnavigation">
+      {items.map(item => (
+        <a
+          href={item.href}
+          class:list={[
+            'fbnm-nav__link',
+            { 'fbnm-nav__link--active': (currentPath === '/' && item.href === '/') || (item.href !== '/' && currentPath.startsWith(item.href)) }
+          ]}
+          aria-current={(currentPath === item.href) ? 'page' : undefined}
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    <button class="fbnm-nav__burger" aria-label="Menue oeffnen" aria-expanded="false" aria-controls="fbnm-nav-links">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<style>
+.fbnm-nav {
+  position: sticky;
+  top: 0;
+  z-index: var(--fbnm-z-dropdown);
+  background-color: var(--fbnm-blue-900);
+  box-shadow: var(--fbnm-shadow-md);
+}
+
+.fbnm-nav__inner {
+  max-width: var(--fbnm-container-max);
+  margin: 0 auto;
+  padding: 0 var(--fbnm-container-padding);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 4rem;
+  gap: var(--fbnm-space-8);
+}
+
+.fbnm-nav__logo img { height: 2.5rem; width: auto; }
+
+.fbnm-nav__links {
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-1);
+  flex: 1;
+}
+
+.fbnm-nav__link {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: color-mix(in srgb, var(--fbnm-white) 80%, transparent);
+  padding: var(--fbnm-space-2) var(--fbnm-space-3);
+  /* reserve space for the 2px bottom border on active state */
+  border-bottom: 2px solid transparent;
+  border-radius: var(--fbnm-radius-sm) var(--fbnm-radius-sm) 0 0;
+  transition: color var(--fbnm-transition-fast),
+              background-color var(--fbnm-transition-fast),
+              border-color var(--fbnm-transition-fast);
+}
+
+.fbnm-nav__link:hover {
+  color: var(--fbnm-white);
+  background-color: color-mix(in srgb, var(--fbnm-white) 10%, transparent);
+}
+
+/* WCAG 1.4.1: active state uses both color AND border-bottom (non-color indicator) */
+/* WCAG 1.4.3/1.4.6: white (#fff) on blue-900 (#002751) = 15.2:1 AAA */
+.fbnm-nav__link--active {
+  color: var(--fbnm-white);
+  background-color: color-mix(in srgb, var(--fbnm-white) 8%, transparent);
+  border-bottom-color: var(--fbnm-white);
+}
+
+.fbnm-nav__burger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: var(--fbnm-space-2);
+  /* WCAG 2.5.8: minimum 24x24px touch target (burger is decorative nav trigger) */
+  min-width: 44px;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+}
+
+.fbnm-nav__burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--fbnm-white);
+  transition: transform var(--fbnm-transition-fast);
+}
+
+@media (max-width: 768px) {
+  .fbnm-nav__links {
+    display: none;
+    position: absolute;
+    top: 4rem;
+    left: 0;
+    right: 0;
+    background: var(--fbnm-blue-900);
+    flex-direction: column;
+    align-items: stretch;
+    padding: var(--fbnm-space-4);
+    box-shadow: var(--fbnm-shadow-lg);
+  }
+
+  .fbnm-nav__links.is-open { display: flex; }
+  .fbnm-nav__burger { display: flex; }
+
+  /* On mobile the active underline is left-side instead of bottom */
+  .fbnm-nav__link--active {
+    border-bottom-color: transparent;
+    border-left: 3px solid var(--fbnm-white);
+    padding-left: calc(var(--fbnm-space-3) - 1px);
+  }
+}
+</style>
+
+<script>
+const burger = document.querySelector('.fbnm-nav__burger') as HTMLButtonElement
+const links = document.getElementById('fbnm-nav-links') as HTMLElement
+
+burger?.addEventListener('click', () => {
+  const isOpen = links.classList.toggle('is-open')
+  burger.setAttribute('aria-expanded', String(isOpen))
+})
+</script>

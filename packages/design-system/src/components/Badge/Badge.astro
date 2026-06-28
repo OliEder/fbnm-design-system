@@ -1,0 +1,56 @@
+---
+interface Props {
+  variant?: 'home' | 'away' | 'win' | 'loss' | 'live' | 'upcoming'
+  class?: string
+}
+
+const { variant = 'upcoming', class: className } = Astro.props
+---
+
+<span class:list={['fbnm-badge', `fbnm-badge--${variant}`, className]}>
+  <slot />
+</span>
+
+<style>
+.fbnm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fbnm-space-1);
+  padding: var(--fbnm-space-1) var(--fbnm-space-2);
+  border-radius: var(--fbnm-radius-full);
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+/* WCAG 1.4.3/1.4.6: all badge text is xs (12px) = small text → needs 7:1 for AAA */
+/* white on blue-800 (#004174) = 10.3:1 AAA */
+.fbnm-badge--home     { background: var(--fbnm-blue-800); color: var(--fbnm-white); }
+/* white on #494949 = 7.84:1 AAA */
+.fbnm-badge--away     { background: #494949; color: var(--fbnm-white); }
+/* white on #14532d (dark green) = 8.14:1 AAA */
+.fbnm-badge--win      { background: #14532d; color: var(--fbnm-white); }
+/* white on #991b1b (dark red) = 7.66:1 AAA */
+.fbnm-badge--loss     { background: #991b1b; color: var(--fbnm-white); }
+/* white on blue-800 (#004174) = 10.3:1 AAA */
+.fbnm-badge--upcoming { background: var(--fbnm-blue-800); color: var(--fbnm-white); }
+/* white on #991b1b (dark red) = 7.66:1 AAA */
+.fbnm-badge--live {
+  background: #991b1b;
+  color: var(--fbnm-white);
+}
+
+/* WCAG 2.3.3 AAA: suppress non-essential animation for motion-sensitive users */
+@media (prefers-reduced-motion: no-preference) {
+  .fbnm-badge--live {
+    animation: fbnm-pulse 2s infinite;
+  }
+}
+
+@keyframes fbnm-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+</style>

@@ -1,0 +1,146 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import Button from '../../../../packages/design-system/src/components/Button/Button.astro'
+---
+
+<BaseLayout title="Kontakt" description="Kontakt zu den Fibalon Baskets Neumarkt">
+  <div class="page-header">
+    <h1>Kontakt</h1>
+  </div>
+
+  <div class="container contact-layout">
+    <section class="contact-form-section">
+      <h2>Nachricht senden</h2>
+      <form id="contact-form" method="post" action="/api/contact.php">
+        <!-- Honeypot -->
+        <input type="text" name="website" tabindex="-1" aria-hidden="true" style="display:none" />
+
+        <div class="form-group">
+          <label for="name">Name *</label>
+          <input type="text" id="name" name="name" required autocomplete="name" />
+        </div>
+        <div class="form-group">
+          <label for="email">E-Mail *</label>
+          <input type="email" id="email" name="email" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label for="subject">Betreff</label>
+          <input type="text" id="subject" name="subject" />
+        </div>
+        <div class="form-group">
+          <label for="message">Nachricht *</label>
+          <textarea id="message" name="message" rows="6" required></textarea>
+        </div>
+
+        <Button type="submit" variant="primary">Absenden</Button>
+        <div id="form-status" role="alert" aria-live="polite"></div>
+      </form>
+    </section>
+
+    <aside class="contact-info">
+      <h2>Adresse</h2>
+      <address>
+        FIBALON Baskets Neumarkt e.V.<br />
+        Schweningerstrasse 2<br />
+        92318 Neumarkt i.d.Opf.
+      </address>
+      <h2>E-Mail</h2>
+      <p><a href="mailto:pr@fibalon-baskets.de">pr@fibalon-baskets.de</a></p>
+      <h2>Vorstand</h2>
+      <ul>
+        <li>1. Vorstand: Maximilian Richter</li>
+        <li>2. Vorstand: Bastian Hitz</li>
+        <li>3. Vorstand: Anita Voestner</li>
+      </ul>
+    </aside>
+  </div>
+</BaseLayout>
+
+<script>
+const form = document.getElementById('contact-form') as HTMLFormElement
+const status = document.getElementById('form-status')!
+
+form?.addEventListener('submit', async (e) => {
+  e.preventDefault()
+  const btn = form.querySelector('button[type=submit]') as HTMLButtonElement
+  btn.disabled = true
+  status.textContent = 'Wird gesendet...'
+
+  try {
+    const res = await fetch('/api/contact.php', {
+      method: 'POST',
+      body: new FormData(form),
+    })
+    const data = await res.json()
+    if (data.success) {
+      status.textContent = 'Nachricht gesendet! Wir melden uns bald.'
+      form.reset()
+    } else {
+      status.textContent = data.error ?? 'Fehler. Bitte erneut versuchen.'
+    }
+  } catch {
+    status.textContent = 'Verbindungsfehler. Bitte erneut versuchen.'
+  } finally {
+    btn.disabled = false
+  }
+})
+</script>
+
+<style>
+.contact-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--fbnm-space-12);
+  padding: var(--fbnm-space-8) var(--fbnm-container-padding) var(--fbnm-space-16);
+  align-items: start;
+}
+
+h2 {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-2xl);
+  text-transform: uppercase;
+  color: var(--fbnm-blue-800);
+  margin-bottom: var(--fbnm-space-4);
+}
+
+.contact-info address, .contact-info p, .contact-info ul {
+  font-style: normal;
+  line-height: var(--fbnm-leading-normal);
+  margin-bottom: var(--fbnm-space-6);
+}
+
+.contact-info a { color: var(--fbnm-cyan-500); }
+
+.form-group { display: flex; flex-direction: column; gap: var(--fbnm-space-1); margin-bottom: var(--fbnm-space-4); }
+
+label {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--fbnm-blue-800);
+}
+
+input, textarea {
+  border: 2px solid var(--fbnm-color-border);
+  border-radius: var(--fbnm-radius-sm);
+  padding: var(--fbnm-space-3);
+  font-size: var(--fbnm-text-base);
+  width: 100%;
+  transition: border-color var(--fbnm-transition-fast);
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--fbnm-cyan-500);
+}
+
+#form-status {
+  margin-top: var(--fbnm-space-3);
+  font-size: var(--fbnm-text-sm);
+  color: var(--fbnm-blue-800);
+}
+
+@media (max-width: 768px) { .contact-layout { grid-template-columns: 1fr; } }
+</style>
