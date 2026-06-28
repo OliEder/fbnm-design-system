@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro'
+---
+
+<BaseLayout title="Impressum" noIndex={true}>
+  <div class="page-header">
+    <h1>Impressum</h1>
+  </div>
+
+  <div class="container legal-content">
+    <h2>Angaben gemass Paragraph 5 TMG</h2>
+    <p>
+      FIBALON Baskets Neumarkt e.V. (VR-Nr. 201850)<br />
+      Schweningerstrasse 2<br />
+      92318 Neumarkt i.d.Opf.
+    </p>
+
+    <h2>Vertreten durch</h2>
+    <p>
+      1. Vorstand: Maximilian Richter<br />
+      2. Vorstand: Bastian Hitz<br />
+      3. Vorstand: Anita Voestner
+    </p>
+
+    <h2>Kontakt</h2>
+    <p>
+      Telefon: 01577 3822288<br />
+      E-Mail: <a href="mailto:vorstand@fibalon-baskets.de">vorstand@fibalon-baskets.de</a><br />
+      Web: <a href="https://www.fibalon-baskets.de">www.fibalon-baskets.de</a>
+    </p>
+
+    <h2>Verantwortlich fuer den Inhalt (Paragraph 55 Abs. 2 RStV)</h2>
+    <p>Maximilian Richter, Schweningerstrasse 2, 92318 Neumarkt i.d.Opf.</p>
+
+    <h2>Streitschlichtung</h2>
+    <p>
+      Die Europaeische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:
+      <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener">https://ec.europa.eu/consumers/odr/</a>.
+      Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
+      Verbraucherschlichtungsstelle teilzunehmen.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+.legal-content {
+  padding: var(--fbnm-space-8) var(--fbnm-container-padding) var(--fbnm-space-16);
+  max-width: 768px;
+}
+
+.legal-content h2 {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xl);
+  text-transform: uppercase;
+  color: var(--fbnm-blue-800);
+  margin-top: var(--fbnm-space-8);
+  margin-bottom: var(--fbnm-space-3);
+}
+
+.legal-content p { line-height: var(--fbnm-leading-normal); margin-bottom: var(--fbnm-space-4); }
+
+.legal-content a { color: var(--fbnm-cyan-500); }
+</style>

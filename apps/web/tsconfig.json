@@ -1,0 +1,9 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "paths": {
+      "@fbnm/design-system": ["../../packages/design-system/src/index.ts"],
+      "@fbnm/design-system/*": ["../../packages/design-system/*"]
+    }
+  }
+}
