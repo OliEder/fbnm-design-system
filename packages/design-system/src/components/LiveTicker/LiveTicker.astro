@@ -1,0 +1,98 @@
+---
+// LiveTicker: Client-side dynamic island.
+// Polls /api/live-score.php every 30s and shows a live game banner.
+// Only visible when a live game is active (isLive: true in API response).
+---
+
+<div id="fbnm-live-ticker" class="fbnm-live-ticker fbnm-live-ticker--hidden" role="status" aria-live="polite" aria-atomic="true">
+  <div class="fbnm-live-ticker__inner">
+    <span class="fbnm-live-ticker__dot" aria-hidden="true"></span>
+    <span class="fbnm-live-ticker__label">LIVE</span>
+    <span class="fbnm-live-ticker__teams"></span>
+    <span class="fbnm-live-ticker__score"></span>
+    <span class="fbnm-live-ticker__time"></span>
+  </div>
+</div>
+
+<style>
+.fbnm-live-ticker {
+  background: #dc2626;
+  color: var(--fbnm-white);
+  padding: var(--fbnm-space-2) 0;
+}
+
+.fbnm-live-ticker--hidden { display: none; }
+
+.fbnm-live-ticker__inner {
+  max-width: var(--fbnm-container-max);
+  margin: 0 auto;
+  padding: 0 var(--fbnm-container-padding);
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-3);
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-sm);
+  font-weight: 600;
+}
+
+.fbnm-live-ticker__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fbnm-white);
+  animation: fbnm-blink 1.5s infinite;
+  flex-shrink: 0;
+}
+
+.fbnm-live-ticker__label {
+  letter-spacing: 0.12em;
+  opacity: 0.85;
+}
+
+.fbnm-live-ticker__score {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-lg);
+  margin-left: auto;
+}
+
+.fbnm-live-ticker__time { opacity: 0.85; }
+
+@keyframes fbnm-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+</style>
+
+<script>
+const POLL_MS = 30_000
+const API_URL = '/api/live-score.php'
+
+async function updateTicker(): Promise<void> {
+  const el = document.getElementById('fbnm-live-ticker')
+  if (!el) return
+
+  try {
+    const res = await fetch(API_URL, { cache: 'no-store' })
+    if (!res.ok) throw new Error('no data')
+    const data = await res.json()
+
+    if (!data?.isLive) {
+      el.classList.add('fbnm-live-ticker--hidden')
+      return
+    }
+
+    el.classList.remove('fbnm-live-ticker--hidden')
+    el.querySelector('.fbnm-live-ticker__teams')!.textContent =
+      `${data.homeTeam} vs ${data.awayTeam}`
+    el.querySelector('.fbnm-live-ticker__score')!.textContent =
+      `${data.homeScore} : ${data.awayScore}`
+    el.querySelector('.fbnm-live-ticker__time')!.textContent =
+      `Q${data.quarter} · ${data.timeRemaining}`
+  } catch {
+    el.classList.add('fbnm-live-ticker--hidden')
+  }
+}
+
+updateTicker()
+setInterval(updateTicker, POLL_MS)
+</script>
