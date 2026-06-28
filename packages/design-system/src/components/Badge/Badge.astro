@@ -1,0 +1,43 @@
+---
+interface Props {
+  variant?: 'home' | 'away' | 'win' | 'loss' | 'live' | 'upcoming'
+  class?: string
+}
+
+const { variant = 'upcoming', class: className } = Astro.props
+---
+
+<span class:list={['fbnm-badge', `fbnm-badge--${variant}`, className]}>
+  <slot />
+</span>
+
+<style>
+.fbnm-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fbnm-space-1);
+  padding: var(--fbnm-space-1) var(--fbnm-space-2);
+  border-radius: var(--fbnm-radius-full);
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.fbnm-badge--home     { background: var(--fbnm-blue-800); color: var(--fbnm-white); }
+.fbnm-badge--away     { background: var(--fbnm-gray-500); color: var(--fbnm-white); }
+.fbnm-badge--win      { background: #22c55e; color: var(--fbnm-white); }
+.fbnm-badge--loss     { background: #ef4444; color: var(--fbnm-white); }
+.fbnm-badge--upcoming { background: var(--fbnm-cyan-500); color: var(--fbnm-white); }
+.fbnm-badge--live {
+  background: #ef4444;
+  color: var(--fbnm-white);
+  animation: fbnm-pulse 2s infinite;
+}
+
+@keyframes fbnm-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+</style>

@@ -1,0 +1,81 @@
+---
+interface Props {
+  href?: string
+  variant?: 'primary' | 'secondary' | 'ghost'
+  size?: 'sm' | 'md' | 'lg'
+  type?: 'button' | 'submit' | 'reset'
+  disabled?: boolean
+  class?: string
+}
+
+const {
+  href,
+  variant = 'primary',
+  size = 'md',
+  type = 'button',
+  disabled = false,
+  class: className,
+} = Astro.props
+
+const Tag = href ? 'a' : 'button'
+---
+
+<Tag
+  class:list={['fbnm-btn', `fbnm-btn--${variant}`, `fbnm-btn--${size}`, className]}
+  {href}
+  {type}
+  {disabled}
+>
+  <slot />
+</Tag>
+
+<style>
+.fbnm-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--fbnm-space-2);
+  font-family: var(--fbnm-font-body);
+  font-weight: var(--fbnm-weight-bold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border: 2px solid transparent;
+  border-radius: var(--fbnm-radius-sm);
+  cursor: pointer;
+  transition: background-color var(--fbnm-transition-fast),
+              color var(--fbnm-transition-fast),
+              border-color var(--fbnm-transition-fast);
+}
+
+.fbnm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fbnm-btn--sm { padding: var(--fbnm-space-2) var(--fbnm-space-4); font-size: var(--fbnm-text-sm); }
+.fbnm-btn--md { padding: var(--fbnm-space-3) var(--fbnm-space-6); font-size: var(--fbnm-text-base); }
+.fbnm-btn--lg { padding: var(--fbnm-space-4) var(--fbnm-space-8); font-size: var(--fbnm-text-lg); }
+
+.fbnm-btn--primary {
+  background-color: var(--fbnm-color-accent);
+  color: var(--fbnm-white);
+}
+.fbnm-btn--primary:hover:not(:disabled) { background-color: var(--fbnm-cyan-400); }
+
+.fbnm-btn--secondary {
+  background-color: var(--fbnm-color-primary);
+  color: var(--fbnm-white);
+}
+.fbnm-btn--secondary:hover:not(:disabled) { background-color: var(--fbnm-blue-700); }
+
+.fbnm-btn--ghost {
+  background-color: transparent;
+  color: var(--fbnm-color-primary);
+  border-color: var(--fbnm-color-primary);
+}
+.fbnm-btn--ghost:hover:not(:disabled) {
+  background-color: var(--fbnm-color-primary);
+  color: var(--fbnm-white);
+}
+</style>
