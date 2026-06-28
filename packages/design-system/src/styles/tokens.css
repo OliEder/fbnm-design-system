@@ -1,0 +1,106 @@
+/* ======================================================
+   FBNM Design Tokens
+   Fibalon Baskets Neumarkt – Brand Manual 2024
+   ====================================================== */
+
+:root {
+  /* --- Colors: Blue Scale --- */
+  --fbnm-blue-900: #002751;   /* Dunkelblau 2 */
+  --fbnm-blue-800: #004174;   /* FBNM Dunkelblau (Hauptfarbe, Pantone PMS 654 C) */
+  --fbnm-blue-700: #1a4b76;   /* Dunkelblau 3 */
+
+  /* --- Colors: Cyan Scale --- */
+  --fbnm-cyan-500: #009fe3;   /* Cyan (Pantone Process Cyan C) */
+  --fbnm-cyan-400: #00a9e6;   /* Cyan 2 */
+
+  /* --- Colors: Neutral --- */
+  --fbnm-gray-500:  #818080;  /* Grau (Pantone PMS 179-9 C) */
+  --fbnm-black:     #1d1d1b;  /* Schwarz (Pantone Process Black C) */
+  --fbnm-white:     #ffffff;
+
+  /* --- Semantic Color Aliases --- */
+  --fbnm-color-primary:         var(--fbnm-blue-800);
+  --fbnm-color-primary-dark:    var(--fbnm-blue-900);
+  --fbnm-color-primary-light:   var(--fbnm-blue-700);
+  --fbnm-color-accent:          var(--fbnm-cyan-500);
+  --fbnm-color-accent-light:    var(--fbnm-cyan-400);
+  --fbnm-color-neutral:         var(--fbnm-gray-500);
+  --fbnm-color-text:            var(--fbnm-black);
+  --fbnm-color-text-inverse:    var(--fbnm-white);
+  --fbnm-color-text-muted:      var(--fbnm-gray-500);
+  --fbnm-color-background:      var(--fbnm-white);
+  --fbnm-color-background-dark: var(--fbnm-blue-900);
+  --fbnm-color-surface:         var(--fbnm-white);
+  --fbnm-color-border:          color-mix(in srgb, var(--fbnm-blue-800) 20%, transparent);
+
+  /* --- Typography: Font Families --- */
+  --fbnm-font-display: 'INSOLENT', 'Arial Black', sans-serif;  /* Headlines */
+  --fbnm-font-body:    'ALLER', 'Arial', sans-serif;            /* Body Text */
+  --fbnm-font-caption: 'Montserrat', 'Arial', sans-serif;       /* Captions, Labels */
+  --fbnm-font-mono:    'Courier New', monospace;
+
+  /* --- Typography: Size Scale --- */
+  --fbnm-text-xs:   0.75rem;    /*  12px – Caption (Montserrat Light 8pt) */
+  --fbnm-text-sm:   0.875rem;   /*  14px */
+  --fbnm-text-base: 1rem;       /*  16px – Body (Aller Regular) */
+  --fbnm-text-lg:   1.125rem;   /*  18px */
+  --fbnm-text-xl:   1.25rem;    /*  20px – Headline XS (INSOLENT 20pt) */
+  --fbnm-text-2xl:  1.5rem;     /*  24px */
+  --fbnm-text-3xl:  1.875rem;   /*  30px */
+  --fbnm-text-4xl:  2.25rem;    /*  36px */
+  --fbnm-text-5xl:  3rem;       /*  48px – Hero */
+  --fbnm-text-6xl:  3.75rem;    /*  60px – Display */
+
+  /* --- Typography: Line Heights --- */
+  --fbnm-leading-tight:   1.2;  /* INSOLENT Headlines */
+  --fbnm-leading-snug:    1.375;
+  --fbnm-leading-normal:  1.5;  /* Aller Body */
+  --fbnm-leading-caption: 1.2;  /* Montserrat Light 8pt / 9.6 Leading ≈ 1.2 */
+
+  /* --- Typography: Font Weights --- */
+  --fbnm-weight-regular: 400;
+  --fbnm-weight-bold:    700;
+
+  /* --- Spacing Scale (8px base) --- */
+  --fbnm-space-1:  0.25rem;   /*   4px */
+  --fbnm-space-2:  0.5rem;    /*   8px */
+  --fbnm-space-3:  0.75rem;   /*  12px */
+  --fbnm-space-4:  1rem;      /*  16px */
+  --fbnm-space-5:  1.25rem;   /*  20px */
+  --fbnm-space-6:  1.5rem;    /*  24px */
+  --fbnm-space-8:  2rem;      /*  32px */
+  --fbnm-space-10: 2.5rem;    /*  40px */
+  --fbnm-space-12: 3rem;      /*  48px */
+  --fbnm-space-16: 4rem;      /*  64px */
+  --fbnm-space-20: 5rem;      /*  80px */
+  --fbnm-space-24: 6rem;      /*  96px */
+  --fbnm-space-32: 8rem;      /* 128px */
+
+  /* --- Border Radius --- */
+  --fbnm-radius-sm:   0.25rem;
+  --fbnm-radius-md:   0.5rem;
+  --fbnm-radius-lg:   1rem;
+  --fbnm-radius-full: 9999px;
+
+  /* --- Shadows --- */
+  --fbnm-shadow-sm: 0 1px 3px rgba(0, 39, 81, 0.15);
+  --fbnm-shadow-md: 0 4px 16px rgba(0, 39, 81, 0.2);
+  --fbnm-shadow-lg: 0 8px 32px rgba(0, 39, 81, 0.25);
+
+  /* --- Transitions --- */
+  --fbnm-transition-fast:   150ms ease;
+  --fbnm-transition-normal: 250ms ease;
+
+  /* --- Layout --- */
+  --fbnm-container-max:     1280px;
+  --fbnm-container-padding: var(--fbnm-space-4);
+
+  /* --- Z-Index Scale --- */
+  --fbnm-z-below:   -1;
+  --fbnm-z-base:     0;
+  --fbnm-z-raised:   10;
+  --fbnm-z-dropdown: 100;
+  --fbnm-z-overlay:  200;
+  --fbnm-z-modal:    300;
+  --fbnm-z-toast:    400;
+}
