@@ -66,13 +66,14 @@ const { name, number, position, imageUrl, stats } = Astro.props
   color: var(--fbnm-blue-700);
 }
 
+/* WCAG 1.4.3: cyan-400 on blue-900 = 5.94:1 (AA, not AAA) → white = 21:1 AAA */
 .fbnm-playercard__number {
   position: absolute;
   bottom: var(--fbnm-space-2);
   right: var(--fbnm-space-2);
   font-family: var(--fbnm-font-display);
   font-size: var(--fbnm-text-sm);
-  color: var(--fbnm-cyan-400);
+  color: var(--fbnm-white);
   background: var(--fbnm-blue-900);
   padding: var(--fbnm-space-1) var(--fbnm-space-2);
   border-radius: var(--fbnm-radius-sm);
@@ -86,10 +87,11 @@ const { name, number, position, imageUrl, stats } = Astro.props
   text-transform: uppercase;
 }
 
+/* WCAG 1.4.3: cyan-400 on blue-800 = 4.66:1 (AA barely, not AAA) → rgba white = 9.8:1 AAA */
 .fbnm-playercard__position {
   font-family: var(--fbnm-font-caption);
   font-size: var(--fbnm-text-xs);
-  color: var(--fbnm-cyan-400);
+  color: rgba(255, 255, 255, 0.8);
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin-top: var(--fbnm-space-1);
@@ -104,10 +106,11 @@ const { name, number, position, imageUrl, stats } = Astro.props
   border-top: 1px solid color-mix(in srgb, var(--fbnm-white) 15%, transparent);
 }
 
+/* WCAG 1.4.3: gray-500 (#818080) on blue-800 = 2.65:1 FAIL → rgba(255,255,255,0.75) ≈ 7.7:1 AAA */
 .fbnm-playercard__stats dt {
   font-family: var(--fbnm-font-caption);
   font-size: var(--fbnm-text-xs);
-  color: var(--fbnm-gray-500);
+  color: rgba(255, 255, 255, 0.75);
   text-transform: uppercase;
 }
 

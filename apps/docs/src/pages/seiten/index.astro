@@ -1,0 +1,147 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+import Navigation from '@ds/components/Navigation/Navigation.astro'
+import Hero from '@ds/components/Hero/Hero.astro'
+import Button from '@ds/components/Button/Button.astro'
+import GameCard from '@ds/components/GameCard/GameCard.astro'
+import StatsTable from '@ds/components/StatsTable/StatsTable.astro'
+import Footer from '@ds/components/Footer/Footer.astro'
+
+const navLinks = [
+  { label: 'Startseite', href: '#', active: true },
+  { label: 'Spielplan', href: '#' },
+  { label: 'Tabelle', href: '#' },
+  { label: 'Team', href: '#' },
+  { label: 'News', href: '#' },
+]
+
+const upcomingGames = [
+  {
+    homeTeam: 'Fibalon Baskets NM',
+    awayTeam: 'BBC Coburg',
+    date: new Date('2025-02-15'),
+    time: '19:30',
+    location: 'Mehrzweckhalle NM',
+    competition: '2. Regionalliga Süd',
+    isHome: true,
+    href: '#',
+  },
+  {
+    homeTeam: 'TV Leinburg',
+    awayTeam: 'Fibalon Baskets NM',
+    date: new Date('2025-02-22'),
+    time: '17:00',
+    location: 'Sporthalle Leinburg',
+    competition: '2. Regionalliga Süd',
+    isHome: false,
+    href: '#',
+  },
+  {
+    homeTeam: 'Fibalon Baskets NM',
+    awayTeam: 'TSV Ansbach',
+    date: new Date('2025-03-01'),
+    time: '18:00',
+    location: 'Mehrzweckhalle NM',
+    competition: '2. Regionalliga Süd',
+    isHome: true,
+    href: '#',
+  },
+]
+
+const standings = [
+  { rank: 1, team: 'TV 1880 Augsburg',       games: 14, wins: 12, losses: 2,  pointsFor: 1124, pointsAgainst: 943,  points: 26 },
+  { rank: 2, team: 'BBC Coburg',              games: 14, wins: 11, losses: 3,  pointsFor: 1087, pointsAgainst: 960,  points: 25 },
+  { rank: 3, team: 'Fibalon Baskets NM',      games: 14, wins: 9,  losses: 5,  pointsFor: 1052, pointsAgainst: 991,  points: 23, isFBNM: true },
+  { rank: 4, team: 'TSV Ansbach Basketball',  games: 14, wins: 8,  losses: 6,  pointsFor: 1010, pointsAgainst: 998,  points: 22 },
+  { rank: 5, team: 'FC Bayern Basketball II', games: 14, wins: 7,  losses: 7,  pointsFor: 998,  pointsAgainst: 1023, points: 21 },
+]
+---
+
+<DocsLayout title="Startseite">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Seiten</p>
+      <h1 class="docs-page__title">Startseite</h1>
+      <p class="docs-page__desc">
+        Vollständige Seitenzusammenstellung: Navigation + Hero + Spielplan-Vorschau +
+        Tabelle + Footer. Zeigt wie alle Komponenten zusammenspielen.
+      </p>
+    </header>
+
+    <div class="wcag wcag--info">
+      <span class="wcag__icon">ℹ️</span>
+      <span>
+        Diese Demo rendert alle Komponenten statisch. Auf der echten Website würde der
+        LiveTicker via <code>client:load</code> hydratisiert — alles andere ist Pure HTML, kein JS.
+        Performanceziel: Lighthouse ≥ 90 (Performance + Accessibility).
+      </span>
+    </div>
+  </div>
+
+  <!-- VOLLSTÄNDIGE SEITEN-ZUSAMMENSETZUNG -->
+  <div class="demo" style="margin: 0 2.5rem 3rem; border-radius:8px; overflow:hidden;">
+    <div class="demo__label">Startseite — vollständige Komposition</div>
+
+    <div style="background:#f0f4f8;">
+      <!-- Navigation -->
+      <Navigation links={navLinks} currentTeam="Herren 1" />
+
+      <!-- Hero -->
+      <Hero
+        title="#OnTeam – Wir sind die Baskets!"
+        subtitle="2. Regionalliga Süd · Saison 2024/25 · Neumarkt i.d. OPf."
+      >
+        <Button variant="primary" href="#">Zum Spielplan</Button>
+        <Button variant="ghost" href="#">Mitglied werden</Button>
+      </Hero>
+
+      <!-- Spielplan-Vorschau -->
+      <section style="max-width:1280px; margin:0 auto; padding:4rem 1.5rem;">
+        <h2 style="font-family:var(--fbnm-font-display,sans-serif); font-size:2rem; text-transform:uppercase; color:var(--fbnm-blue-800,#004174); margin:0 0 1.5rem;">
+          Nächste Spiele
+        </h2>
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-bottom:1rem;">
+          {upcomingGames.map(game => <GameCard {...game} />)}
+        </div>
+        <div style="text-align:center; margin-top:1.5rem;">
+          <Button variant="ghost" href="#">Alle Spiele ansehen →</Button>
+        </div>
+      </section>
+
+      <!-- Tabelle -->
+      <section style="max-width:1280px; margin:0 auto; padding:0 1.5rem 4rem;">
+        <h2 style="font-family:var(--fbnm-font-display,sans-serif); font-size:2rem; text-transform:uppercase; color:var(--fbnm-blue-800,#004174); margin:0 0 1.5rem;">
+          Tabelle
+        </h2>
+        <StatsTable standings={standings} title="2. Regionalliga Süd" />
+        <div style="text-align:center; margin-top:1.5rem;">
+          <Button variant="ghost" href="#">Vollständige Tabelle →</Button>
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <Footer />
+    </div>
+  </div>
+
+  <div class="docs-page" style="padding-top:0;">
+    <h2 class="docs-heading">Seiten-Architektur</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Route</th><th>Typ</th><th>Datenquelle</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>/</td><td>Statisch + Dynamic Island</td><td>iCal + Live-Score PHP</td></tr>
+        <tr><td>/spielplan/</td><td>Statisch (nightly rebuild)</td><td>Basketball-Bund iCal</td></tr>
+        <tr><td>/ergebnisse/</td><td>Statisch (nightly rebuild)</td><td>Basketball-Bund iCal</td></tr>
+        <tr><td>/tabelle/</td><td>Statisch (nightly rebuild)</td><td>BBV API / iCal</td></tr>
+        <tr><td>/spieltag/</td><td>Dynamisch (PHP)</td><td>Live-Score PHP-Proxy</td></tr>
+        <tr><td>/news/[slug]/</td><td>Statisch</td><td>Markdown/MDX</td></tr>
+        <tr><td>/team/</td><td>Statisch</td><td>MDX Content Collection</td></tr>
+        <tr><td>/kontakt/</td><td>Statisch + PHP-Form</td><td>contact.php</td></tr>
+        <tr><td>/mitglied-werden/</td><td>Statisch + PHP-Form</td><td>subscribe.php</td></tr>
+        <tr><td>/impressum/</td><td>Statisch</td><td>Markdown</td></tr>
+      </tbody>
+    </table>
+  </div>
+</DocsLayout>

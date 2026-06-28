@@ -1,0 +1,130 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+---
+
+<DocsLayout title="Typografie">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Design Tokens</p>
+      <h1 class="docs-page__title">Typografie</h1>
+      <p class="docs-page__desc">
+        Drei Font-Familien für drei Rollen — selbst gehostet für DSGVO-Konformität.
+        Die Typoskala deckt alle Größen von Caption bis Hero-Headline ab.
+      </p>
+    </header>
+
+    <h2 class="docs-heading">Schriftfamilien</h2>
+
+    <div class="demo">
+      <div class="demo__label">INSOLENT – Display / Headlines</div>
+      <div class="demo__canvas">
+        <div style="width:100%;">
+          <p style="font-family:var(--fbnm-font-display,sans-serif); font-size:3rem; text-transform:uppercase; color:var(--fbnm-blue-800,#004174); margin:0; line-height:1;">
+            Fibalon Baskets
+          </p>
+          <p style="font-size:0.75rem; color:#64748b; margin:0.5rem 0 0; font-family:system-ui;">
+            <code>--fbnm-font-display: 'INSOLENT', sans-serif</code> · Selbst gehostet · DSGVO-konform
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="demo__label">ALLER – Body / Fließtext</div>
+      <div class="demo__canvas">
+        <div style="width:100%;">
+          <p style="font-family:var(--fbnm-font-body,sans-serif); font-size:1rem; color:#1e293b; margin:0; max-width:55ch; line-height:1.65;">
+            Der Basketball-Verein Fibalon Baskets Neumarkt spielt in der 2. Regionalliga Süd.
+            Gegründet mit dem Ziel, Basketball in der Region zu fördern und jungen Spielern
+            eine starke sportliche Heimat zu bieten.
+          </p>
+          <p style="font-size:0.75rem; color:#64748b; margin:0.5rem 0 0; font-family:system-ui;">
+            <code>--fbnm-font-body: 'ALLER', sans-serif</code> · Selbst gehostet · DSGVO-konform
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo">
+      <div class="demo__label">Montserrat – Captions / Labels / Meta</div>
+      <div class="demo__canvas">
+        <div style="width:100%;">
+          <p style="font-family:var(--fbnm-font-caption,sans-serif); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.1em; color:#64748b; margin:0;">
+            2. Regionalliga Süd · Saison 2024/25 · Heimspiel
+          </p>
+          <p style="font-size:0.75rem; color:#64748b; margin:0.5rem 0 0; font-family:system-ui;">
+            <code>--fbnm-font-caption: 'Montserrat', sans-serif</code> · System-Fallback möglich
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Typoskala</h2>
+
+    <div class="type-row">
+      <div class="type-row__meta">
+        <span class="type-row__token">--fbnm-text-xs</span>
+        <span class="type-row__size">0.75rem / 12px</span>
+      </div>
+      <span class="type-row__sample" style="font-size:0.75rem;">Caption, Labels, Meta-Infos</span>
+    </div>
+    <div class="type-row">
+      <div class="type-row__meta">
+        <span class="type-row__token">--fbnm-text-sm</span>
+        <span class="type-row__size">0.875rem / 14px</span>
+      </div>
+      <span class="type-row__sample" style="font-size:0.875rem;">Tabellenwerte, Sekundärtext</span>
+    </div>
+    <div class="type-row">
+      <div class="type-row__meta">
+        <span class="type-row__token">--fbnm-text-base</span>
+        <span class="type-row__size">1rem / 16px</span>
+      </div>
+      <span class="type-row__sample" style="font-size:1rem;">Standardtext, Buttons, Body</span>
+    </div>
+    <div class="type-row">
+      <div class="type-row__meta">
+        <span class="type-row__token">--fbnm-text-lg</span>
+        <span class="type-row__size">1.25rem / 20px</span>
+      </div>
+      <span class="type-row__sample" style="font-size:1.25rem; font-family:var(--fbnm-font-display,sans-serif); text-transform:uppercase;">Team-Namen, Card-Titel</span>
+    </div>
+    <div class="type-row">
+      <div class="type-row__meta">
+        <span class="type-row__token">--fbnm-text-xl</span>
+        <span class="type-row__size">1.5rem / 24px</span>
+      </div>
+      <span class="type-row__sample" style="font-size:1.5rem; font-family:var(--fbnm-font-display,sans-serif); text-transform:uppercase;">Abschnittstitel</span>
+    </div>
+    <div class="type-row">
+      <div class="type-row__meta">
+        <span class="type-row__token">--fbnm-text-2xl</span>
+        <span class="type-row__size">2rem / 32px</span>
+      </div>
+      <span class="type-row__sample" style="font-size:2rem; font-family:var(--fbnm-font-display,sans-serif); text-transform:uppercase;">Seitentitel</span>
+    </div>
+    <div class="type-row">
+      <div class="type-row__meta">
+        <span class="type-row__token">--fbnm-text-3xl</span>
+        <span class="type-row__size">3rem / 48px</span>
+      </div>
+      <span class="type-row__sample" style="font-size:3rem; font-family:var(--fbnm-font-display,sans-serif); text-transform:uppercase; line-height:1;">Scores</span>
+    </div>
+    <div class="type-row">
+      <div class="type-row__meta">
+        <span class="type-row__token">--fbnm-text-6xl</span>
+        <span class="type-row__size">4rem / 64px</span>
+      </div>
+      <span class="type-row__sample" style="font-size:clamp(2rem,8vw,4rem); font-family:var(--fbnm-font-display,sans-serif); text-transform:uppercase; line-height:1; color:var(--fbnm-blue-800,#004174);">Hero-Headline</span>
+    </div>
+
+    <div class="wcag wcag--info">
+      <span class="wcag__icon">ℹ️</span>
+      <span>
+        <strong>Large Text:</strong> WCAG definiert Large Text als ≥ 18pt (24px) normal oder ≥ 14pt (18.67px) fett.
+        Ab <code>--fbnm-text-2xl</code> gilt Large Text — dort reicht 3:1 (AA) bzw. 4.5:1 (AAA).
+        Darunter (xs bis xl) gelten die strengeren Schwellen: 4.5:1 (AA) / 7:1 (AAA).
+      </span>
+    </div>
+  </div>
+</DocsLayout>

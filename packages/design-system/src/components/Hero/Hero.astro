@@ -73,12 +73,14 @@ const { title, subtitle, backgroundImage, class: className } = Astro.props
   max-width: 16ch;
 }
 
+/* WCAG 1.4.6 AAA: cyan-400 on blue-900 overlay = 5.67:1 (AA only) → white = 21:1 (AAA) */
 .fbnm-hero__subtitle {
-  color: var(--fbnm-cyan-400);
+  color: var(--fbnm-white);
   font-family: var(--fbnm-font-caption);
   font-size: var(--fbnm-text-xl);
   margin-top: var(--fbnm-space-4);
   font-weight: 300;
+  opacity: 0.9;
 }
 
 .fbnm-hero__actions {

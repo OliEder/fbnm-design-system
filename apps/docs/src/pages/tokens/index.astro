@@ -1,0 +1,150 @@
+---
+import DocsLayout from '../../layouts/DocsLayout.astro'
+---
+
+<DocsLayout title="Farben">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Design Tokens</p>
+      <h1 class="docs-page__title">Farben</h1>
+      <p class="docs-page__desc">
+        Die FBNM-Farbpalette basiert auf dem Brand Manual. Semantische CSS-Variablen
+        stellen konsistente, WCAG-konforme Farbverwendung sicher.
+      </p>
+    </header>
+
+    <div class="wcag wcag--warn">
+      <span class="wcag__icon">⚠️</span>
+      <span>
+        <strong>Cyan (#009fe3) und Grau (#818080) sind keine Textfarben auf Weiß!</strong>
+        Beide scheitern an WCAG 1.4.3 AA (4.5:1). Stattdessen die semantischen Variablen
+        <code>--fbnm-color-accent-text</code> und <code>--fbnm-color-text-muted</code> verwenden.
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Primärpalette</h2>
+    <div class="color-grid">
+      <div class="color-chip">
+        <div class="color-chip__swatch" style="background:#002751;"></div>
+        <div class="color-chip__info">
+          <span class="color-chip__name">--fbnm-blue-900</span>
+          <span class="color-chip__hex">#002751</span>
+          <span class="color-chip__ratio color-chip__ratio--aaa">21:1 AAA auf Weiß ✓</span>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-chip__swatch" style="background:#004174;"></div>
+        <div class="color-chip__info">
+          <span class="color-chip__name">--fbnm-blue-800</span>
+          <span class="color-chip__hex">#004174</span>
+          <span class="color-chip__ratio color-chip__ratio--aaa">10.3:1 AAA auf Weiß ✓</span>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-chip__swatch" style="background:#1a4b76;"></div>
+        <div class="color-chip__info">
+          <span class="color-chip__name">--fbnm-blue-700</span>
+          <span class="color-chip__hex">#1a4b76</span>
+          <span class="color-chip__ratio color-chip__ratio--aaa">8.2:1 AAA auf Weiß ✓</span>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-chip__swatch" style="background:#009fe3;"></div>
+        <div class="color-chip__info">
+          <span class="color-chip__name">--fbnm-cyan-500</span>
+          <span class="color-chip__hex">#009fe3</span>
+          <span class="color-chip__ratio color-chip__ratio--fail">3.0:1 – nur dekorativ!</span>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-chip__swatch" style="background:#00a9e6;"></div>
+        <div class="color-chip__info">
+          <span class="color-chip__name">--fbnm-cyan-400</span>
+          <span class="color-chip__hex">#00a9e6</span>
+          <span class="color-chip__ratio color-chip__ratio--fail">3.2:1 – nur Large Text AA</span>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-chip__swatch" style="background:#818080;"></div>
+        <div class="color-chip__info">
+          <span class="color-chip__name">--fbnm-gray-500</span>
+          <span class="color-chip__hex">#818080</span>
+          <span class="color-chip__ratio color-chip__ratio--fail">4.0:1 – Text FAIL!</span>
+        </div>
+      </div>
+      <div class="color-chip">
+        <div class="color-chip__swatch" style="background:#1d1d1b;"></div>
+        <div class="color-chip__info">
+          <span class="color-chip__name">--fbnm-black</span>
+          <span class="color-chip__hex">#1d1d1b</span>
+          <span class="color-chip__ratio color-chip__ratio--aaa">19.1:1 AAA auf Weiß ✓</span>
+        </div>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Semantische Variablen (WCAG-konform)</h2>
+    <table class="contrast-table">
+      <thead>
+        <tr><th>CSS Variable</th><th>Wert</th><th>Verwendung</th><th>Kontrast</th><th>Level</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><code>--fbnm-color-primary</code></td>
+          <td style="color:#004174; font-family:monospace;">#004174</td>
+          <td>Buttons, Links, Fokus-Rahmen</td>
+          <td>10.3:1 auf Weiß</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><code>--fbnm-color-secondary</code></td>
+          <td style="color:#009fe3; font-family:monospace;">#009fe3</td>
+          <td>Dekorative Akzente, Trennlinien</td>
+          <td>3.0:1 auf Weiß</td>
+          <td><span class="badge-level badge-level--deco">Dekorativ</span></td>
+        </tr>
+        <tr>
+          <td><code>--fbnm-color-text</code></td>
+          <td style="font-family:monospace;">#1d1d1b</td>
+          <td>Fließtext auf Weiß</td>
+          <td>19.1:1</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><code>--fbnm-color-text-muted</code></td>
+          <td style="color:#545454; font-family:monospace;">#545454</td>
+          <td>Sekundärtext auf Weiß (statt gray-500!)</td>
+          <td>7.14:1</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><code>--fbnm-color-accent-text</code></td>
+          <td style="color:#005a87; font-family:monospace;">#005a87</td>
+          <td>Cyan-naher Text auf Weiß (statt cyan-500!)</td>
+          <td>7.55:1</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+        <tr>
+          <td><code>--fbnm-color-background</code></td>
+          <td style="color:#002751; font-family:monospace;">#002751</td>
+          <td>Seitenhintergrund</td>
+          <td>Weiß 21:1 auf Bg</td>
+          <td><span class="badge-level badge-level--aaa">AAA</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h2 class="docs-heading">CSS-Nutzung</h2>
+    <div class="code-block">
+      <pre set:text={`/* tokens.css wird via @fbnm/design-system/styles/index.css importiert */
+
+/* Richtig: semantische Variable */
+.my-element { color: var(--fbnm-color-text-muted); }
+
+/* Richtig: Dekorativer Cyan-Akzent (z.B. Linie) */
+.divider { border-color: var(--fbnm-cyan-500); }
+
+/* FALSCH: Cyan als Textfarbe auf Weiß */
+/* .text { color: var(--fbnm-cyan-500); }  ← 3:1 FAIL! */`} />
+    </div>
+  </div>
+</DocsLayout>

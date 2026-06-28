@@ -1,0 +1,53 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import Footer from '@ds/components/Footer/Footer.astro'
+---
+
+<DocsLayout title="Footer">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Komponenten</p>
+      <h1 class="docs-page__title">Footer</h1>
+      <p class="docs-page__desc">
+        Seitenfuß mit Vereinsinfo, Navigation, Rechtlichem und Social-Links.
+        Vollständig branded mit FBNM-Dunkelblau.
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        Überschriften: weiß auf blue-900 = 21:1 (AAA) ·
+        Social-Links: 44×44 px Touch-Target (WCAG 2.5.5 AAA) ·
+        Copyright-Text: rgba(255,255,255,0.6) ≈ 7:1 (AAA bei ~12px) ·
+        Alle Links mit sichtbarem Fokusrahmen.
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Live-Demo</h2>
+    <div class="demo">
+      <div class="demo__label">Footer (vollständig)</div>
+      <div class="demo__canvas demo__canvas--full">
+        <Footer />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Verwendung</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import Footer from '@fbnm/design-system/components/Footer/Footer.astro'
+---
+
+<Footer />`} />
+    </div>
+
+    <div class="wcag wcag--info">
+      <span class="wcag__icon">ℹ️</span>
+      <span>
+        Der Footer enthält fest eingetragene FBNM-Vereinsdaten (Adresse, Links).
+        Social-Media-Links können per Props oder Slot angepasst werden.
+        Impressum und Datenschutz sind als statische Seiten in <code>apps/web/src/pages/</code> vorgesehen.
+      </span>
+    </div>
+  </div>
+</DocsLayout>

@@ -1,0 +1,109 @@
+---
+import DocsLayout from '../layouts/DocsLayout.astro'
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+---
+
+<DocsLayout title="Übersicht">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">FBNM Design System</p>
+      <h1 class="docs-page__title">Willkommen</h1>
+      <p class="docs-page__desc">
+        Das Design System für Fibalon Baskets Neumarkt — Brand-konforme Farben, Typografie,
+        Komponenten und Seitenlayouts. WCAG 2.2 AA/AAA. Gebaut mit Astro, bereit für
+        fibalon-baskets.de auf Hetzner Webspace.
+      </p>
+    </header>
+
+    <div class="wcag wcag--info">
+      <span class="wcag__icon">♿</span>
+      <span>
+        Alle Komponenten erfüllen mindestens <strong>WCAG 2.2 AA</strong>, Ziel ist AAA.
+        Kontrastverhältnisse wurden mit dem APCA-Verfahren und WCAG 2.x-Formel geprüft.
+        Animationen respektieren <code>prefers-reduced-motion</code>.
+      </span>
+    </div>
+
+    <div class="intro-grid">
+      <a href={base + '/tokens/'} class="intro-card">
+        <div class="intro-card__icon">🎨</div>
+        <p class="intro-card__title">Design Tokens</p>
+        <p class="intro-card__desc">Farben, Typografie, Abstände — die Grundbausteine</p>
+      </a>
+      <a href={base + '/atome/button/'} class="intro-card">
+        <div class="intro-card__icon">⚡</div>
+        <p class="intro-card__title">Atome</p>
+        <p class="intro-card__desc">Button, Badge, Card — einfache wiederverwendbare Elemente</p>
+      </a>
+      <a href={base + '/komponenten/navigation/'} class="intro-card">
+        <div class="intro-card__icon">🧩</div>
+        <p class="intro-card__title">Komponenten</p>
+        <p class="intro-card__desc">Navigation, Hero, GameCard, StatsTable, LiveTicker u.m.</p>
+      </a>
+      <a href={base + '/seiten/'} class="intro-card">
+        <div class="intro-card__icon">📄</div>
+        <p class="intro-card__title">Seiten</p>
+        <p class="intro-card__desc">Vollständige Startseite mit allen Komponenten zusammen</p>
+      </a>
+    </div>
+
+    <h2 class="docs-heading">Tech-Stack</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Technologie</th><th>Verwendung</th><th>Version</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Astro</td><td>Framework (SSG + Islands Architecture)</td><td>^4.16</td></tr>
+        <tr><td>pnpm Workspaces</td><td>Monorepo-Verwaltung</td><td>9</td></tr>
+        <tr><td>TypeScript</td><td>Type Safety in Komponenten & Libs</td><td>^5</td></tr>
+        <tr><td>CSS Custom Properties</td><td>Design Tokens ohne Build-Schritt</td><td>–</td></tr>
+        <tr><td>node-ical</td><td>Basketball-Bund iCal-Feed Parser</td><td>^0.19</td></tr>
+        <tr><td>PHP (Hetzner)</td><td>Live-Score API, Kontaktformular</td><td>8.x</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="docs-heading">WCAG 2.2 Abdeckung</h2>
+    <table class="contrast-table">
+      <thead>
+        <tr><th>Kriterium</th><th>Bezeichnung</th><th>Status</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>1.4.1</td>
+          <td>Use of Color — aktive Links haben zusätzl. Rahmen; FBNM-Zeile hat Dot-Marker + sr-only Text</td>
+          <td><span class="badge-level badge-level--aa">AA ✓</span></td>
+        </tr>
+        <tr>
+          <td>1.4.3</td>
+          <td>Contrast Minimum — alle Texte ≥ 4.5:1 (normal), ≥ 3:1 (Large Text)</td>
+          <td><span class="badge-level badge-level--aa">AA ✓</span></td>
+        </tr>
+        <tr>
+          <td>1.4.6</td>
+          <td>Contrast Enhanced — Fließtext und UI-Text ≥ 7:1 AAA</td>
+          <td><span class="badge-level badge-level--aaa">AAA ✓</span></td>
+        </tr>
+        <tr>
+          <td>2.3.3</td>
+          <td>Animation from Interactions — alle Animationen in prefers-reduced-motion: no-preference</td>
+          <td><span class="badge-level badge-level--aaa">AAA ✓</span></td>
+        </tr>
+        <tr>
+          <td>2.4.11</td>
+          <td>Focus Appearance — sichtbarer Fokusindikator auf allen interaktiven Elementen</td>
+          <td><span class="badge-level badge-level--aa">AA ✓</span></td>
+        </tr>
+        <tr>
+          <td>2.5.5</td>
+          <td>Target Size — alle Buttons & Touch-Targets ≥ 44×44 px</td>
+          <td><span class="badge-level badge-level--aaa">AAA ✓</span></td>
+        </tr>
+        <tr>
+          <td>2.5.8</td>
+          <td>Target Size (Minimum) — ≥ 24×24 px mit Offset für alle Klickziele</td>
+          <td><span class="badge-level badge-level--aa">AA ✓</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</DocsLayout>

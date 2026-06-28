@@ -1,0 +1,87 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+
+const spaces = [
+  { token: '--fbnm-space-1', rem: '0.25rem', px: '4px' },
+  { token: '--fbnm-space-2', rem: '0.5rem',  px: '8px' },
+  { token: '--fbnm-space-3', rem: '0.75rem', px: '12px' },
+  { token: '--fbnm-space-4', rem: '1rem',    px: '16px' },
+  { token: '--fbnm-space-6', rem: '1.5rem',  px: '24px' },
+  { token: '--fbnm-space-8', rem: '2rem',    px: '32px' },
+  { token: '--fbnm-space-10', rem: '2.5rem', px: '40px' },
+  { token: '--fbnm-space-12', rem: '3rem',   px: '48px' },
+  { token: '--fbnm-space-16', rem: '4rem',   px: '64px' },
+  { token: '--fbnm-space-20', rem: '5rem',   px: '80px' },
+]
+
+const radii = [
+  { token: '--fbnm-radius-sm',   value: '4px',    use: 'Badges, kleine Elemente' },
+  { token: '--fbnm-radius-md',   value: '8px',    use: 'Cards, GameCards' },
+  { token: '--fbnm-radius-lg',   value: '12px',   use: 'Große Container' },
+  { token: '--fbnm-radius-full', value: '9999px', use: 'Badges (Pill-Form)' },
+]
+---
+
+<DocsLayout title="Abstände">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Design Tokens</p>
+      <h1 class="docs-page__title">Abstände</h1>
+      <p class="docs-page__desc">
+        Ein 4px-Basisraster für Paddings, Margins und Gaps — konsistent und vorhersehbar.
+      </p>
+    </header>
+
+    <h2 class="docs-heading">Spacing-Skala</h2>
+
+    {spaces.map(s => (
+      <div class="space-row">
+        <span class="space-row__label">{s.token}</span>
+        <div class="space-row__bar" style={`width: ${s.px};`}></div>
+        <span class="space-row__value">{s.rem} / {s.px}</span>
+      </div>
+    ))}
+
+    <h2 class="docs-heading">Border-Radien</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Token</th><th>Wert</th><th>Verwendung</th></tr>
+      </thead>
+      <tbody>
+        {radii.map(r => (
+          <tr>
+            <td>{r.token}</td>
+            <td>{r.value}</td>
+            <td style="color:#475569;">{r.use}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+
+    <h2 class="docs-heading">Container</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Token</th><th>Wert</th><th>Verwendung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>--fbnm-container-max</td><td>1280px</td><td>Maximale Inhaltsbreite</td></tr>
+        <tr><td>--fbnm-container-padding</td><td>1.5rem</td><td>Seitlicher Abstand</td></tr>
+      </tbody>
+    </table>
+
+    <h2 class="docs-heading">CSS-Nutzung</h2>
+    <div class="code-block">
+      <pre set:text={`.my-card {
+  padding: var(--fbnm-space-4) var(--fbnm-space-6);
+  border-radius: var(--fbnm-radius-md);
+  gap: var(--fbnm-space-3);
+}
+
+.page-section {
+  max-width: var(--fbnm-container-max);
+  margin: 0 auto;
+  padding: var(--fbnm-space-16) var(--fbnm-container-padding);
+}`} />
+    </div>
+  </div>
+</DocsLayout>

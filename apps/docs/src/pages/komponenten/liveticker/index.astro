@@ -1,0 +1,95 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import LiveTicker from '@ds/components/LiveTicker/LiveTicker.astro'
+---
+
+<DocsLayout title="LiveTicker">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Komponenten</p>
+      <h1 class="docs-page__title">LiveTicker</h1>
+      <p class="docs-page__desc">
+        Dynamisches Spieltag-Widget. Pollt <code>/api/live-score.php</code> alle 30 Sekunden
+        per Fetch API. Zeigt Fallback-Inhalt wenn keine Live-Daten vorhanden.
+        Nur clientseitig hydratisiert (Astro Island <code>client:load</code>).
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        Live-Badge-Hintergrund: #991b1b (weiß = 7.66:1 AAA) ·
+        Blink-Animation nur bei <code>prefers-reduced-motion: no-preference</code> (WCAG 2.3.3 AAA) ·
+        Status-Text immer lesbar auch ohne Animation ·
+        <code>aria-live="polite"</code> für Screenreader-Ankündigungen.
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Statische Vorschau (Fallback)</h2>
+    <div class="demo">
+      <div class="demo__label">Kein Spiel / Fallback-Zustand</div>
+      <div class="demo__canvas demo__canvas--navy">
+        <LiveTicker
+          pollUrl="#"
+          fallbackMessage="Kein Live-Spiel – nächstes Heimspiel: Sa 15.02. um 19:30 Uhr"
+        />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Architektur</h2>
+    <div class="code-block">
+      <pre set:text={`// Auf Hetzner Webspace (MVP):
+//   /api/live-score.php  ← liest data/game-data.json
+//   Browser pollt alle 30 Sekunden via Fetch
+
+// game-data.json Format:
+{
+  "isLive": true,
+  "homeTeam": "Fibalon Baskets NM",
+  "awayTeam": "TSV Ansbach",
+  "homeScore": 54,
+  "awayScore": 48,
+  "quarter": 3,
+  "gameTime": "04:32",
+  "competition": "2. Regionalliga Süd"
+}
+
+// Adapter: PollingAdapter (MVP) → SSEAdapter → BasketballBundLiveAdapter`} />
+    </div>
+
+    <h2 class="docs-heading">Verwendung (Astro Island)</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import LiveTicker from '@fbnm/design-system/components/LiveTicker/LiveTicker.astro'
+---
+
+<!-- client:load hydratisiert nur diesen Teil der Seite -->
+<LiveTicker
+  client:load
+  pollUrl="/api/live-score.php"
+  fallbackMessage="Kein Live-Spiel heute"
+/>`} />
+    </div>
+
+    <h2 class="docs-heading">Props</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Prop</th><th>Typ</th><th>Standard</th><th>Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>pollUrl</td><td>string</td><td>–</td><td>Endpunkt der Live-Score API</td></tr>
+        <tr><td>fallbackMessage</td><td>string</td><td>–</td><td>Text wenn kein Spiel läuft</td></tr>
+        <tr><td>intervalMs</td><td>number</td><td>30000</td><td>Poll-Intervall in Millisekunden</td></tr>
+      </tbody>
+    </table>
+
+    <div class="wcag wcag--info">
+      <span class="wcag__icon">ℹ️</span>
+      <span>
+        <strong>Erweiterbarkeit:</strong> Das Adapter-Muster in <code>src/lib/live-score-adapter.ts</code>
+        erlaubt spätere Integration einer offiziellen Basketball-Bund Live-API oder
+        Server-Sent Events (SSE) ohne Änderung an der UI-Komponente.
+      </span>
+    </div>
+  </div>
+</DocsLayout>
