@@ -55,14 +55,18 @@ jobs:
         run: |
           node -e "
             const data = JSON.parse(require('fs').readFileSync('licenses.json', 'utf8'));
-            // Strong copyleft only: GPL/AGPL/SSPL/EUPL require derived works to be
-            // released under the same license. LGPL is weak copyleft — linking to an
-            // LGPL library (e.g. sharp/libvips) does NOT require your code to be LGPL,
-            // so LGPL is intentionally excluded from this list.
-            const forbidden = ['GPL-2.0','GPL-3.0','AGPL-3.0','SSPL','EUPL'];
+            // Strong copyleft: GPL/AGPL/SSPL/EUPL. LGPL is weak copyleft and allowed
+            // (linking to an LGPL lib, e.g. sharp/libvips, does not infect your code).
+            // Use explicit LGPL guard first so 'LGPL-3.0-or-later'.includes('GPL-3.0')
+            // substring collision cannot trigger a false positive.
+            const isForbidden = (license) => {
+              if (/^LGPL/i.test(license)) return false;
+              return ['GPL-2.0','GPL-3.0','GPL-2.0-only','GPL-3.0-only','AGPL-3.0','SSPL','EUPL']
+                .some(f => license === f || license.startsWith(f + '-') || license.startsWith(f + ' '));
+            };
             const issues = [];
             for (const [license, pkgs] of Object.entries(data)) {
-              if (forbidden.some(f => license.includes(f))) {
+              if (isForbidden(license)) {
                 issues.push(...pkgs.map(p => p.name + '@' + p.version + ': ' + license));
               }
             }
