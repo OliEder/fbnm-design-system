@@ -1,0 +1,90 @@
+---
+interface Props {
+  title: string
+  subtitle?: string
+  backgroundImage?: string
+  class?: string
+}
+
+const { title, subtitle, backgroundImage, class: className } = Astro.props
+---
+
+<section
+  class:list={['fbnm-hero', className]}
+  style={backgroundImage ? `--hero-bg: url(${backgroundImage})` : ''}
+>
+  <div class="fbnm-hero__inner">
+    <h1 class="fbnm-hero__title">{title}</h1>
+    {subtitle && <p class="fbnm-hero__subtitle">{subtitle}</p>}
+    <div class="fbnm-hero__actions">
+      <slot />
+    </div>
+  </div>
+</section>
+
+<style>
+.fbnm-hero {
+  position: relative;
+  min-height: 60vh;
+  display: flex;
+  align-items: center;
+  background-color: var(--fbnm-blue-900);
+  background-image: var(--hero-bg);
+  background-size: cover;
+  background-position: center;
+  overflow: hidden;
+}
+
+.fbnm-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--fbnm-blue-900) 85%, transparent),
+    color-mix(in srgb, var(--fbnm-blue-800) 60%, transparent)
+  );
+}
+
+.fbnm-hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--fbnm-cyan-500), var(--fbnm-cyan-400));
+}
+
+.fbnm-hero__inner {
+  position: relative;
+  z-index: 1;
+  max-width: var(--fbnm-container-max);
+  margin: 0 auto;
+  padding: var(--fbnm-space-20) var(--fbnm-container-padding);
+}
+
+.fbnm-hero__title {
+  color: var(--fbnm-white);
+  font-family: var(--fbnm-font-display);
+  font-size: clamp(2.5rem, 8vw, var(--fbnm-text-6xl));
+  text-transform: uppercase;
+  line-height: 1;
+  max-width: 16ch;
+}
+
+.fbnm-hero__subtitle {
+  color: var(--fbnm-cyan-400);
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xl);
+  margin-top: var(--fbnm-space-4);
+  font-weight: 300;
+}
+
+.fbnm-hero__actions {
+  margin-top: var(--fbnm-space-8);
+  display: flex;
+  gap: var(--fbnm-space-4);
+  flex-wrap: wrap;
+}
+</style>

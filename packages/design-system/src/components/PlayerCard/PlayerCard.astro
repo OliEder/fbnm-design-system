@@ -1,0 +1,119 @@
+---
+interface Props {
+  name: string
+  number: number
+  position: string
+  imageUrl?: string
+  stats?: {
+    ppg?: number
+    rpg?: number
+    apg?: number
+  }
+}
+
+const { name, number, position, imageUrl, stats } = Astro.props
+---
+
+<div class="fbnm-playercard">
+  <div class="fbnm-playercard__image">
+    {imageUrl
+      ? <img src={imageUrl} alt={name} loading="lazy" width="200" height="250" />
+      : <div class="fbnm-playercard__placeholder">{number}</div>
+    }
+    <span class="fbnm-playercard__number">#{number}</span>
+  </div>
+  <div class="fbnm-playercard__info">
+    <h3 class="fbnm-playercard__name">{name}</h3>
+    <p class="fbnm-playercard__position">{position}</p>
+    {stats && (
+      <dl class="fbnm-playercard__stats">
+        {stats.ppg !== undefined && <><dt>PPG</dt><dd>{stats.ppg.toFixed(1)}</dd></>}
+        {stats.rpg !== undefined && <><dt>RPG</dt><dd>{stats.rpg.toFixed(1)}</dd></>}
+        {stats.apg !== undefined && <><dt>APG</dt><dd>{stats.apg.toFixed(1)}</dd></>}
+      </dl>
+    )}
+  </div>
+</div>
+
+<style>
+.fbnm-playercard {
+  background: var(--fbnm-blue-800);
+  border-radius: var(--fbnm-radius-md);
+  overflow: hidden;
+  color: var(--fbnm-white);
+}
+
+.fbnm-playercard__image {
+  position: relative;
+  aspect-ratio: 4/5;
+  background: var(--fbnm-blue-900);
+  overflow: hidden;
+}
+
+.fbnm-playercard__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.fbnm-playercard__placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-6xl);
+  color: var(--fbnm-blue-700);
+}
+
+.fbnm-playercard__number {
+  position: absolute;
+  bottom: var(--fbnm-space-2);
+  right: var(--fbnm-space-2);
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-sm);
+  color: var(--fbnm-cyan-400);
+  background: var(--fbnm-blue-900);
+  padding: var(--fbnm-space-1) var(--fbnm-space-2);
+  border-radius: var(--fbnm-radius-sm);
+}
+
+.fbnm-playercard__info { padding: var(--fbnm-space-4); }
+
+.fbnm-playercard__name {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-lg);
+  text-transform: uppercase;
+}
+
+.fbnm-playercard__position {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-cyan-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: var(--fbnm-space-1);
+}
+
+.fbnm-playercard__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--fbnm-space-2);
+  margin-top: var(--fbnm-space-3);
+  padding-top: var(--fbnm-space-3);
+  border-top: 1px solid color-mix(in srgb, var(--fbnm-white) 15%, transparent);
+}
+
+.fbnm-playercard__stats dt {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-gray-500);
+  text-transform: uppercase;
+}
+
+.fbnm-playercard__stats dd {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xl);
+  color: var(--fbnm-white);
+}
+</style>

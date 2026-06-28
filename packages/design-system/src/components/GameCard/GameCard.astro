@@ -1,0 +1,139 @@
+---
+import Badge from '../Badge/Badge.astro'
+
+interface Props {
+  homeTeam: string
+  awayTeam: string
+  date: Date
+  time: string
+  location: string
+  competition: string
+  homeScore?: number
+  awayScore?: number
+  isLive?: boolean
+  isHome?: boolean
+  href?: string
+}
+
+const {
+  homeTeam,
+  awayTeam,
+  date,
+  time,
+  location,
+  competition,
+  homeScore,
+  awayScore,
+  isLive = false,
+  isHome = true,
+  href,
+} = Astro.props
+
+const hasScore = homeScore !== undefined && awayScore !== undefined
+const isPlayed = hasScore && !isLive
+
+const dateFormatted = date.toLocaleDateString('de-DE', {
+  weekday: 'short',
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+})
+---
+
+<a class="fbnm-gamecard" href={href ?? '#'}>
+  <header class="fbnm-gamecard__header">
+    <span class="fbnm-gamecard__competition">{competition}</span>
+    {isLive && <Badge variant="live">Live</Badge>}
+    {!isPlayed && !isLive && <Badge variant={isHome ? 'home' : 'away'}>{isHome ? 'Heim' : 'Auswaerts'}</Badge>}
+  </header>
+
+  <div class="fbnm-gamecard__teams">
+    <span class="fbnm-gamecard__team fbnm-gamecard__team--home">{homeTeam}</span>
+    <div class="fbnm-gamecard__score">
+      {hasScore
+        ? <><span>{homeScore}</span><span>:</span><span>{awayScore}</span></>
+        : <span class="fbnm-gamecard__time">{time}</span>
+      }
+    </div>
+    <span class="fbnm-gamecard__team fbnm-gamecard__team--away">{awayTeam}</span>
+  </div>
+
+  <footer class="fbnm-gamecard__footer">
+    <span>{dateFormatted}</span>
+    <span>{location}</span>
+  </footer>
+</a>
+
+<style>
+.fbnm-gamecard {
+  display: block;
+  background: var(--fbnm-blue-800);
+  color: var(--fbnm-white);
+  border-radius: var(--fbnm-radius-md);
+  padding: var(--fbnm-space-4);
+  text-decoration: none;
+  transition: background-color var(--fbnm-transition-fast),
+              transform var(--fbnm-transition-fast);
+}
+
+.fbnm-gamecard:hover {
+  background: var(--fbnm-blue-700);
+  transform: translateY(-2px);
+}
+
+.fbnm-gamecard__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--fbnm-space-3);
+}
+
+.fbnm-gamecard__competition {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-cyan-400);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.fbnm-gamecard__teams {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--fbnm-space-4);
+  margin-bottom: var(--fbnm-space-3);
+}
+
+.fbnm-gamecard__team {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-lg);
+  text-transform: uppercase;
+  line-height: 1.2;
+}
+
+.fbnm-gamecard__team--home { text-align: right; }
+.fbnm-gamecard__team--away { text-align: left; }
+
+.fbnm-gamecard__score {
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-2);
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-3xl);
+  color: var(--fbnm-cyan-400);
+}
+
+.fbnm-gamecard__time {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xl);
+  color: var(--fbnm-cyan-400);
+}
+
+.fbnm-gamecard__footer {
+  display: flex;
+  gap: var(--fbnm-space-4);
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  color: color-mix(in srgb, var(--fbnm-white) 70%, transparent);
+}
+</style>
