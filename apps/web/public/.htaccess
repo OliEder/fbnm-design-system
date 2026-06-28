@@ -1,0 +1,39 @@
+# HTTPS erzwingen
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# www erzwingen
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^(.*)$ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Astro Static: .html Extension entfernen
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^([^.]+)/?$ $1.html [L]
+
+# data/ Ordner vor direktem Zugriff schuetzen
+RewriteCond %{REQUEST_URI} ^/data/
+RewriteRule .* - [F,L]
+
+# Security Headers
+Header always set X-Content-Type-Options "nosniff"
+Header always set X-Frame-Options "SAMEORIGIN"
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=()"
+
+# Aggressives Caching fuer Hash-Assets (Astro: _astro/)
+<FilesMatch "\.(css|js|woff2|woff|jpg|jpeg|png|webp|avif|svg|ico|gif)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+</FilesMatch>
+
+# HTML: kurzes Cache, immer revalidieren
+<FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+</FilesMatch>
+
+# Komprimierung
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json text/xml
+</IfModule>
