@@ -55,7 +55,11 @@ jobs:
         run: |
           node -e "
             const data = JSON.parse(require('fs').readFileSync('licenses.json', 'utf8'));
-            const forbidden = ['GPL-2.0','GPL-3.0','AGPL-3.0','LGPL-2.0','LGPL-2.1','LGPL-3.0','SSPL','EUPL'];
+            // Strong copyleft only: GPL/AGPL/SSPL/EUPL require derived works to be
+            // released under the same license. LGPL is weak copyleft — linking to an
+            // LGPL library (e.g. sharp/libvips) does NOT require your code to be LGPL,
+            // so LGPL is intentionally excluded from this list.
+            const forbidden = ['GPL-2.0','GPL-3.0','AGPL-3.0','SSPL','EUPL'];
             const issues = [];
             for (const [license, pkgs] of Object.entries(data)) {
               if (forbidden.some(f => license.includes(f))) {
@@ -63,11 +67,11 @@ jobs:
               }
             }
             if (issues.length) {
-              console.error('Copyleft licenses found — review required:');
+              console.error('Strong copyleft licenses found — review required:');
               issues.forEach(i => console.error(' ', i));
               process.exit(1);
             }
-            console.log('License check passed — no copyleft licenses found.');
+            console.log('License check passed — no strong copyleft licenses found.');
           "
 
       - name: Upload license report
