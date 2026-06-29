@@ -1,20 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 56" role="img" aria-label="Fibalon Baskets Neumarkt">
-  <title>Fibalon Baskets Neumarkt</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 310" role="img" aria-label="Fibalon Baskets">
+  <title>Fibalon Baskets</title>
+  <defs>
+    <!-- Shield: dark navy gradient top→bottom -->
+    <linearGradient id="sh" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#1a4070"/>
+      <stop offset="100%" stop-color="#001e3a"/>
+    </linearGradient>
+    <!-- Water drop: radial, bright highlight upper-left → deep blue -->
+    <radialGradient id="dr" cx="36%" cy="22%" r="72%">
+      <stop offset="0%" stop-color="#dff6ff"/>
+      <stop offset="18%" stop-color="#7dd6f8"/>
+      <stop offset="56%" stop-color="#009fe3"/>
+      <stop offset="100%" stop-color="#005aa8"/>
+    </radialGradient>
+  </defs>
 
-  <!-- Basketball -->
-  <circle cx="28" cy="28" r="24" fill="#E8751A"/>
-  <path d="M4,28 Q28,4 52,28" fill="none" stroke="rgba(0,0,0,0.28)" stroke-width="1.8"/>
-  <path d="M4,28 Q28,52 52,28" fill="none" stroke="rgba(0,0,0,0.28)" stroke-width="1.8"/>
-  <line x1="28" y1="4" x2="28" y2="52" stroke="rgba(0,0,0,0.28)" stroke-width="1.8"/>
-  <line x1="4" y1="28" x2="52" y2="28" stroke="rgba(0,0,0,0.28)" stroke-width="1.8"/>
+  <!-- ── SHIELD ─────────────────────────────────────────── -->
+  <!-- White outer border -->
+  <polygon points="140,302 14,212 14,94 266,94 266,212" fill="white"/>
+  <!-- Cyan accent ring -->
+  <polygon points="140,292 23,207 23,103 257,103 257,207"
+           fill="none" stroke="#40c8f5" stroke-width="3"/>
+  <!-- Main navy body -->
+  <polygon points="140,289 26,205 26,106 254,106 254,205" fill="url(#sh)"/>
+  <!-- Darker banner section (lower triangle for BASKETS) -->
+  <!-- At y=232, taper left≈63, right≈217 -->
+  <polygon points="63,232 217,232 140,289" fill="#000e20"/>
+  <!-- Subtle separator line above banner -->
+  <line x1="63" y1="232" x2="217" y2="232" stroke="#40c8f5" stroke-width="1.5" opacity="0.5"/>
 
-  <!-- FIBALON -->
-  <text x="60" y="24"
-    font-family="Arial Black, Helvetica Neue, Helvetica, sans-serif"
-    font-size="20" font-weight="900" fill="#ffffff" letter-spacing="2">FIBALON</text>
+  <!-- ── WATER DROP ─────────────────────────────────────── -->
+  <!-- White outer border/glow -->
+  <path d="M140,5 C176,47,208,90,208,128 A68,68,0,0,1,72,128 C72,90,104,47,140,5Z"
+        fill="white"/>
+  <!-- Thin inner cyan ring -->
+  <path d="M140,14 C174,54,202,95,202,128 A62,62,0,0,1,78,128 C78,95,106,54,140,14Z"
+        fill="none" stroke="#70d8f8" stroke-width="1.5"/>
+  <!-- Gradient fill -->
+  <path d="M140,18 C172,57,198,97,198,128 A58,58,0,0,1,82,128 C82,97,108,57,140,18Z"
+        fill="url(#dr)"/>
+  <!-- Specular highlight (upper-left glare) -->
+  <ellipse cx="118" cy="62" rx="16" ry="24"
+           fill="rgba(255,255,255,0.42)" transform="rotate(-18,118,62)"/>
 
-  <!-- BASKETS NEUMARKT -->
-  <text x="61" y="41"
-    font-family="Arial, Helvetica, sans-serif"
-    font-size="10" font-weight="600" fill="#009fe3" letter-spacing="2.2">BASKETS NEUMARKT</text>
+  <!-- Basketball seam lines -->
+  <path d="M140,24 C143,72,143,112,140,128"
+        fill="none" stroke="#003060" stroke-width="2" opacity="0.48"/>
+  <path d="M95,110 C110,90,127,61,140,24"
+        fill="none" stroke="#003060" stroke-width="2" opacity="0.48"/>
+  <path d="M185,110 C170,90,153,61,140,24"
+        fill="none" stroke="#003060" stroke-width="2" opacity="0.48"/>
+  <path d="M80,125 C108,116,172,116,200,125"
+        fill="none" stroke="#003060" stroke-width="2" opacity="0.48"/>
+
+  <!-- ── TEXT ───────────────────────────────────────────── -->
+  <!-- FIBALON — drawn before drop so drop overlaps top slightly (matches logo) -->
+  <text x="140" y="212"
+        text-anchor="middle"
+        font-family="'Arial Black','Arial Narrow Bold',Impact,sans-serif"
+        font-size="52" font-weight="900" font-style="italic"
+        fill="white"
+        stroke="#001020" stroke-width="7" stroke-linejoin="round"
+        paint-order="stroke">FIBALON</text>
+
+  <!-- BASKETS — in the banner section -->
+  <text x="140" y="270"
+        text-anchor="middle"
+        font-family="'Arial Black',Impact,sans-serif"
+        font-size="28" font-weight="900" font-style="italic"
+        fill="white"
+        stroke="#000a18" stroke-width="4" stroke-linejoin="round"
+        paint-order="stroke">BASKETS</text>
 </svg>
