@@ -1,74 +1,53 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 310" width="280" height="310" role="img" aria-label="Fibalon Baskets">
   <title>Fibalon Baskets</title>
   <defs>
-    <!-- Shield: dark navy gradient top→bottom -->
+    
     <linearGradient id="sh" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#1a4070"/>
-      <stop offset="100%" stop-color="#001e3a"/>
+      <stop offset="0%" stop-color="#1a4070"></stop>
+      <stop offset="100%" stop-color="#001e3a"></stop>
     </linearGradient>
-    <!-- Water drop: radial, bright highlight upper-left → deep blue -->
+    
     <radialGradient id="dr" cx="36%" cy="22%" r="72%">
-      <stop offset="0%" stop-color="#dff6ff"/>
-      <stop offset="18%" stop-color="#7dd6f8"/>
-      <stop offset="56%" stop-color="#009fe3"/>
-      <stop offset="100%" stop-color="#005aa8"/>
+      <stop offset="0%" stop-color="#dff6ff"></stop>
+      <stop offset="18%" stop-color="#7dd6f8"></stop>
+      <stop offset="56%" stop-color="#009fe3"></stop>
+      <stop offset="100%" stop-color="#005aa8"></stop>
     </radialGradient>
   </defs>
 
-  <!-- ── SHIELD ─────────────────────────────────────────── -->
-  <!-- White outer border -->
-  <polygon points="140,302 14,212 14,94 266,94 266,212" fill="white"/>
-  <!-- Cyan accent ring -->
-  <polygon points="140,292 23,207 23,103 257,103 257,207"
-           fill="none" stroke="#40c8f5" stroke-width="3"/>
-  <!-- Main navy body -->
-  <polygon points="140,289 26,205 26,106 254,106 254,205" fill="url(#sh)"/>
-  <!-- Darker banner section (lower triangle for BASKETS) -->
-  <!-- At y=232, taper left≈63, right≈217 -->
-  <polygon points="63,232 217,232 140,289" fill="#000e20"/>
-  <!-- Subtle separator line above banner -->
-  <line x1="63" y1="232" x2="217" y2="232" stroke="#40c8f5" stroke-width="1.5" opacity="0.5"/>
+  
+  
+  <polygon points="140,302 14,212 14,94 266,94 266,212" fill="white"></polygon>
+  
+  <polygon points="140,292 23,207 23,103 257,103 257,207" fill="none" stroke="#40c8f5" stroke-width="3"></polygon>
+  
+  <polygon points="140,289 26,205 26,106 254,106 254,205" fill="url(#sh)"></polygon>
+  
+  
+  <polygon points="63,232 217,232 140,289" fill="#000e20"></polygon>
+  
+  <line x1="63" y1="232" x2="217" y2="232" stroke="#40c8f5" stroke-width="1.5" opacity="0.5"></line>
 
-  <!-- ── WATER DROP ─────────────────────────────────────── -->
-  <!-- White outer border/glow -->
-  <path d="M140,5 C176,47,208,90,208,128 A68,68,0,0,1,72,128 C72,90,104,47,140,5Z"
-        fill="white"/>
-  <!-- Thin inner cyan ring -->
-  <path d="M140,14 C174,54,202,95,202,128 A62,62,0,0,1,78,128 C78,95,106,54,140,14Z"
-        fill="none" stroke="#70d8f8" stroke-width="1.5"/>
-  <!-- Gradient fill -->
-  <path d="M140,18 C172,57,198,97,198,128 A58,58,0,0,1,82,128 C82,97,108,57,140,18Z"
-        fill="url(#dr)"/>
-  <!-- Specular highlight (upper-left glare) -->
-  <ellipse cx="118" cy="62" rx="16" ry="24"
-           fill="rgba(255,255,255,0.42)" transform="rotate(-18,118,62)"/>
+  
+  
+  <path d="M140,5 C176,47,208,90,208,128 A68,68,0,0,1,72,128 C72,90,104,47,140,5Z" fill="white"></path>
+  
+  <path d="M140,14 C174,54,202,95,202,128 A62,62,0,0,1,78,128 C78,95,106,54,140,14Z" fill="none" stroke="#70d8f8" stroke-width="1.5"></path>
+  
+  <path d="M140,18 C172,57,198,97,198,128 A58,58,0,0,1,82,128 C82,97,108,57,140,18Z" fill="url(#dr)"></path>
+  
+  <ellipse cx="118" cy="62" rx="16" ry="24" fill="rgba(255,255,255,0.42)" transform="rotate(-18,118,62)"></ellipse>
 
-  <!-- Basketball seam lines -->
-  <path d="M140,24 C143,72,143,112,140,128"
-        fill="none" stroke="#003060" stroke-width="2" opacity="0.48"/>
-  <path d="M95,110 C110,90,127,61,140,24"
-        fill="none" stroke="#003060" stroke-width="2" opacity="0.48"/>
-  <path d="M185,110 C170,90,153,61,140,24"
-        fill="none" stroke="#003060" stroke-width="2" opacity="0.48"/>
-  <path d="M80,125 C108,116,172,116,200,125"
-        fill="none" stroke="#003060" stroke-width="2" opacity="0.48"/>
+  
+  <path d="M140,24 C143,72,143,112,140,128" fill="none" stroke="#003060" stroke-width="2" opacity="0.48"></path>
+  <path d="M95,110 C110,90,127,61,140,24" fill="none" stroke="#003060" stroke-width="2" opacity="0.48"></path>
+  <path d="M185,110 C170,90,153,61,140,24" fill="none" stroke="#003060" stroke-width="2" opacity="0.48"></path>
+  <path d="M80,125 C108,116,172,116,200,125" fill="none" stroke="#003060" stroke-width="2" opacity="0.48"></path>
 
-  <!-- ── TEXT ───────────────────────────────────────────── -->
-  <!-- FIBALON — drawn before drop so drop overlaps top slightly (matches logo) -->
-  <text x="140" y="212"
-        text-anchor="middle"
-        font-family="'Arial Black','Arial Narrow Bold',Impact,sans-serif"
-        font-size="52" font-weight="900" font-style="italic"
-        fill="white"
-        stroke="#001020" stroke-width="7" stroke-linejoin="round"
-        paint-order="stroke">FIBALON</text>
+  
+  
+  <text x="140" y="212" text-anchor="middle" font-family="&#39;Arial Black&#39;,&#39;Arial Narrow Bold&#39;,Impact,sans-serif" font-size="52" font-weight="900" font-style="italic" fill="white" stroke="#001020" stroke-width="7" stroke-linejoin="round" paint-order="stroke">FIBALON</text>
 
-  <!-- BASKETS — in the banner section -->
-  <text x="140" y="270"
-        text-anchor="middle"
-        font-family="'Arial Black',Impact,sans-serif"
-        font-size="28" font-weight="900" font-style="italic"
-        fill="white"
-        stroke="#000a18" stroke-width="4" stroke-linejoin="round"
-        paint-order="stroke">BASKETS</text>
+  
+  <text x="140" y="270" text-anchor="middle" font-family="&#39;Arial Black&#39;,Impact,sans-serif" font-size="28" font-weight="900" font-style="italic" fill="white" stroke="#000a18" stroke-width="4" stroke-linejoin="round" paint-order="stroke">BASKETS</text>
 </svg>
