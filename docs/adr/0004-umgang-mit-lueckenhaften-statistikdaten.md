@@ -6,20 +6,28 @@
 ## Kontext
 
 Die Qualität der BBB-Daten ist im Breitensport (Jugend, untere Ligen) sehr
-ungleich. Klassische Scouting-Werte werden selten erfasst, weil an den
-Kampfgerichts-Tischen nicht genug geschulte Personen sitzen. Realistische
-Verfügbarkeit:
+ungleich. Klassische Scouting-Werte (Reb/Ast/Stl/Blk/Min, FG%) werden im
+Breitensport kaum erfasst.
 
-| Qualität | Werte | Verfügbarkeit |
-|----------|-------|---------------|
-| ✅ fast immer | Endstand, Paarung, Datum, Liga, Sieg/Niederlage | zuverlässig |
-| 🟡 oft       | Punkte je Spieler, evtl. Viertel-/Achtel-Stände | teilweise |
-| 🔴 selten    | Reb/Ast/Stl/Blk/Min, FG%, Dreier               | meist leer |
+**Quelle ist einheitlich die BBB-API.** Auch handnotierte Daten landen über den
+Spielleiter in der API; der Digitale Spielberichtsbogen (DSB) und die API sind im
+Wesentlichen dieselbe Quelle. Der Unterschied liegt nicht in der *Herkunft*,
+sondern im **Detailgrad und der Genauigkeit** der gelieferten Daten:
+
+| | DSB (regulärer Ligabetrieb) | Mini-Bereich (bis ~U12, handnotiert → API) |
+|--|------------------------------|---------------------------------------------|
+| Wer/wann auf dem Feld | ✅ zuverlässig & sauber (seit DSB) | 🟡 nur grob (welches Viertel/Achtel) |
+| Punkte | ✅ sauber je Viertel | 🟡 Team-Summe sicher; Trennung je Viertel/Achtel **nicht immer** |
+| Team-Fouls / persönl. Fouls | ✅ | 🟡 erfasst, aber oft ungenau |
+| Scouting (Reb/Ast/Stl/Blk) | meist nicht | nein |
+
+**Zwei Achsen** der Datenqualität, die das Modell trennen muss:
+1. **Vorhanden vs. nicht erfasst** (Lücke) → `null`-Semantik.
+2. **Vorhanden, aber unsicher** (z. B. Mini: Punkte je Achtel evtl. unsauber) →
+   ein Wert kann da sein und trotzdem nicht voll verlässlich.
 
 Die bisher entworfenen Komponenten (`MatchStats`, `BoxScore`) setzten implizit
-einen vollständigen Box-Score voraus — das ist nicht die Realität. Tabellen mit
-lauter leeren Spalten wirken kaputt, und Lücken dürfen abgeleitete Statistiken
-(Schnitte) nicht verfälschen.
+einen vollständigen, exakten Box-Score voraus — das ist nicht die Realität.
 
 ## Entscheidung
 
@@ -54,6 +62,28 @@ Statistik-Komponenten zeigen pro Spiel/Team **nur die Spalten, die tatsächlich
 Daten enthalten**. Eine durchgehend leere Spalte (z. B. Rebounds nicht erfasst)
 wird komplett ausgeblendet — statt einer Spalte voller „–". Mindestgerüst
 (Nr/Name/Punkte) ist immer vorhanden.
+
+### 6. Verlässlichkeit ist quellen-/kontextabhängig, nicht pauschal
+Seit dem DSB sind **Einsatzdaten (wer/wann auf dem Feld)** im regulären
+Ligabetrieb zuverlässig — das hebt **Spieler-±** und Einsatzzeiten dort aus dem
+„nur wenn erfasst"-Bereich in den verlässlichen. Im **Mini-Bereich** (handnotiert)
+bleiben sie grob (nur Viertel/Achtel-Ebene). Verfügbar sind dort zusätzlich
+**Team-Fouls und persönliche Fouls** (aber oft ungenau). Eine Metrik ist also
+nicht generell „möglich/unmöglich", sondern abhängig davon, was das **konkrete
+Spiel** liefert (siehe Punkt 4: nur bei vorhandenen Eingaben berechnen).
+
+### 7. Genauigkeit getrennt von Vorhandensein behandeln
+Ein vorhandener Wert ist nicht automatisch exakt (z. B. Mini: Punkte je Achtel
+evtl. unsauber getrennt). Wo Genauigkeit nicht gesichert ist, im Zweifel die
+**robustere Aggregatebene** zeigen (z. B. Team-Punkte gesamt statt je Achtel)
+statt Scheingenauigkeit zu suggerieren.
+
+### 8. Manuelle Nachpflege & Konfliktregel
+Handnotierte Mini-Daten kommen i. d. R. ohnehin über die API. Falls darüber
+hinaus Werte manuell nachgepflegt werden (sofern vorhanden), gilt: **die
+offizielle Quelle (DSB/API) gewinnt, wenn vorhanden** — manuell Nachgepflegtes
+ist nur Lückenfüller, bis offizielle Daten vorliegen. Der konkrete
+Nachpflege-Pfad (SQL/Admin-Tool vs. Importdatei) ist **noch offen**.
 
 ## Konsequenzen
 

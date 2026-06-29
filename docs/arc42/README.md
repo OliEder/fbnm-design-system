@@ -107,10 +107,14 @@ Stand aus MariaDB → aktualisiert `LiveTicker`.
   Farb-/Spacing-/Typo-Quelle.
 - **Datenfluss-Prinzip:** Fakten persistieren, Aggregate ableiten; Daten als
   Props, kein Browser-`fetch` (außer Live).
-- **Datenqualität (Breitensport):** Scouting-Werte sind oft lückenhaft. Statistik-
-  Werte sind `null`-fähig; `null` (nicht erfasst) ≠ `0` (null erzielt). Komponenten
-  blenden nicht erfasste Spalten dynamisch aus. Abgeleitete Metriken (GB, ±, Form,
-  Punkte-Schnitte) werden nur bei vorhandenen Eingaben berechnet. Siehe ADR-0004.
+- **Datenqualität (Breitensport):** Quelle einheitlich BBB-API (auch handnotierte
+  Mini-Daten laufen über den Spielleiter dort ein). Zwei Achsen: *vorhanden vs.
+  nicht erfasst* (`null` ≠ `0`) und *vorhanden, aber unsicher* (Mini: Punkte je
+  Achtel evtl. unsauber). DSB-Ligabetrieb liefert Einsatzdaten zuverlässig
+  (→ Spieler-± dort möglich); Mini nur grob + Fouls (oft ungenau). Komponenten
+  blenden nicht erfasste Spalten dynamisch aus; abgeleitete Metriken nur bei
+  vorhandenen Eingaben. Offizielle Quelle gewinnt vor manueller Nachpflege.
+  Siehe ADR-0004.
 
 ## 9. Architekturentscheidungen (ADRs)
 
