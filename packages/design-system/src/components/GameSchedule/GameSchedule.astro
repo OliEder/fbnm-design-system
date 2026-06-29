@@ -52,8 +52,8 @@ function firstUpcomingIdx(list: ScheduleGame[]) {
   return list.findIndex(g => !isPlayed(g) && g.date >= now)
 }
 
-/* Stable ID from title so multiple instances on same page stay unique */
-const id = `gs-${title.replace(/[^a-zA-Z0-9]/g, '').toLowerCase().slice(0, 14) || 'schedule'}`
+/* Full title used (no slice) so instances with similar titles produce distinct IDs */
+const id = `gs-${title.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'schedule'}`
 
 const tabs: Array<{
   key: string
@@ -225,7 +225,7 @@ document.querySelectorAll<HTMLElement>('.fbnm-schedule').forEach(schedule => {
       panels.forEach(p => p.classList.remove('fbnm-schedule__panel--active'))
       tab.setAttribute('aria-selected', 'true')
       tab.classList.add('fbnm-schedule__tab--active')
-      document.getElementById(targetId)?.classList.add('fbnm-schedule__panel--active')
+      panels.find(p => p.id === targetId)?.classList.add('fbnm-schedule__panel--active')
     })
   })
 })
