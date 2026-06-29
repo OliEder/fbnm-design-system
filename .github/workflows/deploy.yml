@@ -14,11 +14,11 @@ jobs:
 
       - uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: '24'
           cache: pnpm
 
       - name: Install dependencies
@@ -30,15 +30,3 @@ jobs:
           ICAL_URL_HERREN: ${{ secrets.ICAL_URL_HERREN }}
           ICAL_URL_DAMEN: ${{ secrets.ICAL_URL_DAMEN }}
 
-      - name: Deploy via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.HETZNER_FTP_HOST }}
-          username: ${{ secrets.HETZNER_FTP_USER }}
-          password: ${{ secrets.HETZNER_FTP_PASS }}
-          local-dir: ./apps/web/dist/
-          server-dir: /public_html/
-          protocol: ftps
-          exclude: |
-            **/.git*
-            **/.git*/**

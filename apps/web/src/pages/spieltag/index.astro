@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import Button from '../../../../packages/design-system/src/components/Button/Button.astro'
-import { fetchGamesFromIcal, getNextGame } from '../../../../packages/design-system/src/lib/bbb-ical'
+import Button from '@ds/components/Button/Button.astro'
+import { fetchGamesFromIcal, getNextGame } from '@ds/lib/bbb-ical'
 
 const herrenUrl = import.meta.env.ICAL_URL_HERREN
 let nextGame: Awaited<ReturnType<typeof getNextGame>> = undefined

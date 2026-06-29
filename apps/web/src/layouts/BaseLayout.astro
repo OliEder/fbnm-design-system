@@ -1,8 +1,8 @@
 ---
-import Navigation from '../../../packages/design-system/src/components/Navigation/Navigation.astro'
-import Footer from '../../../packages/design-system/src/components/Footer/Footer.astro'
-import LiveTicker from '../../../packages/design-system/src/components/LiveTicker/LiveTicker.astro'
-import '../../../packages/design-system/src/styles/index.css'
+import Navigation from '@ds/components/Navigation/Navigation.astro'
+import Footer from '@ds/components/Footer/Footer.astro'
+import LiveTicker from '@ds/components/LiveTicker/LiveTicker.astro'
+import '@ds/styles/index.css'
 
 interface Props {
   title: string
@@ -56,7 +56,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site)
   <body>
     <a href="#main" class="skip-link">Zum Inhalt springen</a>
     <LiveTicker />
-    <Navigation />
+    <Navigation logoSrc="https://www.basketball-bund.net/media/team/151076/logo" />
     <main id="main">
       <slot />
     </main>

@@ -4,8 +4,13 @@ import Navigation from '@ds/components/Navigation/Navigation.astro'
 import Hero from '@ds/components/Hero/Hero.astro'
 import Button from '@ds/components/Button/Button.astro'
 import GameCard from '@ds/components/GameCard/GameCard.astro'
+import PlayerCard from '@ds/components/PlayerCard/PlayerCard.astro'
 import StatsTable from '@ds/components/StatsTable/StatsTable.astro'
 import Footer from '@ds/components/Footer/Footer.astro'
+
+const base      = import.meta.env.BASE_URL.replace(/\/$/, '')
+const logoSrc   = `${base}/images/logo.svg`
+const heroImage = `${base}/images/hero-action.jpg`
 
 const navLinks = [
   { label: 'Startseite', href: '#', active: true },
@@ -48,12 +53,57 @@ const upcomingGames = [
   },
 ]
 
-const standings = [
+const players = [
+  {
+    name: 'Markus Bauer',
+    number: 7,
+    position: 'Point Guard',
+    imageUrl: 'https://images.unsplash.com/photo-1519766304817-4f37bda74a26?w=400&h=500&fit=crop',
+    stats: { ppg: 18.4, rpg: 4.2, apg: 7.1 },
+  },
+  {
+    name: 'Stefan Koch',
+    number: 23,
+    position: 'Center',
+    imageUrl: 'https://images.unsplash.com/photo-1519058082700-08a515c25d90?w=400&h=500&fit=crop',
+    stats: { ppg: 12.6, rpg: 9.8, apg: 1.3 },
+  },
+  {
+    name: 'Jonas Weber',
+    number: 11,
+    position: 'Small Forward',
+    imageUrl: 'https://images.unsplash.com/photo-1607297155413-40e1d3c4ee4e?w=400&h=500&fit=crop',
+    stats: { ppg: 15.2, rpg: 5.5, apg: 3.8 },
+  },
+]
+
+const standingsHerren1 = [
   { rank: 1, team: 'TV 1880 Augsburg',       games: 14, wins: 12, losses: 2,  pointsFor: 1124, pointsAgainst: 943,  points: 26 },
   { rank: 2, team: 'BBC Coburg',              games: 14, wins: 11, losses: 3,  pointsFor: 1087, pointsAgainst: 960,  points: 25 },
   { rank: 3, team: 'Fibalon Baskets NM',      games: 14, wins: 9,  losses: 5,  pointsFor: 1052, pointsAgainst: 991,  points: 23, isFBNM: true },
   { rank: 4, team: 'TSV Ansbach Basketball',  games: 14, wins: 8,  losses: 6,  pointsFor: 1010, pointsAgainst: 998,  points: 22 },
   { rank: 5, team: 'FC Bayern Basketball II', games: 14, wins: 7,  losses: 7,  pointsFor: 998,  pointsAgainst: 1023, points: 21 },
+  { rank: 6, team: 'TV Leinburg',             games: 14, wins: 5,  losses: 9,  pointsFor: 942,  pointsAgainst: 1035, points: 19 },
+  { rank: 7, team: 'BSC Regensburg',          games: 14, wins: 3,  losses: 11, pointsFor: 876,  pointsAgainst: 1089, points: 17 },
+  { rank: 8, team: 'TSV 1904 Fürth',         games: 14, wins: 1,  losses: 13, pointsFor: 821,  pointsAgainst: 1131, points: 15 },
+]
+
+const standingsHerren2 = [
+  { rank: 1, team: 'TSV Regensburg Basketball', games: 12, wins: 10, losses: 2,  pointsFor: 982, pointsAgainst: 841, points: 22 },
+  { rank: 2, team: 'Fibalon Baskets NM II',     games: 12, wins: 9,  losses: 3,  pointsFor: 954, pointsAgainst: 867, points: 21, isFBNM: true },
+  { rank: 3, team: 'SV Neutraubling',            games: 12, wins: 7,  losses: 5,  pointsFor: 901, pointsAgainst: 888, points: 19 },
+  { rank: 4, team: 'BC Lupburg',                 games: 12, wins: 6,  losses: 6,  pointsFor: 865, pointsAgainst: 890, points: 18 },
+  { rank: 5, team: 'MTV Ingolstadt II',          games: 12, wins: 4,  losses: 8,  pointsFor: 812, pointsAgainst: 921, points: 16 },
+  { rank: 6, team: 'TV Cham',                    games: 12, wins: 2,  losses: 10, pointsFor: 754, pointsAgainst: 961, points: 14 },
+]
+
+const standingsDamen = [
+  { rank: 1, team: 'BBC Coburg Damen',           games: 10, wins: 9,  losses: 1,  pointsFor: 801, pointsAgainst: 642, points: 19 },
+  { rank: 2, team: 'TSV Ansbach Damen',           games: 10, wins: 7,  losses: 3,  pointsFor: 763, pointsAgainst: 680, points: 17 },
+  { rank: 3, team: 'Fibalon Baskets NM Damen',    games: 10, wins: 6,  losses: 4,  pointsFor: 741, pointsAgainst: 699, points: 16, isFBNM: true },
+  { rank: 4, team: 'TV 1880 Augsburg Damen',      games: 10, wins: 4,  losses: 6,  pointsFor: 698, pointsAgainst: 741, points: 14 },
+  { rank: 5, team: 'FC Bayern Basketball Damen',  games: 10, wins: 2,  losses: 8,  pointsFor: 631, pointsAgainst: 798, points: 12 },
+  { rank: 6, team: 'TSV Nördlingen Damen',        games: 10, wins: 1,  losses: 9,  pointsFor: 589, pointsAgainst: 863, points: 11 },
 ]
 ---
 
@@ -64,7 +114,7 @@ const standings = [
       <h1 class="docs-page__title">Startseite</h1>
       <p class="docs-page__desc">
         Vollständige Seitenzusammenstellung: Navigation + Hero + Spielplan-Vorschau +
-        Tabelle + Footer. Zeigt wie alle Komponenten zusammenspielen.
+        Team-Übersicht + 3 Ligatabellen (Herren 1, Herren 2, Damen) + Footer.
       </p>
     </header>
 
@@ -80,16 +130,17 @@ const standings = [
 
   <!-- VOLLSTÄNDIGE SEITEN-ZUSAMMENSETZUNG -->
   <div class="demo" style="margin: 0 2.5rem 3rem; border-radius:8px; overflow:hidden;">
-    <div class="demo__label">Startseite — vollständige Komposition</div>
+    <div class="demo__label">Startseite — vollständige Komposition mit Logo + Hero-Bild + 3 Tabellen</div>
 
     <div style="background:#f0f4f8;">
-      <!-- Navigation -->
-      <Navigation links={navLinks} currentTeam="Herren 1" />
+      <!-- Navigation mit Logo -->
+      <Navigation links={navLinks} logoSrc={logoSrc} />
 
-      <!-- Hero -->
+      <!-- Hero mit Hintergrundbild -->
       <Hero
         title="#OnTeam – Wir sind die Baskets!"
         subtitle="2. Regionalliga Süd · Saison 2024/25 · Neumarkt i.d. OPf."
+        backgroundImage={heroImage}
       >
         <Button variant="primary" href="#">Zum Spielplan</Button>
         <Button variant="ghost" href="#">Mitglied werden</Button>
@@ -100,7 +151,7 @@ const standings = [
         <h2 style="font-family:var(--fbnm-font-display,sans-serif); font-size:2rem; text-transform:uppercase; color:var(--fbnm-blue-800,#004174); margin:0 0 1.5rem;">
           Nächste Spiele
         </h2>
-        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem; margin-bottom:1rem;">
+        <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:1rem;">
           {upcomingGames.map(game => <GameCard {...game} />)}
         </div>
         <div style="text-align:center; margin-top:1.5rem;">
@@ -108,19 +159,40 @@ const standings = [
         </div>
       </section>
 
-      <!-- Tabelle -->
-      <section style="max-width:1280px; margin:0 auto; padding:0 1.5rem 4rem;">
-        <h2 style="font-family:var(--fbnm-font-display,sans-serif); font-size:2rem; text-transform:uppercase; color:var(--fbnm-blue-800,#004174); margin:0 0 1.5rem;">
-          Tabelle
+      <!-- Team-Übersicht -->
+      <section style="background:var(--fbnm-blue-900,#002751); padding:4rem 0;">
+        <div style="max-width:1280px; margin:0 auto; padding:0 1.5rem;">
+          <h2 style="font-family:var(--fbnm-font-display,sans-serif); font-size:2rem; text-transform:uppercase; color:var(--fbnm-white,#fff); margin:0 0 1.5rem;">
+            Unser Team
+          </h2>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1rem;">
+            {players.map(p => <PlayerCard {...p} />)}
+          </div>
+          <div style="text-align:center; margin-top:1.5rem;">
+            <Button variant="secondary" href="#">Alle Spieler →</Button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Tabellen (je eine pro Mannschaft) -->
+      <section style="max-width:1280px; margin:0 auto; padding:4rem 1.5rem;">
+        <h2 style="font-family:var(--fbnm-font-display,sans-serif); font-size:2rem; text-transform:uppercase; color:var(--fbnm-blue-800,#004174); margin:0 0 2rem;">
+          Aktuelle Tabellen
         </h2>
-        <StatsTable standings={standings} title="2. Regionalliga Süd" />
-        <div style="text-align:center; margin-top:1.5rem;">
-          <Button variant="ghost" href="#">Vollständige Tabelle →</Button>
+
+        <div style="display:grid; gap:2.5rem;">
+          <StatsTable standings={standingsHerren1} title="Herren 1" league="2. Regionalliga Süd" />
+          <StatsTable standings={standingsHerren2} title="Herren 2" league="Bezirksliga Oberpfalz" />
+          <StatsTable standings={standingsDamen} title="Damen" league="Bezirksliga Damen Nord" />
+        </div>
+
+        <div style="text-align:center; margin-top:2rem;">
+          <Button variant="ghost" href="#">Vollständige Tabellen →</Button>
         </div>
       </section>
 
       <!-- Footer -->
-      <Footer />
+      <Footer logoSrc={logoSrc} />
     </div>
   </div>
 

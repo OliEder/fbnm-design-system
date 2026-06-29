@@ -158,7 +158,8 @@ tbody tr:hover {
   white-space: nowrap;
 }
 
-.fbnm-statstable__fbnm-marker { color: var(--fbnm-cyan-500); font-size: 0.5rem; }
+/* WCAG 1.4.3: cyan-500 auf Weiß = 2.97:1 (FAIL) → blue-800 = 10.3:1 (AAA) */
+.fbnm-statstable__fbnm-marker { color: var(--fbnm-blue-800); font-size: 0.625rem; }
 
 .fbnm-statstable__pts-col {
   font-family: var(--fbnm-font-display);

@@ -1,0 +1,525 @@
+---
+export interface ScheduleGame {
+  uid: string
+  date: Date
+  time: string
+  homeTeam: string
+  awayTeam: string
+  location: string
+  competition: string
+  isHome: boolean
+  homeScore?: number
+  awayScore?: number
+}
+
+interface Props {
+  games: ScheduleGame[]
+  title?: string
+  ownTeam?: string
+  icsUrlAll?: string
+  icsUrlHome?: string
+  icsUrlAway?: string
+}
+
+const {
+  games,
+  title = 'Spielplan',
+  ownTeam = 'Fibalon Baskets',
+  icsUrlAll,
+  icsUrlHome,
+  icsUrlAway,
+} = Astro.props
+
+const now = new Date()
+
+const isPlayed = (g: ScheduleGame) =>
+  g.homeScore !== undefined && g.awayScore !== undefined
+
+function won(g: ScheduleGame): boolean | undefined {
+  if (!isPlayed(g)) return undefined
+  const ownIsHome = g.homeTeam.toLowerCase().includes(ownTeam.toLowerCase())
+  return ownIsHome ? g.homeScore! > g.awayScore! : g.awayScore! > g.homeScore!
+}
+
+const homeGames = games.filter(g => g.isHome)
+const awayGames = games.filter(g => !g.isHome)
+
+function formatDate(d: Date) {
+  return d.toLocaleDateString('de-DE', { weekday: 'short', day: '2-digit', month: '2-digit' })
+}
+
+function firstUpcomingIdx(list: ScheduleGame[]) {
+  return list.findIndex(g => !isPlayed(g) && g.date >= now)
+}
+
+/* Full title used (no slice) so instances with similar titles produce distinct IDs */
+const id = `gs-${title.replace(/[^a-zA-Z0-9]/g, '').toLowerCase() || 'schedule'}`
+
+const tabs: Array<{
+  key: string
+  label: string
+  list: ScheduleGame[]
+  icsUrl?: string
+}> = [
+  { key: 'all',  label: 'Alle',      list: games,     icsUrl: icsUrlAll  },
+  { key: 'home', label: 'Heim',      list: homeGames, icsUrl: icsUrlHome },
+  { key: 'away', label: 'Auswärts',  list: awayGames, icsUrl: icsUrlAway },
+]
+---
+
+<div class="fbnm-schedule" id={id}>
+  <header class="fbnm-schedule__header">
+    <h2 class="fbnm-schedule__title">{title}</h2>
+  </header>
+
+  <div class="fbnm-schedule__tabbar" role="tablist" aria-label={`${title} – Spieltyp filtern`}>
+    {tabs.map(({ key, label, list }, i) => (
+      <button
+        class:list={['fbnm-schedule__tab', i === 0 && 'fbnm-schedule__tab--active']}
+        role="tab"
+        aria-selected={i === 0 ? 'true' : 'false'}
+        aria-controls={`${id}-${key}`}
+        id={`${id}-tab-${key}`}
+      >
+        {label}<span class="fbnm-schedule__tab-count" aria-hidden="true"> {list.length}</span>
+      </button>
+    ))}
+  </div>
+
+  {tabs.map(({ key, list, icsUrl }, tabIdx) => {
+    const nextIdx = firstUpcomingIdx(list)
+    return (
+      <div
+        id={`${id}-${key}`}
+        role="tabpanel"
+        aria-labelledby={`${id}-tab-${key}`}
+        class:list={['fbnm-schedule__panel', tabIdx === 0 && 'fbnm-schedule__panel--active']}
+      >
+        {list.length === 0 && (
+          <p class="fbnm-schedule__empty">Keine Spiele in dieser Kategorie.</p>
+        )}
+
+        {list.map((g, rowIdx) => {
+          const played = isPlayed(g)
+          const isNext = rowIdx === nextIdx && nextIdx !== -1
+          const w = won(g)
+          const opp = g.isHome ? g.awayTeam : g.homeTeam
+          const score = played
+            ? `${g.homeScore}:${g.awayScore}`
+            : null
+
+          return (
+            <div class:list={[
+              'fbnm-schedule__row',
+              played && 'fbnm-schedule__row--past',
+              isNext  && 'fbnm-schedule__row--next',
+            ]}>
+              {isNext && (
+                <div class="fbnm-schedule__next-label" aria-hidden="true">
+                  Nächstes Spiel
+                </div>
+              )}
+              <div class="fbnm-schedule__row-inner">
+                {/* ── Badge ── */}
+                {played ? (
+                  <span
+                    class:list={[
+                      'fbnm-schedule__badge',
+                      w === true  && 'fbnm-schedule__badge--win',
+                      w === false && 'fbnm-schedule__badge--loss',
+                    ]}
+                    aria-label={w === true ? 'Sieg' : w === false ? 'Niederlage' : 'Unbekannt'}
+                  >
+                    {w === true ? 'S' : 'N'}
+                  </span>
+                ) : (
+                  <span
+                    class:list={[
+                      'fbnm-schedule__badge',
+                      g.isHome ? 'fbnm-schedule__badge--home' : 'fbnm-schedule__badge--away',
+                    ]}
+                    aria-label={g.isHome ? 'Heimspiel' : 'Auswärtsspiel'}
+                  >
+                    {g.isHome ? 'H' : 'A'}
+                  </span>
+                )}
+
+                {/* ── Info (date, time, opponent, competition) ── */}
+                <div class="fbnm-schedule__info">
+                  <div class="fbnm-schedule__info-row1">
+                    <span class="fbnm-schedule__date">{formatDate(g.date)}</span>
+                    {!played && (
+                      <span class="fbnm-schedule__time">{g.time} Uhr</span>
+                    )}
+                    <span class="fbnm-schedule__opponent">
+                      {g.isHome ? 'vs.' : '@'} {opp}
+                    </span>
+                  </div>
+                  <div class="fbnm-schedule__competition">{g.competition}</div>
+                </div>
+
+                {/* ── Result or venue ── */}
+                <div class="fbnm-schedule__result">
+                  {played ? (
+                    <span class:list={[
+                      'fbnm-schedule__score',
+                      w === true  && 'fbnm-schedule__score--win',
+                      w === false && 'fbnm-schedule__score--loss',
+                    ]}>
+                      {score}
+                    </span>
+                  ) : (
+                    <span class="fbnm-schedule__venue">{g.location}</span>
+                  )}
+                </div>
+              </div>
+            </div>
+          )
+        })}
+
+        {/* ── Calendar subscription ── */}
+        {icsUrl && (() => {
+          const webcalUrl = icsUrl.replace(/^https?:\/\//, 'webcal://')
+          const googleUrl = `https://www.google.com/calendar/render?cid=${encodeURIComponent(webcalUrl)}`
+          return (
+            <div class="fbnm-schedule__cal">
+              <h3 class="fbnm-schedule__cal-heading">Kalender abonnieren</h3>
+              <div class="fbnm-schedule__cal-btns">
+                <a href={webcalUrl} class="fbnm-schedule__cal-btn">
+                  iOS / macOS
+                </a>
+                <a href={googleUrl} class="fbnm-schedule__cal-btn" rel="noopener noreferrer" target="_blank">
+                  Google Calendar
+                </a>
+                <a href={icsUrl} download class="fbnm-schedule__cal-btn">
+                  ICS herunterladen
+                </a>
+                <button
+                  type="button"
+                  class="fbnm-schedule__cal-btn fbnm-schedule__cal-copy"
+                  data-url={icsUrl}
+                >
+                  Link kopieren
+                </button>
+              </div>
+            </div>
+          )
+        })()}
+      </div>
+    )
+  })}
+</div>
+
+<script>
+document.querySelectorAll<HTMLElement>('.fbnm-schedule').forEach(schedule => {
+  const tabs   = Array.from(schedule.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
+  const panels = Array.from(schedule.querySelectorAll<HTMLElement>('[role="tabpanel"]'))
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      const targetId = tab.getAttribute('aria-controls')!
+      tabs.forEach(t => {
+        t.setAttribute('aria-selected', 'false')
+        t.classList.remove('fbnm-schedule__tab--active')
+      })
+      panels.forEach(p => p.classList.remove('fbnm-schedule__panel--active'))
+      tab.setAttribute('aria-selected', 'true')
+      tab.classList.add('fbnm-schedule__tab--active')
+      panels.find(p => p.id === targetId)?.classList.add('fbnm-schedule__panel--active')
+    })
+  })
+})
+
+document.querySelectorAll<HTMLButtonElement>('.fbnm-schedule__cal-copy').forEach(btn => {
+  btn.addEventListener('click', async () => {
+    const url = btn.dataset.url!
+    try {
+      await navigator.clipboard.writeText(url)
+      const orig = btn.textContent!
+      btn.textContent = '✓ Kopiert!'
+      setTimeout(() => { btn.textContent = orig }, 2000)
+    } catch {
+      /* clipboard not available — silently ignore */
+    }
+  })
+})
+</script>
+
+<style>
+.fbnm-schedule {
+  background: var(--fbnm-white);
+  border-radius: var(--fbnm-radius-md);
+  overflow: hidden;
+  box-shadow: var(--fbnm-shadow-sm);
+}
+
+/* ── Header ── */
+.fbnm-schedule__header {
+  background: var(--fbnm-blue-800);
+  color: var(--fbnm-white);
+  padding: var(--fbnm-space-4) var(--fbnm-space-6);
+}
+
+.fbnm-schedule__title {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xl);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ── Tab bar ── */
+.fbnm-schedule__tabbar {
+  display: flex;
+  border-bottom: 2px solid var(--fbnm-color-border);
+  background: color-mix(in srgb, var(--fbnm-blue-900) 3%, var(--fbnm-white));
+}
+
+.fbnm-schedule__tab {
+  flex: 1;
+  padding: var(--fbnm-space-3) var(--fbnm-space-2);
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  cursor: pointer;
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-sm);
+  font-weight: 600;
+  color: var(--fbnm-color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  transition: color 0.15s, border-color 0.15s;
+  /* WCAG 2.5.8: ≥44px touch target */
+  min-height: 44px;
+}
+
+.fbnm-schedule__tab:hover { color: var(--fbnm-blue-800); }
+
+/* WCAG 1.4.1: active tab uses border-bottom indicator + color change */
+.fbnm-schedule__tab--active {
+  color: var(--fbnm-blue-800);
+  border-bottom-color: var(--fbnm-blue-800);
+}
+
+.fbnm-schedule__tab:focus-visible {
+  outline: 3px solid var(--fbnm-cyan-500);
+  outline-offset: -3px;
+  border-radius: 2px;
+}
+
+.fbnm-schedule__tab-count {
+  font-weight: 400;
+  /* no opacity — any opacity over the tinted tabbar bg fails WCAG 1.4.3 */
+}
+
+/* ── Panels ── */
+.fbnm-schedule__panel { display: none; }
+.fbnm-schedule__panel--active { display: block; }
+
+.fbnm-schedule__empty {
+  padding: var(--fbnm-space-8) var(--fbnm-space-6);
+  text-align: center;
+  color: var(--fbnm-color-text-muted);
+  font-size: var(--fbnm-text-sm);
+}
+
+/* ── Schedule rows ── */
+.fbnm-schedule__row {
+  border-bottom: 1px solid var(--fbnm-color-border);
+  transition: background-color 0.1s;
+}
+
+.fbnm-schedule__row:last-of-type { border-bottom: none; }
+
+/* WCAG 1.4.3: past rows use explicit per-property colors — no bg tint.
+   #767676 on white (#ffffff) = 4.59:1 AA. A tinted bg would lower this below 4.5:1. */
+.fbnm-schedule__row--past .fbnm-schedule__date,
+.fbnm-schedule__row--past .fbnm-schedule__time,
+.fbnm-schedule__row--past .fbnm-schedule__competition {
+  color: #767676;
+}
+/* Lighter font weight signals "history" without breaking contrast */
+.fbnm-schedule__row--past .fbnm-schedule__opponent { font-weight: 400; }
+
+/* WCAG 1.4.1: next game uses background + "Nächstes Spiel" label — not color alone */
+.fbnm-schedule__row--next {
+  background: color-mix(in srgb, var(--fbnm-cyan-500) 8%, var(--fbnm-white));
+}
+
+.fbnm-schedule__next-label {
+  padding: var(--fbnm-space-2) var(--fbnm-space-4) 0;
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  /* WCAG 1.4.3: blue-800 on cyan-tinted white = ~10:1 AAA */
+  color: var(--fbnm-blue-800);
+}
+
+.fbnm-schedule__row-inner {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  align-items: center;
+  gap: var(--fbnm-space-3);
+  padding: var(--fbnm-space-3) var(--fbnm-space-4);
+}
+
+/* ── Badge ── */
+.fbnm-schedule__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.875rem;
+  height: 1.875rem;
+  border-radius: 50%;
+  font-family: var(--fbnm-font-caption);
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  flex-shrink: 0;
+}
+
+/* WCAG 1.4.3: all badge text is small → requires ≥7:1 AAA */
+/* white on blue-800 (#004174) = 10.3:1 AAA */
+.fbnm-schedule__badge--home { background: var(--fbnm-blue-800); color: var(--fbnm-white); }
+/* white on #494949 = 7.84:1 AAA */
+.fbnm-schedule__badge--away { background: #494949;              color: var(--fbnm-white); }
+/* white on #14532d = 8.14:1 AAA */
+.fbnm-schedule__badge--win  { background: #14532d;              color: var(--fbnm-white); }
+/* white on #991b1b = 7.66:1 AAA */
+.fbnm-schedule__badge--loss { background: #991b1b;              color: var(--fbnm-white); }
+
+/* ── Info column ── */
+.fbnm-schedule__info { min-width: 0; }
+
+.fbnm-schedule__info-row1 {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--fbnm-space-1) var(--fbnm-space-2);
+}
+
+.fbnm-schedule__date {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 600;
+  color: var(--fbnm-color-text-muted);
+  white-space: nowrap;
+}
+
+.fbnm-schedule__time {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-color-text-muted);
+  white-space: nowrap;
+}
+
+.fbnm-schedule__opponent {
+  font-size: var(--fbnm-text-sm);
+  font-weight: 600;
+  color: var(--fbnm-color-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fbnm-schedule__row--next .fbnm-schedule__opponent { font-weight: 700; }
+
+.fbnm-schedule__competition {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-color-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Result / venue column ── */
+.fbnm-schedule__result { text-align: right; min-width: 0; }
+
+.fbnm-schedule__score {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-base);
+  font-weight: 700;
+  color: var(--fbnm-color-text-muted);
+  white-space: nowrap;
+}
+
+/* WCAG 1.4.3: #14532d on white = 8.14:1 AAA; #991b1b on white = 7.66:1 AAA */
+.fbnm-schedule__score--win  { color: #14532d; }
+.fbnm-schedule__score--loss { color: #991b1b; }
+
+.fbnm-schedule__venue {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-color-text-muted);
+  max-width: 9rem;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Calendar subscription ── */
+.fbnm-schedule__cal {
+  border-top: 2px solid var(--fbnm-color-border);
+  padding: var(--fbnm-space-5) var(--fbnm-space-6);
+  background: color-mix(in srgb, var(--fbnm-blue-900) 4%, var(--fbnm-white));
+}
+
+.fbnm-schedule__cal-heading {
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  /* WCAG 1.4.3: blue-800 on near-white bg = ~10:1 AAA */
+  color: var(--fbnm-blue-800);
+  margin: 0 0 var(--fbnm-space-3);
+}
+
+.fbnm-schedule__cal-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--fbnm-space-2);
+}
+
+/* WCAG 1.4.3: blue-800 on white = 10.3:1 AAA */
+.fbnm-schedule__cal-btn {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--fbnm-space-2) var(--fbnm-space-4);
+  border: 1.5px solid var(--fbnm-blue-800);
+  border-radius: var(--fbnm-radius-sm);
+  background: none;
+  color: var(--fbnm-blue-800);
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+  /* WCAG 2.5.8: ≥44px touch target */
+  min-height: 44px;
+}
+
+.fbnm-schedule__cal-btn:hover {
+  background: var(--fbnm-blue-800);
+  color: var(--fbnm-white);
+}
+
+.fbnm-schedule__cal-btn:focus-visible {
+  outline: 3px solid var(--fbnm-cyan-500);
+  outline-offset: 2px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 480px) {
+  .fbnm-schedule__venue { max-width: 6rem; }
+  .fbnm-schedule__row-inner { gap: var(--fbnm-space-2); padding: var(--fbnm-space-2) var(--fbnm-space-3); }
+  .fbnm-schedule__cal { padding: var(--fbnm-space-4); }
+  .fbnm-schedule__cal-btns { flex-direction: column; }
+  .fbnm-schedule__cal-btn { justify-content: center; }
+}
+</style>

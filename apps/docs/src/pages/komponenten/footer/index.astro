@@ -1,6 +1,9 @@
 ---
 import DocsLayout from '../../../layouts/DocsLayout.astro'
 import Footer from '@ds/components/Footer/Footer.astro'
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const logoSrc = `${base}/images/logo.svg`
 ---
 
 <DocsLayout title="Footer">
@@ -28,7 +31,7 @@ import Footer from '@ds/components/Footer/Footer.astro'
     <div class="demo">
       <div class="demo__label">Footer (vollständig)</div>
       <div class="demo__canvas demo__canvas--full">
-        <Footer />
+        <Footer logoSrc={logoSrc} />
       </div>
     </div>
 

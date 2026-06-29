@@ -2,10 +2,16 @@
 interface NavItem {
   label: string
   href: string
+  active?: boolean
 }
 
 interface Props {
+  /** Nav items to display. Also accepts `links` for backwards-compat with docs pages. */
   items?: NavItem[]
+  links?: NavItem[]
+  /** Logo image src. Use BASE_URL prefix for GitHub Pages. Defaults to /images/logo.svg.
+   *  Production: https://www.basketball-bund.net/media/team/{teamId}/logo */
+  logoSrc?: string
 }
 
 const defaultItems: NavItem[] = [
@@ -19,23 +25,24 @@ const defaultItems: NavItem[] = [
   { label: 'Kontakt', href: '/kontakt/' },
 ]
 
-const { items = defaultItems } = Astro.props
+const { items, links, logoSrc = '/images/logo.svg' } = Astro.props
+const navItems = links ?? items ?? defaultItems
 const currentPath = Astro.url?.pathname ?? '/'
 ---
 
 <header class="fbnm-nav">
   <div class="fbnm-nav__inner">
     <a href="/" class="fbnm-nav__logo" aria-label="FBNM Startseite">
-      <img src="/images/logo.svg" alt="Fibalon Baskets Neumarkt" width="120" height="48" />
+      <img src={logoSrc} alt="Fibalon Baskets Neumarkt" width="120" height="48" />
     </a>
 
     <nav class="fbnm-nav__links" id="fbnm-nav-links" aria-label="Hauptnavigation">
-      {items.map(item => (
+      {navItems.map(item => (
         <a
           href={item.href}
           class:list={[
             'fbnm-nav__link',
-            { 'fbnm-nav__link--active': (currentPath === '/' && item.href === '/') || (item.href !== '/' && currentPath.startsWith(item.href)) }
+            { 'fbnm-nav__link--active': item.active || (currentPath === '/' && item.href === '/') || (item.href !== '/' && currentPath.startsWith(item.href)) }
           ]}
           aria-current={(currentPath === item.href) ? 'page' : undefined}
         >

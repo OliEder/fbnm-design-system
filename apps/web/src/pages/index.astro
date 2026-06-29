@@ -1,9 +1,9 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro'
-import Hero from '../../../packages/design-system/src/components/Hero/Hero.astro'
-import Button from '../../../packages/design-system/src/components/Button/Button.astro'
-import GameCard from '../../../packages/design-system/src/components/GameCard/GameCard.astro'
-import { fetchGamesFromIcal, getUpcomingGames, getPastGames } from '../../../packages/design-system/src/lib/bbb-ical'
+import Hero from '@ds/components/Hero/Hero.astro'
+import Button from '@ds/components/Button/Button.astro'
+import GameCard from '@ds/components/GameCard/GameCard.astro'
+import { fetchGamesFromIcal, getUpcomingGames, getPastGames } from '@ds/lib/bbb-ical'
 
 const herrenUrl = import.meta.env.ICAL_URL_HERREN
 const damenUrl = import.meta.env.ICAL_URL_DAMEN

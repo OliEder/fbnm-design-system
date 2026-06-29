@@ -2,6 +2,10 @@
 import DocsLayout from '../../../layouts/DocsLayout.astro'
 import Hero from '@ds/components/Hero/Hero.astro'
 import Button from '@ds/components/Button/Button.astro'
+
+const base        = import.meta.env.BASE_URL.replace(/\/$/, '')
+const heroImage   = `${base}/images/hero-action.jpg`
+const trainingImg = `${base}/images/training.jpg`
 ---
 
 <DocsLayout title="Hero">
@@ -23,6 +27,36 @@ import Button from '@ds/components/Button/Button.astro'
         Cyan-Akzentlinie unten: dekorativ, kein Text ·
         Gradient-Overlay sichert Lesbarkeit auch mit Hintergrundbild.
       </span>
+    </div>
+
+    <h2 class="docs-heading">Spieltagsfoto (Action-Shot)</h2>
+    <div class="demo">
+      <div class="demo__label">backgroundImage — echtes FBNM Spielfoto</div>
+      <div class="demo__canvas demo__canvas--full">
+        <Hero
+          title="#OnTeam – Wir sind die Baskets!"
+          subtitle="2. Regionalliga Süd · Saison 2024/25 · Neumarkt i.d. OPf."
+          backgroundImage={heroImage}
+        >
+          <Button variant="primary" href="#">Zum Spielplan</Button>
+          <Button variant="ghost" href="#">Mitglied werden</Button>
+        </Hero>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Trainingsfoto</h2>
+    <div class="demo">
+      <div class="demo__label">backgroundImage — Neumarkt Basketball Training</div>
+      <div class="demo__canvas demo__canvas--full">
+        <Hero
+          title="Nachwuchs Neumarkt"
+          subtitle="Unsere Jugend – die Zukunft der Fibalon Baskets"
+          backgroundImage={trainingImg}
+        >
+          <Button variant="primary" href="#">Mitmachen</Button>
+          <Button variant="ghost" href="#">Mehr erfahren</Button>
+        </Hero>
+      </div>
     </div>
 
     <h2 class="docs-heading">Standard (ohne Bild)</h2>
@@ -59,7 +93,7 @@ import Button from '@fbnm/design-system/components/Button/Button.astro'
 <Hero
   title="Willkommen bei den Baskets"
   subtitle="2. Regionalliga Süd · Saison 2024/25"
-  backgroundImage="/images/arena.jpg"
+  backgroundImage="/images/hero-action.jpg"
 >
   <Button variant="primary" href="/spielplan/">Spielplan</Button>
   <Button variant="ghost"   href="/team/">Unser Team</Button>
