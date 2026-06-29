@@ -215,11 +215,14 @@ const teamGroups = mega
               border-color var(--fbnm-transition-fast);
 }
 
-/* Button-Variante (Mega-Trigger) teilt das Aussehen mit den <a>-Links */
+/* Button-Variante (Mega-Trigger) teilt das Aussehen mit den <a>-Links.
+   WICHTIG: <button> bringt einen UA-Default-Hintergrund (#efefef) mit —
+   muss zurückgesetzt werden, sonst failt der weiße Text den Kontrast. */
 .fbnm-nav__link--mega {
   display: inline-flex;
   align-items: center;
   gap: var(--fbnm-space-1);
+  background: transparent;
   border-top: none;
   border-left: none;
   border-right: none;
@@ -506,8 +509,17 @@ if (megaTrigger && megaPanel && megaHeader) {
   }
   const isOpen = (): boolean => !megaPanel.hidden
 
-  megaTrigger.addEventListener('click', () => setMega(!isOpen()))
-  megaTrigger.addEventListener('mouseenter', () => setMega(true))
+  // Hover öffnet (Desktop-Affordanz). Merke den Zeitpunkt, damit der direkt
+  // folgende click (echte Maus feuert mouseenter→click) das Menü nicht sofort
+  // wieder schließt. Per Tastatur/Touch (kein mouseenter) bleibt click ein Toggle.
+  let lastHoverOpen = 0
+  megaTrigger.addEventListener('mouseenter', () => {
+    if (!isOpen()) { setMega(true); lastHoverOpen = performance.now() }
+  })
+  megaTrigger.addEventListener('click', () => {
+    if (isOpen() && performance.now() - lastHoverOpen < 500) return // gerade per Hover geöffnet
+    setMega(!isOpen())
+  })
   megaHeader.addEventListener('mouseleave', () => setMega(false))
 
   // Escape schließt und gibt Fokus zurück

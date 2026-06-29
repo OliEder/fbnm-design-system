@@ -345,6 +345,134 @@ test.describe('WCAG 2.2 Komponenten-Checks', () => {
     await expect(schedule1.getByRole('tab', { name: /Alle/i })).toHaveAttribute('aria-selected', 'true')
   })
 
+  // ── Mega-Menü (Navigation) ───────────────────────────────────────────────
+  test('Mega-Menü: Trigger hat aria-haspopup, aria-expanded, aria-controls (WCAG 4.1.2)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Mega-Trigger im Hamburger-Flow auf Mobile')
+    await page.goto(`${BASE}/seiten/uebersicht/`)
+    const trigger = page.locator('[data-mega-trigger]').first()
+    await expect(trigger).toBeVisible()
+    await expect(trigger).toHaveAttribute('aria-haspopup', 'true')
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    await expect(trigger).toHaveAttribute('aria-controls')
+  })
+
+  test('Mega-Menü: Klick öffnet Panel und setzt aria-expanded=true (WCAG 4.1.3)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Mega-Trigger im Hamburger-Flow auf Mobile')
+    await page.goto(`${BASE}/seiten/uebersicht/`)
+    const trigger = page.locator('[data-mega-trigger]').first()
+    const panel = page.locator('[data-mega-panel]').first()
+
+    await expect(panel).toBeHidden()
+    await trigger.click()
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    await expect(panel).toBeVisible()
+  })
+
+  test('Mega-Menü: Escape schließt und gibt Fokus an den Trigger zurück (WCAG 2.1.2)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Mega-Trigger im Hamburger-Flow auf Mobile')
+    await page.goto(`${BASE}/seiten/uebersicht/`)
+    const trigger = page.locator('[data-mega-trigger]').first()
+    const panel = page.locator('[data-mega-panel]').first()
+
+    await trigger.click()
+    await expect(panel).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(panel).toBeHidden()
+    await expect(trigger).toBeFocused()
+  })
+
+  test('Mega-Menü: Panel hat role=region mit aria-label (WCAG 1.3.1)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Mega-Trigger im Hamburger-Flow auf Mobile')
+    await page.goto(`${BASE}/seiten/uebersicht/`)
+    const panel = page.locator('[data-mega-panel]').first()
+    await expect(panel).toHaveAttribute('role', 'region')
+    await expect(panel).toHaveAttribute('aria-label')
+  })
+
+  // ── Subnav (Mannschaften-Switcher) ──────────────────────────────────────
+  test('Subnav: <nav> mit aria-label und aktivem Unterstrich (WCAG 1.3.1 + 1.4.1)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const subnav = page.locator('.fbnm-subnav').first()
+    await expect(subnav).toBeVisible()
+    await expect(subnav).toHaveAttribute('aria-label')
+
+    const active = page.locator('.fbnm-subnav__item--active').first()
+    await expect(active).toBeVisible()
+    const borderWidth = await active.evaluate(el => parseFloat(getComputedStyle(el).borderBottomWidth))
+    expect(borderWidth, 'Aktives Subnav-Item braucht border-bottom ≥3px').toBeGreaterThanOrEqual(3)
+  })
+
+  test('Subnav: aktives Item hat aria-current=page (WCAG 4.1.2)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const active = page.locator('.fbnm-subnav__item--active').first()
+    await expect(active).toHaveAttribute('aria-current', 'page')
+  })
+
+  // ── MatchStats (reiche Spieltag-Statistik) ──────────────────────────────
+  test('MatchStats: Tabs mit role=tab und aria-controls (WCAG 4.1.2)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const tablist = page.locator('.fbnm-matchstats [role="tablist"]').first()
+    await expect(tablist).toBeVisible()
+
+    const tabs = tablist.locator('[role="tab"]')
+    const count = await tabs.count()
+    expect(count, 'MatchStats erwartet ≥2 Tabs').toBeGreaterThanOrEqual(2)
+
+    for (let i = 0; i < count; i++) {
+      await expect(tabs.nth(i)).toHaveAttribute('aria-controls')
+      await expect(tabs.nth(i)).toHaveAttribute('aria-selected')
+    }
+    await expect(tabs.nth(0)).toHaveAttribute('aria-selected', 'true')
+  })
+
+  test('MatchStats: Tab-Klick schaltet Panel um (WCAG 4.1.3)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const stats = page.locator('.fbnm-matchstats').first()
+    const tabs = stats.locator('[role="tab"]')
+
+    const firstPanelId = await tabs.nth(0).getAttribute('aria-controls')
+    const secondPanelId = await tabs.nth(1).getAttribute('aria-controls')
+
+    await expect(stats.locator(`#${firstPanelId}`)).toBeVisible()
+    await tabs.nth(1).click()
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
+    await expect(stats.locator(`#${secondPanelId}`)).toBeVisible()
+    await expect(stats.locator(`#${firstPanelId}`)).toBeHidden()
+  })
+
+  test('MatchStats: Pfeiltasten navigieren zwischen Tabs (WCAG 2.1.1 — WAI-ARIA Tabs)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const tabs = page.locator('.fbnm-matchstats [role="tab"]')
+    await tabs.nth(0).focus()
+    await expect(tabs.nth(0)).toBeFocused()
+
+    await page.keyboard.press('ArrowRight')
+    await expect(tabs.nth(1)).toBeFocused()
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
+  })
+
+  test('MatchStats: Tabs ≥44px Touch-Target (WCAG 2.5.8)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const tabs = page.locator('.fbnm-matchstats [role="tab"]')
+    const count = await tabs.count()
+    for (let i = 0; i < count; i++) {
+      const box = await tabs.nth(i).boundingBox()
+      if (!box) continue
+      expect(box.height, `MatchStats-Tab ${i + 1}: Höhe ${box.height.toFixed(1)}px < 44px`).toBeGreaterThanOrEqual(44)
+    }
+  })
+
+  test('MatchStats: "bester Liga-Rang" hat sr-only-Hinweis (WCAG 1.4.1 — nicht nur Farbe)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const stats = page.locator('.fbnm-matchstats').first()
+    // Saison-Tab öffnen
+    await stats.getByRole('tab', { name: /Saison/i }).click()
+    const best = stats.locator('.fbnm-matchstats__rank--best').first()
+    await expect(best).toBeVisible()
+    const srOnly = best.locator('.sr-only')
+    await expect(srOnly, 'Bester Rang braucht sr-only-Hinweis').toBeAttached()
+  })
+
   // ── Docs-Sidebar Kontrast ────────────────────────────────────────────────
   test('Sidebar-Gruppen-Labels erfüllen WCAG AA Kontrast (≥4.5:1)', async ({ page }) => {
     await page.goto(`${BASE}/`)

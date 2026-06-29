@@ -260,8 +260,9 @@ const tabs = [
   font-family: var(--fbnm-font-display);
   font-size: var(--fbnm-text-lg);
 }
-/* 18px display = large text; cyan-400 auf blue-800 = 3.2:1 (AA large). Marken-Akzent. */
-.fbnm-matchstats__head-result { color: var(--fbnm-cyan-400); }
+/* WCAG 1.4.3: 18px/normal zählt NICHT als large text → 4.5:1 nötig.
+   cyan-400 auf blue-800 = 3.89:1 (FAIL). Score in weiß = 10.3:1 AAA. */
+.fbnm-matchstats__head-result { color: var(--fbnm-white); font-weight: 700; }
 .fbnm-matchstats__head-opp { color: color-mix(in srgb, var(--fbnm-white) 75%, transparent); }
 
 .fbnm-matchstats__tabs {
