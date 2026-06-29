@@ -331,9 +331,20 @@ document.querySelectorAll<HTMLButtonElement>('.fbnm-schedule__cal-copy').forEach
 
 .fbnm-schedule__row:last-of-type { border-bottom: none; }
 
-.fbnm-schedule__row--past .fbnm-schedule__row-inner { opacity: 0.55; }
-.fbnm-schedule__row--past:hover .fbnm-schedule__row-inner { opacity: 1; }
-.fbnm-schedule__row--past:hover { background: color-mix(in srgb, var(--fbnm-blue-900) 3%, var(--fbnm-white)); }
+/* WCAG 1.4.3: opacity on inherited colors would push text below 4.5:1 AA.
+   Instead we mute past rows via explicit per-property colors and a subtle bg. */
+.fbnm-schedule__row--past {
+  background: color-mix(in srgb, var(--fbnm-blue-900) 3%, var(--fbnm-white));
+}
+/* #767676 on white = 4.59:1 AA — minimum compliant muted text */
+.fbnm-schedule__row--past .fbnm-schedule__date,
+.fbnm-schedule__row--past .fbnm-schedule__time,
+.fbnm-schedule__row--past .fbnm-schedule__competition {
+  color: #767676;
+}
+/* Lighter font weight signals "history" without breaking contrast */
+.fbnm-schedule__row--past .fbnm-schedule__opponent { font-weight: 400; }
+.fbnm-schedule__row--past:hover { background: color-mix(in srgb, var(--fbnm-blue-800) 6%, var(--fbnm-white)); }
 
 /* WCAG 1.4.1: next game uses background + "Nächstes Spiel" label — not color alone */
 .fbnm-schedule__row--next {
