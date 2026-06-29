@@ -2,7 +2,8 @@
 import DocsLayout from '../../../layouts/DocsLayout.astro'
 import Navigation from '@ds/components/Navigation/Navigation.astro'
 
-const logoSrc = (import.meta.env.BASE_URL ?? '/') + 'images/logo.svg'
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const logoSrc = `${base}/images/logo.svg`
 
 const links = [
   { label: 'Startseite', href: '#' },

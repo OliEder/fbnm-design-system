@@ -8,8 +8,9 @@ import PlayerCard from '@ds/components/PlayerCard/PlayerCard.astro'
 import StatsTable from '@ds/components/StatsTable/StatsTable.astro'
 import Footer from '@ds/components/Footer/Footer.astro'
 
-const logoSrc   = (import.meta.env.BASE_URL ?? '/') + 'images/logo.svg'
-const heroImage = (import.meta.env.BASE_URL ?? '/') + 'images/hero-action.jpg'
+const base      = import.meta.env.BASE_URL.replace(/\/$/, '')
+const logoSrc   = `${base}/images/logo.svg`
+const heroImage = `${base}/images/hero-action.jpg`
 
 const navLinks = [
   { label: 'Startseite', href: '#', active: true },
@@ -168,7 +169,7 @@ const standingsDamen = [
             {players.map(p => <PlayerCard {...p} />)}
           </div>
           <div style="text-align:center; margin-top:1.5rem;">
-            <Button variant="ghost" href="#">Alle Spieler →</Button>
+            <Button variant="secondary" href="#">Alle Spieler →</Button>
           </div>
         </div>
       </section>
@@ -191,7 +192,7 @@ const standingsDamen = [
       </section>
 
       <!-- Footer -->
-      <Footer />
+      <Footer logoSrc={logoSrc} />
     </div>
   </div>
 

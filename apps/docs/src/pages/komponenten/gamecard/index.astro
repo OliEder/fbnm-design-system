@@ -39,6 +39,26 @@ const result = {
   isHome: false,
   href: '#',
 }
+
+const codeSnippet = `---
+import GameCard from '@fbnm/design-system/components/GameCard/GameCard.astro'
+
+// Daten kommen aus Basketball-Bund iCal-Feed (bbb-ical.ts)
+const games = await fetchGamesFromIcal(process.env.ICAL_URL_HERREN)
+---
+
+{games.map(game => (
+  <GameCard
+    homeTeam={game.homeTeam}
+    awayTeam={game.awayTeam}
+    date={game.date}
+    time={game.time}
+    location={game.location}
+    competition={game.competition}
+    isHome={game.isHome}
+    href={\`/spieltag/\${game.id}/\`}
+  />
+))}`
 ---
 
 <DocsLayout title="GameCard">
@@ -89,25 +109,7 @@ const result = {
 
     <h2 class="docs-heading">Verwendung</h2>
     <div class="code-block">
-      <pre set:text={`---
-import GameCard from '@fbnm/design-system/components/GameCard/GameCard.astro'
-
-// Daten kommen aus Basketball-Bund iCal-Feed (bbb-ical.ts)
-const games = await fetchGamesFromIcal(process.env.ICAL_URL_HERREN)
----
-
-{games.map(game => (
-  <GameCard
-    homeTeam={game.homeTeam}
-    awayTeam={game.awayTeam}
-    date={game.date}
-    time={game.time}
-    location={game.location}
-    competition={game.competition}
-    isHome={game.isHome}
-    href={\`/spieltag/\${game.id}/\`}
-  />
-))}`} />
+      <pre set:text={codeSnippet} />
     </div>
 
     <h2 class="docs-heading">Props</h2>

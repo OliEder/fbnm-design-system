@@ -1,11 +1,16 @@
 ---
+interface Props {
+  logoSrc?: string
+}
+
+const { logoSrc = '/images/logo.svg' } = Astro.props
 const currentYear = new Date().getFullYear()
 ---
 
 <footer class="fbnm-footer">
   <div class="fbnm-footer__inner">
     <div class="fbnm-footer__brand">
-      <img src="/images/logo.svg" alt="Fibalon Baskets Neumarkt" width="100" height="40" />
+      <img src={logoSrc} alt="Fibalon Baskets Neumarkt" width="100" height="40" />
       <p class="fbnm-footer__tagline">#ONETEAM</p>
     </div>
 
