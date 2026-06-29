@@ -101,21 +101,50 @@ test.describe('WCAG 2.2 Komponenten-Checks', () => {
     await expect(nav).toBeVisible()
   })
 
-  // ── WCAG 1.4.3: Farbkontrast Schlüssel-Elemente ─────────────────────────
-  test('Hero-Titel ist weiß (21:1 auf Dunkelblau-Overlay)', async ({ page }) => {
+  // ── WCAG 1.4.3: Farbkontrast — alle Hero-Varianten ─────────────────────
+  // Die Hero-Seite zeigt 4 Varianten: Action-Shot, Trainingsfoto, Standard, Kurze Version.
+  // Alle Titel und Untertitel müssen weiß sein (21:1 AAA auf dem Dunkelblau-Overlay).
+  test('Alle Hero-Varianten: Titel ist weiß (WCAG 1.4.3 AAA)', async ({ page }) => {
     await page.goto(`${BASE}/komponenten/hero/`)
-    const title = page.locator('.fbnm-hero__title').first()
-    await expect(title).toBeVisible()
-    const color = await title.evaluate(el => getComputedStyle(el).color)
-    expect(color, 'Hero-Titel sollte weiß sein').toBe('rgb(255, 255, 255)')
+    const titles = page.locator('.fbnm-hero__title')
+    const count = await titles.count()
+    expect(count, 'Erwartet mindestens 4 Hero-Varianten auf der Seite').toBeGreaterThanOrEqual(4)
+
+    for (let i = 0; i < count; i++) {
+      await expect(titles.nth(i)).toBeVisible()
+      const color = await titles.nth(i).evaluate(el => getComputedStyle(el).color)
+      expect(color, `Hero-Titel #${i + 1} sollte weiß sein`).toBe('rgb(255, 255, 255)')
+    }
   })
 
-  test('Hero-Untertitel ist weiß (mindestens ~18:1)', async ({ page }) => {
+  test('Alle Hero-Varianten mit Untertitel: Untertitel ist weiß (WCAG 1.4.3 AAA)', async ({ page }) => {
     await page.goto(`${BASE}/komponenten/hero/`)
-    const subtitle = page.locator('.fbnm-hero__subtitle').first()
-    await expect(subtitle).toBeVisible()
-    const color = await subtitle.evaluate(el => getComputedStyle(el).color)
-    expect(color, 'Hero-Untertitel sollte weiß sein').toBe('rgb(255, 255, 255)')
+    const subtitles = page.locator('.fbnm-hero__subtitle')
+    const count = await subtitles.count()
+    // 3 von 4 Varianten haben einen Untertitel (Kurze Version hat keinen)
+    expect(count, 'Erwartet mindestens 3 Hero-Untertitel auf der Seite').toBeGreaterThanOrEqual(3)
+
+    for (let i = 0; i < count; i++) {
+      await expect(subtitles.nth(i)).toBeVisible()
+      const color = await subtitles.nth(i).evaluate(el => getComputedStyle(el).color)
+      expect(color, `Hero-Untertitel #${i + 1} sollte weiß sein`).toBe('rgb(255, 255, 255)')
+    }
+  })
+
+  test('Ghost-Buttons im Hero haben weißen Text und Border (WCAG 1.4.3 AAA)', async ({ page }) => {
+    // Ghost-Button (blue-800 Text auf blue-900 Bg) = 1.43:1 → FAIL ohne Override.
+    // Hero.astro setzt :global(.fbnm-hero .fbnm-btn--ghost) auf weiß (21:1 AAA).
+    await page.goto(`${BASE}/komponenten/hero/`)
+    const ghostBtns = page.locator('.fbnm-hero .fbnm-btn--ghost')
+    const count = await ghostBtns.count()
+    expect(count, 'Erwartet Ghost-Buttons innerhalb von Hero-Varianten').toBeGreaterThan(0)
+
+    for (let i = 0; i < count; i++) {
+      const color = await ghostBtns.nth(i).evaluate(el => getComputedStyle(el).color)
+      expect(color, `Ghost-Button #${i + 1} im Hero: Text sollte weiß sein`).toBe('rgb(255, 255, 255)')
+      const borderColor = await ghostBtns.nth(i).evaluate(el => getComputedStyle(el).borderTopColor)
+      expect(borderColor, `Ghost-Button #${i + 1} im Hero: Border sollte weiß sein`).toBe('rgb(255, 255, 255)')
+    }
   })
 
   // ── WCAG 2.1.1: Tastatur-Zugänglichkeit (direkte Focus-Methode) ─────────
@@ -158,6 +187,29 @@ test.describe('WCAG 2.2 Komponenten-Checks', () => {
     await expect(table).toBeVisible()
     const thCount = await table.locator('th').count()
     expect(thCount, 'StatsTable hat keine <th>-Elemente').toBeGreaterThan(0)
+  })
+
+  test('StatsTable FBNM-Marker ist blau-800 statt Cyan (WCAG 1.4.3: ≥4.5:1 auf Weiß)', async ({ page }) => {
+    // Dot-Marker war --fbnm-cyan-500 = 2.97:1 auf Weiß (FAIL).
+    // Fix: --fbnm-blue-800 = 10.3:1 auf Weiß (AAA).
+    await page.goto(`${BASE}/komponenten/statstable/`)
+    const marker = page.locator('.fbnm-statstable__fbnm-marker').first()
+    await expect(marker).toBeVisible()
+    const color = await marker.evaluate(el => getComputedStyle(el).color)
+    // blue-800 (#004174) = rgb(0, 65, 116)
+    expect(color, 'FBNM-Marker sollte blue-800 sein (10.3:1 auf Weiß), nicht Cyan (2.97:1 FAIL)').toBe('rgb(0, 65, 116)')
+  })
+
+  test('StatsTable Highlight-Zeile ist visuell unterscheidbar (Hintergrund + Fettschrift)', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/statstable/`)
+    const highlight = page.locator('.fbnm-statstable__row--highlight').first()
+    await expect(highlight).toBeVisible()
+
+    const fontWeight = await highlight.locator('td').first().evaluate(el => getComputedStyle(el).fontWeight)
+    expect(parseInt(fontWeight), 'Highlight-Zeile muss fett sein (WCAG 1.4.1 — nicht nur Farbe)').toBeGreaterThanOrEqual(700)
+
+    const srOnly = highlight.locator('.sr-only').first()
+    await expect(srOnly, 'sr-only Text für Screen-Reader muss vorhanden sein').toBeAttached()
   })
 
   // ── Docs-Sidebar Kontrast ────────────────────────────────────────────────
