@@ -8,7 +8,8 @@ import PlayerCard from '@ds/components/PlayerCard/PlayerCard.astro'
 import StatsTable from '@ds/components/StatsTable/StatsTable.astro'
 import Footer from '@ds/components/Footer/Footer.astro'
 
-const logoSrc = (import.meta.env.BASE_URL ?? '/') + 'images/logo.svg'
+const logoSrc   = (import.meta.env.BASE_URL ?? '/') + 'images/logo.svg'
+const heroImage = (import.meta.env.BASE_URL ?? '/') + 'images/hero-action.jpg'
 
 const navLinks = [
   { label: 'Startseite', href: '#', active: true },
@@ -138,7 +139,7 @@ const standingsDamen = [
       <Hero
         title="#OnTeam – Wir sind die Baskets!"
         subtitle="2. Regionalliga Süd · Saison 2024/25 · Neumarkt i.d. OPf."
-        backgroundImage="https://images.unsplash.com/photo-1546519638405-a9f65f1b6f4b?w=1920&h=400&fit=crop"
+        backgroundImage={heroImage}
       >
         <Button variant="primary" href="#">Zum Spielplan</Button>
         <Button variant="ghost" href="#">Mitglied werden</Button>
