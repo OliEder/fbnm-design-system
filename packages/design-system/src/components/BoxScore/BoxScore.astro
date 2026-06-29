@@ -42,42 +42,28 @@ const totals = players.reduce(
   { pts: 0, fgm: 0, ftm: 0, fta: 0 },
 )
 
-// Eindeutige ID, damit mehrere BoxScore-Instanzen pro Seite koexistieren können.
+// Eindeutige ID/Gruppenname, damit mehrere Instanzen pro Seite koexistieren.
 const uid = `fbnm-bs-${Math.random().toString(36).slice(2, 9)}`
+const groupName = `${uid}-tabs`
 ---
 
-<section class:list={['fbnm-boxscore', className]} data-boxscore>
+{/* CSS-only Tabs: Radio-Inputs steuern die Panel-Sichtbarkeit via :checked + :has().
+    Kein JS nötig — native Tastatur (Pfeiltasten zwischen Radios) und Fokus. */}
+<section class:list={['fbnm-boxscore', className]}>
   <h2 class="fbnm-boxscore__title">{title}</h2>
   <div class="fbnm-boxscore__card">
-    <div role="tablist" aria-label="Statistik-Ansicht" class="fbnm-boxscore__tabs">
-      <button
-        role="tab"
-        id={`${uid}-tab-stats`}
-        aria-controls={`${uid}-panel-stats`}
-        aria-selected="true"
-        class="fbnm-boxscore__tab"
-        data-tab="stats"
-      >Spielerstatistik</button>
-      <button
-        role="tab"
-        id={`${uid}-tab-lineup`}
-        aria-controls={`${uid}-panel-lineup`}
-        aria-selected="false"
-        tabindex="-1"
-        class="fbnm-boxscore__tab"
-        data-tab="lineup"
-      >Aufstellung</button>
+    {/* Versteckte Radios — steuern, welches Panel sichtbar ist */}
+    <input type="radio" name={groupName} id={`${uid}-r-stats`} class="fbnm-boxscore__radio" checked />
+    <input type="radio" name={groupName} id={`${uid}-r-lineup`} class="fbnm-boxscore__radio" />
+
+    <div class="fbnm-boxscore__tabs" role="radiogroup" aria-label="Statistik-Ansicht">
+      <label for={`${uid}-r-stats`} class="fbnm-boxscore__tab">Spielerstatistik</label>
+      <label for={`${uid}-r-lineup`} class="fbnm-boxscore__tab">Aufstellung</label>
     </div>
 
     {/* Panel: Spielerstatistik */}
-    <div
-      role="tabpanel"
-      id={`${uid}-panel-stats`}
-      aria-labelledby={`${uid}-tab-stats`}
-      class="fbnm-boxscore__panel"
-      data-panel="stats"
-    >
-      <div class="fbnm-boxscore__scroll">
+    <div class="fbnm-boxscore__panel fbnm-boxscore__panel--stats">
+      <div class="fbnm-boxscore__scroll" tabindex="0" role="group" aria-label="Spielerstatistik">
         <table>
           <thead>
             <tr>
@@ -114,15 +100,8 @@ const uid = `fbnm-bs-${Math.random().toString(36).slice(2, 9)}`
     </div>
 
     {/* Panel: Aufstellung */}
-    <div
-      role="tabpanel"
-      id={`${uid}-panel-lineup`}
-      aria-labelledby={`${uid}-tab-lineup`}
-      class="fbnm-boxscore__panel"
-      data-panel="lineup"
-      hidden
-    >
-      <div class="fbnm-boxscore__scroll">
+    <div class="fbnm-boxscore__panel fbnm-boxscore__panel--lineup">
+      <div class="fbnm-boxscore__scroll" tabindex="0" role="group" aria-label="Aufstellung">
         <table>
           <thead>
             <tr>
@@ -177,6 +156,15 @@ const uid = `fbnm-bs-${Math.random().toString(36).slice(2, 9)}`
   box-shadow: var(--fbnm-shadow-sm);
 }
 
+/* Radios visuell versteckt, aber fokussierbar/bedienbar (kein display:none!) */
+.fbnm-boxscore__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .fbnm-boxscore__tabs {
   display: flex;
   gap: var(--fbnm-space-1);
@@ -184,12 +172,13 @@ const uid = `fbnm-bs-${Math.random().toString(36).slice(2, 9)}`
   border-bottom: 2px solid var(--fbnm-color-border);
 }
 
-/* WCAG 1.4.3: inaktiver Tab nutzt muted-text (#545454, 7.14:1 AAA),
-   aktiver Tab blue-800 (10.3:1 AAA). Auswahl wird zusätzlich durch
-   den Unterstrich (nicht nur Farbe) signalisiert (1.4.1). */
+/* WCAG 1.4.3: inaktiver Tab muted-text (#545454, 7.14:1 AAA),
+   aktiver blue-800 (10.3:1 AAA). Auswahl auch über Unterstrich (1.4.1). */
 .fbnm-boxscore__tab {
-  background: none;
-  border: none;
+  /* WCAG 2.5.8: 44px Touch-Target */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
   padding: var(--fbnm-space-3) var(--fbnm-space-4);
   margin-bottom: -2px;
@@ -203,25 +192,37 @@ const uid = `fbnm-bs-${Math.random().toString(36).slice(2, 9)}`
   transition: color var(--fbnm-transition-fast),
               border-color var(--fbnm-transition-fast);
 }
-
 .fbnm-boxscore__tab:hover { color: var(--fbnm-blue-800); }
 
-.fbnm-boxscore__tab[aria-selected='true'] {
+/* Aktiver Tab (zum jeweils gecheckten Radio).
+   WCAG 1.4.1: Auswahl über Farbe UND Unterstrich. */
+.fbnm-boxscore__radio:nth-of-type(1):checked ~ .fbnm-boxscore__tabs label:nth-of-type(1),
+.fbnm-boxscore__radio:nth-of-type(2):checked ~ .fbnm-boxscore__tabs label:nth-of-type(2) {
   color: var(--fbnm-blue-800);
   font-weight: 700;
   border-bottom-color: var(--fbnm-cyan-500);
 }
-
-/* WCAG 2.4.7: sichtbarer Fokus */
-.fbnm-boxscore__tab:focus-visible {
+/* Sichtbarer Fokus: gecheckter/fokussierter Radio hebt sein Label hervor */
+.fbnm-boxscore__radio:nth-of-type(1):focus-visible ~ .fbnm-boxscore__tabs label:nth-of-type(1),
+.fbnm-boxscore__radio:nth-of-type(2):focus-visible ~ .fbnm-boxscore__tabs label:nth-of-type(2) {
   outline: 2px solid var(--fbnm-blue-700);
   outline-offset: -2px;
   border-radius: var(--fbnm-radius-sm);
 }
 
-.fbnm-boxscore__panel[hidden] { display: none; }
+/* Panels: standardmäßig versteckt, sichtbar je nach gechecktem Radio */
+.fbnm-boxscore__panel { display: none; }
+.fbnm-boxscore__radio:nth-of-type(1):checked ~ .fbnm-boxscore__panel--stats,
+.fbnm-boxscore__radio:nth-of-type(2):checked ~ .fbnm-boxscore__panel--lineup {
+  display: block;
+}
 
 .fbnm-boxscore__scroll { overflow-x: auto; }
+/* WCAG 2.4.7: scrollbarer Bereich ist fokussierbar → sichtbarer Fokus */
+.fbnm-boxscore__scroll:focus-visible {
+  outline: 2px solid var(--fbnm-blue-700);
+  outline-offset: -2px;
+}
 
 table {
   width: 100%;
@@ -231,7 +232,7 @@ table {
 }
 
 thead th {
-  background: color-mix(in srgb, var(--fbnm-blue-900) 5%, var(--fbnm-white));
+  background: var(--fbnm-color-surface-muted);
   padding: var(--fbnm-space-2) var(--fbnm-space-3);
   font-family: var(--fbnm-font-body);
   font-weight: 700;
@@ -270,14 +271,13 @@ tbody td {
 
 .fbnm-boxscore__num { font-variant-numeric: tabular-nums; }
 
-/* WCAG 1.4.3: Position als muted-text (#545454, 7.14:1 AAA) statt gray-500 (4.0:1 FAIL) */
+/* WCAG 1.4.3: Position als muted-text (#545454, 7.14:1 AAA) */
 .fbnm-boxscore__pos { text-align: left; color: var(--fbnm-color-text-muted); }
 
-/* WCAG 1.4.1: Häkchen + sr-only-Text statt nur Farbe.
-   #14532d (dunkelgrün) auf weiß = 8.7:1 AAA */
+/* WCAG 1.4.1: Häkchen + sr-only-Text. #14532d auf weiß = 8.7:1 AAA */
 .fbnm-boxscore__played { color: #14532d; font-weight: 700; }
 
-/* WCAG 1.4.1: Top-Scorer = Hintergrund + Fettung (nicht nur Farbe) */
+/* WCAG 1.4.1: Top-Scorer = Hintergrund + Fettung */
 .fbnm-boxscore__row--top {
   background: color-mix(in srgb, var(--fbnm-cyan-500) 8%, var(--fbnm-white));
 }
@@ -325,47 +325,3 @@ tbody td {
   border: 0;
 }
 </style>
-
-<script>
-// Tab-Steuerung mit WAI-ARIA Tabs-Pattern (Pfeiltasten + Home/End).
-// Mehrere Instanzen pro Seite werden unabhängig gesteuert.
-function initBoxScore(root: HTMLElement): void {
-  const tabs = Array.from(
-    root.querySelectorAll<HTMLButtonElement>('[role="tab"]'),
-  )
-  const panels = new Map<string, HTMLElement>()
-  root.querySelectorAll<HTMLElement>('[data-panel]').forEach(p => {
-    panels.set(p.dataset.panel!, p)
-  })
-
-  function select(tab: HTMLButtonElement): void {
-    tabs.forEach(t => {
-      const selected = t === tab
-      t.setAttribute('aria-selected', String(selected))
-      t.tabIndex = selected ? 0 : -1
-    })
-    panels.forEach((panel, key) => {
-      panel.hidden = key !== tab.dataset.tab
-    })
-  }
-
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => select(tab))
-    tab.addEventListener('keydown', e => {
-      let next = -1
-      if (e.key === 'ArrowRight') next = (i + 1) % tabs.length
-      else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length
-      else if (e.key === 'Home') next = 0
-      else if (e.key === 'End') next = tabs.length - 1
-      if (next === -1) return
-      e.preventDefault()
-      tabs[next].focus()
-      select(tabs[next])
-    })
-  })
-}
-
-document
-  .querySelectorAll<HTMLElement>('[data-boxscore]')
-  .forEach(initBoxScore)
-</script>

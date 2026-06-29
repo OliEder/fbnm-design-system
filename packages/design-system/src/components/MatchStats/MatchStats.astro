@@ -76,6 +76,7 @@ const totals = box.reduce(
 )
 
 const uid = `fbnm-ms-${Math.random().toString(36).slice(2, 9)}`
+const groupName = `${uid}-tabs`
 
 // Tab-Liste dynamisch — nur vorhandene Panels.
 const tabs = [
@@ -83,9 +84,23 @@ const tabs = [
   { key: 'lineup', label: 'Aufstellung', show: hasLineup },
   { key: 'season', label: 'Saison-Schnitt', show: hasSeason },
 ].filter(t => t.show)
+
+// CSS-only: pro Instanz scoped Regeln, die das gecheckte Radio mit „seinem"
+// Label (aktiv-Style) und „seinem" Panel (sichtbar) verknüpfen — robust bei
+// variabler Tab-Anzahl, ohne nth-of-type-Fragilität.
+const scopedCss = tabs
+  .map(t => `
+#${uid} #${uid}-r-${t.key}:checked ~ .fbnm-matchstats__tabs label[for="${uid}-r-${t.key}"] {
+  color: var(--fbnm-blue-800); font-weight: 700; border-bottom-color: var(--fbnm-cyan-500);
+}
+#${uid} #${uid}-r-${t.key}:focus-visible ~ .fbnm-matchstats__tabs label[for="${uid}-r-${t.key}"] {
+  outline: 2px solid var(--fbnm-blue-700); outline-offset: -2px; border-radius: var(--fbnm-radius-sm);
+}
+#${uid} #${uid}-r-${t.key}:checked ~ .fbnm-matchstats__panel--${t.key} { display: block; }`)
+  .join('\n')
 ---
 
-<section class:list={['fbnm-matchstats', className]} data-matchstats>
+<section id={uid} class:list={['fbnm-matchstats', className]}>
   <div class="fbnm-matchstats__head">
     <div class="fbnm-matchstats__head-title">{title}</div>
     {hasScore && (
@@ -97,23 +112,26 @@ const tabs = [
     )}
   </div>
 
-  <div role="tablist" aria-label={title} class="fbnm-matchstats__tabs">
-    {tabs.map((t, i) => (
-      <button
-        role="tab"
-        id={`${uid}-tab-${t.key}`}
-        aria-controls={`${uid}-panel-${t.key}`}
-        aria-selected={i === 0 ? 'true' : 'false'}
-        tabindex={i === 0 ? undefined : -1}
-        class="fbnm-matchstats__tab"
-        data-tab={t.key}
-      >{t.label}</button>
+  {/* CSS-only Tabs: versteckte Radios + Labels. Kein JS. */}
+  {tabs.map((t, i) => (
+    <input
+      type="radio"
+      name={groupName}
+      id={`${uid}-r-${t.key}`}
+      class="fbnm-matchstats__radio"
+      checked={i === 0}
+    />
+  ))}
+
+  <div class="fbnm-matchstats__tabs" role="radiogroup" aria-label={title}>
+    {tabs.map(t => (
+      <label for={`${uid}-r-${t.key}`} class="fbnm-matchstats__tab">{t.label}</label>
     ))}
   </div>
 
   {/* Panel: Spielerstatistik */}
-  <div role="tabpanel" id={`${uid}-panel-stats`} aria-labelledby={`${uid}-tab-stats`} class="fbnm-matchstats__panel" data-panel="stats">
-    <div class="fbnm-matchstats__scroll">
+  <div class="fbnm-matchstats__panel fbnm-matchstats__panel--stats">
+    <div class="fbnm-matchstats__scroll" tabindex="0" role="group" aria-label="Spielerstatistik">
       <table>
         <thead>
           <tr>
@@ -160,8 +178,8 @@ const tabs = [
 
   {/* Panel: Aufstellung */}
   {hasLineup && (
-    <div role="tabpanel" id={`${uid}-panel-lineup`} aria-labelledby={`${uid}-tab-lineup`} class="fbnm-matchstats__panel" data-panel="lineup" hidden>
-      <div class="fbnm-matchstats__scroll">
+    <div class="fbnm-matchstats__panel fbnm-matchstats__panel--lineup">
+      <div class="fbnm-matchstats__scroll" tabindex="0" role="group" aria-label="Aufstellung">
         <table>
           <thead>
             <tr>
@@ -202,8 +220,8 @@ const tabs = [
 
   {/* Panel: Saison-Schnitt */}
   {hasSeason && (
-    <div role="tabpanel" id={`${uid}-panel-season`} aria-labelledby={`${uid}-tab-season`} class="fbnm-matchstats__panel" data-panel="season" hidden>
-      <div class="fbnm-matchstats__scroll">
+    <div class="fbnm-matchstats__panel fbnm-matchstats__panel--season">
+      <div class="fbnm-matchstats__scroll" tabindex="0" role="group" aria-label="Saison-Schnitt">
         <table>
           <thead>
             <tr>
@@ -265,6 +283,15 @@ const tabs = [
 .fbnm-matchstats__head-result { color: var(--fbnm-white); font-weight: 700; }
 .fbnm-matchstats__head-opp { color: color-mix(in srgb, var(--fbnm-white) 75%, transparent); }
 
+/* Radios visuell versteckt, aber fokussierbar (kein display:none) */
+.fbnm-matchstats__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .fbnm-matchstats__tabs {
   display: flex;
   gap: var(--fbnm-space-1);
@@ -272,10 +299,12 @@ const tabs = [
   border-bottom: 2px solid var(--fbnm-color-border);
 }
 .fbnm-matchstats__tab {
-  background: none;
-  border: none;
+  /* WCAG 2.5.8: 44px Touch-Target */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
-  padding: var(--fbnm-space-4) var(--fbnm-space-4);
+  padding: var(--fbnm-space-3) var(--fbnm-space-4);
   margin-bottom: -2px;
   font-family: var(--fbnm-font-body);
   font-size: var(--fbnm-text-sm);
@@ -287,19 +316,17 @@ const tabs = [
   transition: color var(--fbnm-transition-fast), border-color var(--fbnm-transition-fast);
 }
 .fbnm-matchstats__tab:hover { color: var(--fbnm-blue-800); }
-.fbnm-matchstats__tab[aria-selected='true'] {
-  color: var(--fbnm-blue-800);
-  font-weight: 700;
-  border-bottom-color: var(--fbnm-cyan-500);
-}
-.fbnm-matchstats__tab:focus-visible {
+/* aktiv-/fokus-/sichtbar-Regeln pro Instanz: siehe scopedCss (set:html unten) */
+
+/* Panels default versteckt — das gecheckte Radio blendet „sein" Panel ein */
+.fbnm-matchstats__panel { display: none; }
+
+.fbnm-matchstats__scroll { overflow-x: auto; }
+/* WCAG 2.4.7: scrollbarer Bereich fokussierbar → sichtbarer Fokus */
+.fbnm-matchstats__scroll:focus-visible {
   outline: 2px solid var(--fbnm-blue-700);
   outline-offset: -2px;
-  border-radius: var(--fbnm-radius-sm);
 }
-
-.fbnm-matchstats__panel[hidden] { display: none; }
-.fbnm-matchstats__scroll { overflow-x: auto; }
 
 table { width: 100%; border-collapse: collapse; font-family: var(--fbnm-font-body); font-size: var(--fbnm-text-sm); }
 
@@ -378,36 +405,6 @@ tbody td {
 }
 </style>
 
-<script>
-function initMatchStats(root: HTMLElement): void {
-  const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('[role="tab"]'))
-  const panels = new Map<string, HTMLElement>()
-  root.querySelectorAll<HTMLElement>('[data-panel]').forEach(p => panels.set(p.dataset.panel!, p))
-
-  function select(tab: HTMLButtonElement): void {
-    tabs.forEach(t => {
-      const on = t === tab
-      t.setAttribute('aria-selected', String(on))
-      t.tabIndex = on ? 0 : -1
-    })
-    panels.forEach((panel, key) => { panel.hidden = key !== tab.dataset.tab })
-  }
-
-  tabs.forEach((tab, i) => {
-    tab.addEventListener('click', () => select(tab))
-    tab.addEventListener('keydown', e => {
-      let next = -1
-      if (e.key === 'ArrowRight') next = (i + 1) % tabs.length
-      else if (e.key === 'ArrowLeft') next = (i - 1 + tabs.length) % tabs.length
-      else if (e.key === 'Home') next = 0
-      else if (e.key === 'End') next = tabs.length - 1
-      if (next === -1) return
-      e.preventDefault()
-      tabs[next].focus()
-      select(tabs[next])
-    })
-  })
-}
-
-document.querySelectorAll<HTMLElement>('[data-matchstats]').forEach(initMatchStats)
-</script>
+{/* Scoped Aktiv-/Sichtbar-Regeln je Instanz — verbindet Radio mit Label & Panel.
+    Kein JS: reine CSS-Steuerung. */}
+<style set:html={scopedCss}></style>

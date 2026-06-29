@@ -114,7 +114,7 @@ const teamGroups = mega
   </div>
 
   {mega && (
-    <div id="fbnm-mega" class="fbnm-mega" role="region" aria-label="Teams" hidden data-mega-panel>
+    <div id="fbnm-mega" class="fbnm-mega" role="region" aria-label="Teams" data-mega-panel>
       <div class="fbnm-mega__inner">
         <div class="fbnm-mega__col">
           {teamGroups.map(group => (
@@ -318,7 +318,20 @@ const teamGroups = mega
   box-shadow: var(--fbnm-shadow-lg);
   border-top: 3px solid var(--fbnm-cyan-500);
 }
-.fbnm-mega[hidden] { display: none; }
+
+/* CSS-first: Mega-Menü ist standardmäßig zu und öffnet OHNE JS —
+   per Hover (Maus) und :focus-within (Tastatur-Tab in Trigger/Panel).
+   Das JS-Enhancement (Escape, Klick-außerhalb, aria-expanded) ist optional. */
+.fbnm-mega { display: none; }
+.fbnm-nav:hover .fbnm-mega,
+.fbnm-nav:focus-within .fbnm-mega {
+  display: block;
+}
+/* JS-Enhancement: ist JS aktiv (data-mega-js am Header), steuert ausschließlich
+   aria-expanded — Hover/Focus-Auto-Open wird unterdrückt (kein „klebriges" Menü). */
+.fbnm-nav[data-mega-js]:hover .fbnm-mega,
+.fbnm-nav[data-mega-js]:focus-within .fbnm-mega { display: none; }
+.fbnm-nav[data-mega-js]:has(.fbnm-nav__link--mega[aria-expanded='true']) .fbnm-mega { display: block; }
 
 .fbnm-mega__inner {
   max-width: var(--fbnm-container-max);
@@ -497,33 +510,24 @@ burger?.addEventListener('click', () => {
   burger.setAttribute('aria-expanded', String(isOpen))
 })
 
-// --- Mega-Menü ---
+// --- Mega-Menü: optionales JS-Enhancement ---
+// Ohne JS öffnet das Menü per CSS (:hover / :focus-within). Ist JS aktiv,
+// markieren wir den Header mit data-mega-js → CSS übergibt die Steuerung an
+// aria-expanded, und wir ergänzen Klick-Toggle, Escape und Klick-außerhalb.
 const megaTrigger = document.querySelector('[data-mega-trigger]') as HTMLButtonElement | null
-const megaPanel = document.querySelector('[data-mega-panel]') as HTMLElement | null
-const megaHeader = megaTrigger?.closest('header') as HTMLElement | null
+const megaNav = megaTrigger?.closest('.fbnm-nav') as HTMLElement | null
 
-if (megaTrigger && megaPanel && megaHeader) {
-  const setMega = (open: boolean): void => {
-    megaPanel.hidden = !open
+if (megaTrigger && megaNav) {
+  megaNav.setAttribute('data-mega-js', '')
+
+  const isOpen = (): boolean => megaTrigger.getAttribute('aria-expanded') === 'true'
+  const setMega = (open: boolean): void =>
     megaTrigger.setAttribute('aria-expanded', String(open))
-  }
-  const isOpen = (): boolean => !megaPanel.hidden
 
-  // Hover öffnet (Desktop-Affordanz). Merke den Zeitpunkt, damit der direkt
-  // folgende click (echte Maus feuert mouseenter→click) das Menü nicht sofort
-  // wieder schließt. Per Tastatur/Touch (kein mouseenter) bleibt click ein Toggle.
-  let lastHoverOpen = 0
-  megaTrigger.addEventListener('mouseenter', () => {
-    if (!isOpen()) { setMega(true); lastHoverOpen = performance.now() }
-  })
-  megaTrigger.addEventListener('click', () => {
-    if (isOpen() && performance.now() - lastHoverOpen < 500) return // gerade per Hover geöffnet
-    setMega(!isOpen())
-  })
-  megaHeader.addEventListener('mouseleave', () => setMega(false))
+  megaTrigger.addEventListener('click', () => setMega(!isOpen()))
 
   // Escape schließt und gibt Fokus zurück
-  megaHeader.addEventListener('keydown', e => {
+  megaNav.addEventListener('keydown', e => {
     if (e.key === 'Escape' && isOpen()) {
       setMega(false)
       megaTrigger.focus()
@@ -532,13 +536,13 @@ if (megaTrigger && megaPanel && megaHeader) {
 
   // Klick außerhalb schließt
   document.addEventListener('click', e => {
-    if (isOpen() && !megaHeader.contains(e.target as Node)) setMega(false)
+    if (isOpen() && !megaNav.contains(e.target as Node)) setMega(false)
   })
 
-  // Fokus verlässt den Header → schließen
-  megaHeader.addEventListener('focusout', () => {
+  // Fokus verlässt die Nav → schließen
+  megaNav.addEventListener('focusout', () => {
     requestAnimationFrame(() => {
-      if (isOpen() && !megaHeader.contains(document.activeElement)) setMega(false)
+      if (isOpen() && !megaNav.contains(document.activeElement)) setMega(false)
     })
   })
 }
