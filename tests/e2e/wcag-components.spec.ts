@@ -80,6 +80,7 @@ test.describe('WCAG 2.2 Komponenten-Checks', () => {
       `${BASE}/atome/button/`,
       `${BASE}/komponenten/navigation/`,
       `${BASE}/komponenten/playercard/`,
+      `${BASE}/komponenten/spielplan/`,
     ]
     for (const path of pages) {
       await page.goto(path)
@@ -210,6 +211,117 @@ test.describe('WCAG 2.2 Komponenten-Checks', () => {
 
     const srOnly = highlight.locator('.sr-only').first()
     await expect(srOnly, 'sr-only Text für Screen-Reader muss vorhanden sein').toBeAttached()
+  })
+
+  // ── GameSchedule (Spielplan) ─────────────────────────────────────────────
+  test('GameSchedule: 3 Tabs mit role=tab und aria-controls (WCAG 4.1.2)', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/spielplan/`)
+    const tablist = page.locator('[role="tablist"]').first()
+    await expect(tablist).toBeVisible()
+
+    const tabs = tablist.locator('[role="tab"]')
+    await expect(tabs).toHaveCount(3)
+
+    // Alle 3 Tabs haben aria-controls und aria-selected
+    for (let i = 0; i < 3; i++) {
+      await expect(tabs.nth(i)).toHaveAttribute('aria-controls')
+      await expect(tabs.nth(i)).toHaveAttribute('aria-selected')
+    }
+    // Erster Tab initial aktiv
+    await expect(tabs.nth(0)).toHaveAttribute('aria-selected', 'true')
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'false')
+    await expect(tabs.nth(2)).toHaveAttribute('aria-selected', 'false')
+  })
+
+  test('GameSchedule: Tab-Klick schaltet Panel um (WCAG 4.1.3 — dynamische Updates)', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/spielplan/`)
+    const tablist = page.locator('[role="tablist"]').first()
+    const tabs = tablist.locator('[role="tab"]')
+    const schedule = page.locator('.fbnm-schedule').first()
+
+    // Heim-Tab klicken
+    await tabs.nth(1).click()
+    await expect(tabs.nth(1)).toHaveAttribute('aria-selected', 'true')
+    await expect(tabs.nth(0)).toHaveAttribute('aria-selected', 'false')
+
+    // Heim-Panel sichtbar, Alle-Panel unsichtbar
+    const heimPanelId = await tabs.nth(1).getAttribute('aria-controls')
+    const allePanelId = await tabs.nth(0).getAttribute('aria-controls')
+    await expect(schedule.locator(`#${heimPanelId}`)).toBeVisible()
+    await expect(schedule.locator(`#${allePanelId}`)).not.toBeVisible()
+
+    // Auswärts-Tab klicken
+    await tabs.nth(2).click()
+    await expect(tabs.nth(2)).toHaveAttribute('aria-selected', 'true')
+  })
+
+  test('GameSchedule: Tabs sind per Tastatur fokussierbar (WCAG 2.1.1)', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/spielplan/`)
+    const firstTab = page.locator('[role="tablist"]').first().locator('[role="tab"]').first()
+    await firstTab.focus()
+    await expect(firstTab).toBeFocused()
+  })
+
+  test('GameSchedule: Tab-Buttons ≥ 44px Touch-Target (WCAG 2.5.8)', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/spielplan/`)
+    const tabs = page.locator('.fbnm-schedule').first().locator('[role="tab"]')
+    const count = await tabs.count()
+    expect(count).toBe(3)
+
+    for (let i = 0; i < count; i++) {
+      const box = await tabs.nth(i).boundingBox()
+      expect(box, `Tab ${i + 1} nicht renderbar`).not.toBeNull()
+      expect(box!.height, `Tab ${i + 1}: Höhe ${box!.height}px < 44px`).toBeGreaterThanOrEqual(44)
+    }
+  })
+
+  test('GameSchedule: Badges haben aria-label für Screen-Reader (WCAG 1.4.1 + 4.1.2)', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/spielplan/`)
+    // Alle sichtbaren Badges im aktiven Panel müssen ein aria-label haben
+    const panel = page.locator('.fbnm-schedule__panel--active').first()
+    await expect(panel).toBeVisible()
+
+    const badges = panel.locator('.fbnm-schedule__badge')
+    const count = await badges.count()
+    expect(count, 'Keine Badges im aktiven Panel gefunden').toBeGreaterThan(0)
+
+    for (let i = 0; i < count; i++) {
+      const label = await badges.nth(i).getAttribute('aria-label')
+      expect(label, `Badge ${i + 1} hat kein aria-label`).toBeTruthy()
+    }
+  })
+
+  test('GameSchedule: "Nächstes Spiel"-Label ist vorhanden (WCAG 1.4.1 — nicht nur Farbe)', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/spielplan/`)
+    // Mindestens eine "Nächstes Spiel"-Kennzeichnung auf der Seite
+    const nextLabel = page.locator('.fbnm-schedule__next-label').first()
+    await expect(nextLabel, '"Nächstes Spiel"-Label nicht gefunden — Hervorhebung darf nicht nur auf Farbe basieren').toBeAttached()
+  })
+
+  test('GameSchedule: Kalender-Buttons ≥ 44px Touch-Target (WCAG 2.5.8)', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/spielplan/`)
+    // Kalender-Sektion im ersten Panel (icsUrlAll ist gesetzt)
+    const calBtns = page.locator('.fbnm-schedule__cal-btn')
+    const count = await calBtns.count()
+    expect(count, 'Keine Kalender-Buttons gefunden (icsUrlAll gesetzt?)').toBeGreaterThan(0)
+
+    for (let i = 0; i < count; i++) {
+      const box = await calBtns.nth(i).boundingBox()
+      if (!box) continue
+      expect(box.height, `Kalender-Button ${i + 1}: Höhe ${box.height.toFixed(1)}px < 44px`).toBeGreaterThanOrEqual(44)
+    }
+  })
+
+  test('GameSchedule: Alle panel-Elemente haben role=tabpanel mit aria-labelledby (WCAG 4.1.2)', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/spielplan/`)
+    const schedule = page.locator('.fbnm-schedule').first()
+    const panels = schedule.locator('[role="tabpanel"]')
+    const count = await panels.count()
+    expect(count, 'Erwartet 3 Tabpanels pro GameSchedule-Instanz').toBe(3)
+
+    for (let i = 0; i < count; i++) {
+      await expect(panels.nth(i)).toHaveAttribute('aria-labelledby')
+    }
   })
 
   // ── Docs-Sidebar Kontrast ────────────────────────────────────────────────

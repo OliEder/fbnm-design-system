@@ -15,6 +15,7 @@ const allPages = [
   { path: `${BASE}/komponenten/hero/`,             name: 'Komponente: Hero' },
   { path: `${BASE}/komponenten/footer/`,           name: 'Komponente: Footer' },
   { path: `${BASE}/komponenten/gamecard/`,         name: 'Komponente: GameCard' },
+  { path: `${BASE}/komponenten/spielplan/`,        name: 'Komponente: GameSchedule (Spielplan)' },
   { path: `${BASE}/komponenten/playercard/`,       name: 'Komponente: PlayerCard' },
   { path: `${BASE}/komponenten/statstable/`,       name: 'Komponente: StatsTable' },
   { path: `${BASE}/komponenten/liveticker/`,       name: 'Komponente: LiveTicker' },

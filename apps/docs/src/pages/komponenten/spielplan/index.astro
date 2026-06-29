@@ -1,0 +1,256 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import GameSchedule from '@ds/components/GameSchedule/GameSchedule.astro'
+import type { ScheduleGame } from '@ds/components/GameSchedule/GameSchedule.astro'
+
+// Mock data — "now" relative to 2026-06-29 (today's date in this session)
+// Past games: results filled in. Next game: first entry without a score.
+const herren1: ScheduleGame[] = [
+  // ── Vergangene Spiele ──────────────────────────────────────────────────────
+  {
+    uid: 'h1-01', isHome: true,
+    date: new Date('2026-02-07T19:30:00'), time: '19:30',
+    homeTeam: 'Fibalon Baskets NM', awayTeam: 'TSV Regensburg Basketball',
+    location: 'Mehrzweckhalle NM', competition: '2. Regionalliga Süd',
+    homeScore: 85, awayScore: 72,
+  },
+  {
+    uid: 'h1-02', isHome: false,
+    date: new Date('2026-02-21T16:00:00'), time: '16:00',
+    homeTeam: 'BBC Coburg', awayTeam: 'Fibalon Baskets NM',
+    location: 'Bamberger Sportpark', competition: '2. Regionalliga Süd',
+    homeScore: 61, awayScore: 74,
+  },
+  {
+    uid: 'h1-03', isHome: true,
+    date: new Date('2026-03-07T19:30:00'), time: '19:30',
+    homeTeam: 'Fibalon Baskets NM', awayTeam: 'MTV Ansbach',
+    location: 'Mehrzweckhalle NM', competition: '2. Regionalliga Süd',
+    homeScore: 78, awayScore: 83,
+  },
+  {
+    uid: 'h1-04', isHome: false,
+    date: new Date('2026-03-21T15:00:00'), time: '15:00',
+    homeTeam: 'SV Neutraubling', awayTeam: 'Fibalon Baskets NM',
+    location: 'Schulsporthalle Neutraubling', competition: '2. Regionalliga Süd',
+    homeScore: 69, awayScore: 71,
+  },
+  {
+    uid: 'h1-05', isHome: true,
+    date: new Date('2026-04-11T19:30:00'), time: '19:30',
+    homeTeam: 'Fibalon Baskets NM', awayTeam: 'BC Lupburg',
+    location: 'Mehrzweckhalle NM', competition: '2. Regionalliga Süd',
+    homeScore: 92, awayScore: 77,
+  },
+  {
+    uid: 'h1-06', isHome: false,
+    date: new Date('2026-04-25T18:00:00'), time: '18:00',
+    homeTeam: 'MTV Ingolstadt', awayTeam: 'Fibalon Baskets NM',
+    location: 'Sportanlage Ingolstadt', competition: '2. Regionalliga Süd',
+    homeScore: 88, awayScore: 81,
+  },
+  // ── Nächstes Spiel ─────────────────────────────────────────────────────────
+  {
+    uid: 'h1-07', isHome: true,
+    date: new Date('2026-07-05T19:30:00'), time: '19:30',
+    homeTeam: 'Fibalon Baskets NM', awayTeam: 'TSV Ansbach',
+    location: 'Mehrzweckhalle NM', competition: '2. Regionalliga Süd',
+  },
+  // ── Weitere Spiele ─────────────────────────────────────────────────────────
+  {
+    uid: 'h1-08', isHome: false,
+    date: new Date('2026-07-19T16:00:00'), time: '16:00',
+    homeTeam: 'BBC München', awayTeam: 'Fibalon Baskets NM',
+    location: 'Olympia-Sporthalle München', competition: '2. Regionalliga Süd',
+  },
+  {
+    uid: 'h1-09', isHome: true,
+    date: new Date('2026-08-02T19:30:00'), time: '19:30',
+    homeTeam: 'Fibalon Baskets NM', awayTeam: 'SV Neutraubling',
+    location: 'Mehrzweckhalle NM', competition: '2. Regionalliga Süd',
+  },
+  {
+    uid: 'h1-10', isHome: false,
+    date: new Date('2026-08-16T15:00:00'), time: '15:00',
+    homeTeam: 'TV Leinburg', awayTeam: 'Fibalon Baskets NM',
+    location: 'Sporthalle Leinburg', competition: '2. Regionalliga Süd',
+  },
+]
+
+const herren2: ScheduleGame[] = [
+  {
+    uid: 'h2-01', isHome: false,
+    date: new Date('2026-03-14T16:00:00'), time: '16:00',
+    homeTeam: 'TSV Regensburg II', awayTeam: 'Fibalon Baskets NM II',
+    location: 'Schulsporthalle Regensburg', competition: 'Bezirksliga Oberpfalz',
+    homeScore: 71, awayScore: 78,
+  },
+  {
+    uid: 'h2-02', isHome: true,
+    date: new Date('2026-03-28T18:00:00'), time: '18:00',
+    homeTeam: 'Fibalon Baskets NM II', awayTeam: 'BC Lupburg',
+    location: 'Mehrzweckhalle NM', competition: 'Bezirksliga Oberpfalz',
+    homeScore: 84, awayScore: 61,
+  },
+  {
+    uid: 'h2-03', isHome: false,
+    date: new Date('2026-04-18T15:00:00'), time: '15:00',
+    homeTeam: 'TV Cham', awayTeam: 'Fibalon Baskets NM II',
+    location: 'Sporthalle Cham', competition: 'Bezirksliga Oberpfalz',
+    homeScore: 55, awayScore: 66,
+  },
+  {
+    uid: 'h2-04', isHome: true,
+    date: new Date('2026-07-12T18:00:00'), time: '18:00',
+    homeTeam: 'Fibalon Baskets NM II', awayTeam: 'MTV Ingolstadt II',
+    location: 'Mehrzweckhalle NM', competition: 'Bezirksliga Oberpfalz',
+  },
+  {
+    uid: 'h2-05', isHome: false,
+    date: new Date('2026-07-26T16:00:00'), time: '16:00',
+    homeTeam: 'SV Neutraubling', awayTeam: 'Fibalon Baskets NM II',
+    location: 'Schulsporthalle Neutraubling', competition: 'Bezirksliga Oberpfalz',
+  },
+]
+
+// Demo ICS URL (würde in Produktion aus env kommen)
+const demoIcsUrl = 'https://olieder.github.io/bbb-ics-generator/ics/321759_all.ics'
+
+const codeSnippet = `---
+import GameSchedule from '@fbnm/design-system/components/GameSchedule/GameSchedule.astro'
+import { fetchGamesFromIcal } from '@fbnm/design-system/lib/bbb-ical'
+
+// Daten kommen aus BBB iCal-Feed — wird zur Build-Zeit abgerufen
+const games = await fetchGamesFromIcal(
+  process.env.ICAL_URL_HERREN,
+  'Fibalon Baskets'
+)
+---
+
+<GameSchedule
+  games={games}
+  title="Spielplan Herren 1"
+  ownTeam="Fibalon Baskets"
+  icsUrlAll={process.env.ICAL_URL_HERREN}
+/>`
+---
+
+<DocsLayout title="Spielplan">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Komponenten</p>
+      <h1 class="docs-page__title">GameSchedule</h1>
+      <p class="docs-page__desc">
+        Tabellarischer Spielplan mit Heim/Auswärts-Filterung, Ergebnisanzeige,
+        Nächstes-Spiel-Highlight und eingebetteten Kalender-Abonnement-Links
+        (iOS, Google Calendar, ICS-Download). Daten kommen aus dem BBB iCal-Feed
+        über <code>fetchGamesFromIcal()</code>.
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        Tabs: role="tablist/tab/tabpanel", aria-selected, aria-controls — WCAG 4.1.2 ·
+        Aktiver Tab: border-bottom + Farbwechsel (kein Farbe-allein) — WCAG 1.4.1 ·
+        Nächstes Spiel: Hintergrund + "Nächstes Spiel"-Label — WCAG 1.4.1 ·
+        Badges: Sieg S / Niederlage N mit aria-label — WCAG 1.4.1 ·
+        Alle Farben ≥ 7:1 AAA — WCAG 1.4.6 ·
+        Touch-Targets ≥ 44px — WCAG 2.5.8
+      </span>
+    </div>
+
+    <!-- ── Herren 1 ── -->
+    <h2 class="docs-heading">Herren 1 — 2. Regionalliga Süd</h2>
+    <p class="docs-desc">
+      Vollständiger Saisonüberblick: vergangene Spiele (Ergebnis + Sieg/Niederlage),
+      nächstes Spiel (hervorgehoben), kommende Spiele mit Uhrzeit und Spielort.
+    </p>
+    <div class="demo demo--full">
+      <GameSchedule
+        games={herren1}
+        title="Spielplan Herren 1"
+        ownTeam="Fibalon Baskets NM"
+        icsUrlAll={demoIcsUrl}
+        icsUrlHome={demoIcsUrl}
+        icsUrlAway={demoIcsUrl}
+      />
+    </div>
+
+    <!-- ── Herren 2 ── -->
+    <h2 class="docs-heading">Herren 2 — Bezirksliga Oberpfalz</h2>
+    <p class="docs-desc">
+      Gleiche Komponente, andere Instanz — jede Mannschaft bekommt ihr eigenes
+      <code>&lt;GameSchedule&gt;</code>.
+    </p>
+    <div class="demo demo--full">
+      <GameSchedule
+        games={herren2}
+        title="Spielplan Herren 2"
+        ownTeam="Fibalon Baskets NM II"
+      />
+    </div>
+
+    <!-- ── Code ── -->
+    <h2 class="docs-heading">Verwendung</h2>
+    <div class="code-block">
+      <pre set:text={codeSnippet} />
+    </div>
+
+    <!-- ── Props ── -->
+    <h2 class="docs-heading">Props</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Prop</th><th>Typ</th><th>Standard</th><th>Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>games</td><td>ScheduleGame[]</td><td>–</td><td>Spielliste (alle Spiele der Saison)</td></tr>
+        <tr><td>title</td><td>string</td><td>'Spielplan'</td><td>Titel im blauen Header</td></tr>
+        <tr><td>ownTeam</td><td>string</td><td>'Fibalon Baskets'</td><td>Eigener Teamname — bestimmt Sieg/Niederlage-Auswertung</td></tr>
+        <tr><td>icsUrlAll</td><td>string</td><td>–</td><td>ICS-URL für alle Spiele (zeigt Kalender-Abschnitt)</td></tr>
+        <tr><td>icsUrlHome</td><td>string</td><td>–</td><td>ICS-URL für Heimspiele</td></tr>
+        <tr><td>icsUrlAway</td><td>string</td><td>–</td><td>ICS-URL für Auswärtsspiele</td></tr>
+      </tbody>
+    </table>
+
+    <!-- ── ScheduleGame type ── -->
+    <h2 class="docs-heading">ScheduleGame-Interface</h2>
+    <table class="props-table">
+      <thead>
+        <tr><th>Feld</th><th>Typ</th><th>Pflicht</th><th>Beschreibung</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>uid</td><td>string</td><td>ja</td><td>Eindeutiger Bezeichner (aus iCal UID)</td></tr>
+        <tr><td>date</td><td>Date</td><td>ja</td><td>Spieltermin (Datum + Zeit)</td></tr>
+        <tr><td>time</td><td>string</td><td>ja</td><td>Uhrzeit als String, z.B. "19:30"</td></tr>
+        <tr><td>homeTeam</td><td>string</td><td>ja</td><td>Heimmannschaft</td></tr>
+        <tr><td>awayTeam</td><td>string</td><td>ja</td><td>Gastmannschaft</td></tr>
+        <tr><td>location</td><td>string</td><td>ja</td><td>Halle / Spielort</td></tr>
+        <tr><td>competition</td><td>string</td><td>ja</td><td>Liga oder Pokal</td></tr>
+        <tr><td>isHome</td><td>boolean</td><td>ja</td><td>true = Heimspiel aus Vereinssicht</td></tr>
+        <tr><td>homeScore</td><td>number</td><td>nein</td><td>Heimtore (bei gespielten Partien)</td></tr>
+        <tr><td>awayScore</td><td>number</td><td>nein</td><td>Gasttore (bei gespielten Partien)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="wcag wcag--info" style="margin-top: var(--fbnm-space-8)">
+      <span class="wcag__icon">📅</span>
+      <span>
+        Die ICS-Feeds werden vom <strong>bbb-ics-generator</strong> erzeugt und enthalten drei Varianten
+        pro Mannschaft: alle Spiele (<code>_all.ics</code>), Heimspiele (<code>_home.ics</code>),
+        Auswärtsspiele (<code>_away.ics</code>). Abonnenten erhalten Updates automatisch.
+      </span>
+    </div>
+  </div>
+</DocsLayout>
+
+<style>
+.demo--full { padding: 0; background: none; }
+.docs-desc {
+  color: var(--fbnm-color-text-muted, #545454);
+  font-size: var(--fbnm-text-sm);
+  margin: calc(-1 * var(--fbnm-space-4)) 0 var(--fbnm-space-4);
+  line-height: 1.6;
+}
+.wcag--info { background: color-mix(in srgb, var(--fbnm-cyan-500) 8%, white); border-color: var(--fbnm-cyan-500); }
+</style>
