@@ -89,4 +89,20 @@ const { title, subtitle, backgroundImage, class: className } = Astro.props
   gap: var(--fbnm-space-4);
   flex-wrap: wrap;
 }
+
+/* WCAG 1.4.3 AAA: Ghost-Button (blue-800 on white) wird im Hero-Kontext (blue-900 bg)
+   zu weiß geändert — blue-800 auf blue-900 = 1.43:1 (FAIL).
+   Weißer Text + Border auf blue-900 = 21:1 AAA. */
+:global(.fbnm-hero .fbnm-btn--ghost) {
+  color: var(--fbnm-white);
+  border-color: var(--fbnm-white);
+}
+:global(.fbnm-hero .fbnm-btn--ghost:hover:not(:disabled)) {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--fbnm-white);
+  border-color: var(--fbnm-white);
+}
+:global(.fbnm-hero .fbnm-btn--ghost:focus-visible) {
+  outline-color: var(--fbnm-white);
+}
 </style>
