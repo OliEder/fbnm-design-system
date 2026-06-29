@@ -1,0 +1,228 @@
+---
+interface StandingRow {
+  rank: number
+  team: string
+  /** Team-Kürzel im Logo-Kreis, z.B. "NM" */
+  initials: string
+  /** Hintergrundfarbe des Logo-Kreises (Hex). Muss weißen Text mit >= 4.5:1 tragen. */
+  logoBg?: string
+  /** Spiele */
+  games: number
+  /** Gewinnpunkte */
+  gp: number
+  wins: number
+  losses: number
+  /** Games Behind (z.B. "1.5" oder "–") */
+  gb: string
+  /** Korbdifferenz */
+  diff: number
+  isFBNM?: boolean
+}
+
+interface Props {
+  rows: StandingRow[]
+  title?: string
+  /** Zusatzinfo rechts neben dem Titel */
+  note?: string
+  class?: string
+}
+
+const {
+  rows,
+  title = 'Tabelle',
+  note,
+  class: className,
+} = Astro.props
+
+// Default-Logo: FBNM-Blau (10.3:1 mit weißem Text → AAA)
+const DEFAULT_LOGO_BG = '#004174'
+---
+
+<section class:list={['fbnm-standings', className]}>
+  <header class="fbnm-standings__header">
+    <h2 class="fbnm-standings__title">{title}</h2>
+    {note && <span class="fbnm-standings__note">{note}</span>}
+  </header>
+  <div class="fbnm-standings__card">
+    <div class="fbnm-standings__scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col" class="fbnm-standings__team-col">Team</th>
+            <th scope="col" title="Spiele">Sp</th>
+            <th scope="col" title="Gewinnpunkte">GP</th>
+            <th scope="col" title="Siege">S</th>
+            <th scope="col" title="Niederlagen">N</th>
+            <th scope="col" title="Games Behind">GB</th>
+            <th scope="col" title="Korbdifferenz">+/&#8722;</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(r => {
+            const diffStr = (r.diff > 0 ? '+' : '') + r.diff
+            return (
+              <tr class:list={{ 'fbnm-standings__row--fbnm': r.isFBNM }}>
+                <td class="fbnm-standings__rank">{r.rank}</td>
+                <td class="fbnm-standings__team">
+                  <span class="fbnm-standings__team-inner">
+                    <span
+                      class="fbnm-standings__logo"
+                      style={`background:${r.logoBg ?? DEFAULT_LOGO_BG}`}
+                      aria-hidden="true"
+                    >{r.initials}</span>
+                    {r.isFBNM && <span class="sr-only">(Fibalon Baskets Neumarkt)</span>}
+                    <span class="fbnm-standings__team-name">{r.team}</span>
+                  </span>
+                </td>
+                <td class="fbnm-standings__muted">{r.games}</td>
+                <td class="fbnm-standings__gp">{r.gp}</td>
+                <td>{r.wins}</td>
+                <td>{r.losses}</td>
+                <td class="fbnm-standings__muted">{r.gb}</td>
+                <td
+                  class:list={[
+                    'fbnm-standings__diff',
+                    r.diff > 0 && 'fbnm-standings__diff--pos',
+                    r.diff < 0 && 'fbnm-standings__diff--neg',
+                  ]}
+                >{diffStr}</td>
+              </tr>
+            )
+          })}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+.fbnm-standings__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--fbnm-space-3);
+  flex-wrap: wrap;
+  margin-bottom: var(--fbnm-space-3);
+}
+
+.fbnm-standings__title {
+  font-family: var(--fbnm-font-display);
+  text-transform: uppercase;
+  font-size: var(--fbnm-text-2xl);
+  color: var(--fbnm-blue-800);
+}
+
+/* WCAG 1.4.3: muted-text-Token = 7.14:1 AAA auf weiß */
+.fbnm-standings__note {
+  font-family: var(--fbnm-font-body);
+  font-weight: 700;
+  font-size: var(--fbnm-text-xs);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fbnm-color-text-muted);
+}
+
+.fbnm-standings__card {
+  background: var(--fbnm-white);
+  border-radius: var(--fbnm-radius-md);
+  overflow: hidden;
+  box-shadow: var(--fbnm-shadow-sm);
+}
+
+.fbnm-standings__scroll { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-sm);
+}
+
+/* WCAG 1.4.3: weiß auf blue-800 = 10.3:1 AAA */
+thead th {
+  background: var(--fbnm-blue-800);
+  color: var(--fbnm-white);
+  padding: var(--fbnm-space-3);
+  font-family: var(--fbnm-font-body);
+  font-weight: 700;
+  font-size: var(--fbnm-text-xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.fbnm-standings__team-col { text-align: left; }
+
+tbody td {
+  padding: var(--fbnm-space-3);
+  text-align: center;
+  border-bottom: 1px solid var(--fbnm-color-border);
+  color: var(--fbnm-color-text);
+}
+tbody tr:last-child td { border-bottom: none; }
+
+.fbnm-standings__rank {
+  font-family: var(--fbnm-font-body);
+  font-weight: 700;
+  color: var(--fbnm-blue-800);
+}
+
+.fbnm-standings__team { text-align: left; }
+
+.fbnm-standings__team-inner {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fbnm-space-3);
+  white-space: nowrap;
+}
+
+.fbnm-standings__logo {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--fbnm-white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xs);
+  flex: none;
+}
+
+.fbnm-standings__team-name { color: var(--fbnm-color-text); }
+
+.fbnm-standings__muted { color: var(--fbnm-color-text-muted); }
+
+.fbnm-standings__gp {
+  font-family: var(--fbnm-font-display);
+  font-weight: 700;
+  color: var(--fbnm-blue-800);
+}
+
+.fbnm-standings__diff { font-variant-numeric: tabular-nums; font-weight: 600; }
+/* WCAG 1.4.3: #14532d = 8.7:1 AAA, #991b1b = 7.66:1 AAA auf weiß.
+   Vorzeichen (+/−) liefert zusätzlich nicht-farbliche Bedeutung (1.4.1). */
+.fbnm-standings__diff--pos { color: #14532d; }
+.fbnm-standings__diff--neg { color: #991b1b; }
+
+/* WCAG 1.4.1: FBNM-Zeile = Hintergrund + Fettung + sr-only (nicht nur Farbe) */
+.fbnm-standings__row--fbnm {
+  background: color-mix(in srgb, var(--fbnm-cyan-500) 10%, var(--fbnm-white));
+}
+.fbnm-standings__row--fbnm .fbnm-standings__team-name,
+.fbnm-standings__row--fbnm td { font-weight: 700; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>

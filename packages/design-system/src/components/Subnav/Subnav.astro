@@ -1,0 +1,120 @@
+---
+interface SubnavItem {
+  label: string
+  href?: string
+  active?: boolean
+  /** Mannschaft ohne aktiven Ligabetrieb (dezenter dargestellt) */
+  inactive?: boolean
+}
+
+interface Props {
+  items: SubnavItem[]
+  /** Beschriftung links, z.B. "Mannschaften" */
+  label?: string
+  class?: string
+}
+
+const { items, label = 'Mannschaften', class: className } = Astro.props
+const currentPath = Astro.url?.pathname ?? ''
+---
+
+<nav class:list={['fbnm-subnav', className]} aria-label={label}>
+  <div class="fbnm-subnav__inner">
+    <span class="fbnm-subnav__label">{label}</span>
+    <div class="fbnm-subnav__scroll">
+      {items.map(item => {
+        const isActive =
+          item.active ||
+          (item.href && item.href !== '/' && currentPath.startsWith(item.href))
+        return (
+          <a
+            href={item.href ?? '#'}
+            class:list={[
+              'fbnm-subnav__item',
+              { 'fbnm-subnav__item--active': isActive, 'fbnm-subnav__item--inactive': item.inactive },
+            ]}
+            aria-current={isActive ? 'page' : undefined}
+          >{item.label}</a>
+        )
+      })}
+    </div>
+  </div>
+</nav>
+
+<style>
+.fbnm-subnav {
+  position: sticky;
+  top: 4rem; /* unter der 64px-Hauptnav */
+  z-index: calc(var(--fbnm-z-dropdown) - 1);
+  background: var(--fbnm-white);
+  border-bottom: 1px solid var(--fbnm-color-border);
+  box-shadow: var(--fbnm-shadow-sm);
+}
+
+.fbnm-subnav__inner {
+  max-width: var(--fbnm-container-max);
+  margin: 0 auto;
+  padding: 0 var(--fbnm-container-padding);
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-4);
+}
+
+/* WCAG 1.4.3: muted-text (#545454) = 7.14:1 AAA auf weiß */
+.fbnm-subnav__label {
+  flex: none;
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fbnm-color-text-muted);
+}
+
+.fbnm-subnav__scroll {
+  display: flex;
+  align-items: stretch;
+  gap: var(--fbnm-space-1);
+  overflow-x: auto;
+  flex: 1;
+}
+
+.fbnm-subnav__item {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 48px;
+  padding: 0 var(--fbnm-space-4);
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-sm);
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  /* WCAG 1.4.3: muted-text = 7.14:1 AAA */
+  color: var(--fbnm-color-text-muted);
+  border-bottom: 3px solid transparent;
+  transition: color var(--fbnm-transition-fast),
+              border-color var(--fbnm-transition-fast);
+}
+
+.fbnm-subnav__item:hover { color: var(--fbnm-blue-800); }
+
+/* WCAG 1.4.1: aktiver Zustand = Farbe UND Unterstrich (nicht nur Farbe) */
+.fbnm-subnav__item--active {
+  color: var(--fbnm-blue-800);
+  border-bottom-color: var(--fbnm-cyan-500);
+}
+
+/* „Kein Ligabetrieb": dezenter, aber WCAG-konform.
+   Export nutzte #8b97a3 (3.4:1 FAIL) → accent-text #005a87 (7.55:1 AAA) wäre zu prominent;
+   gewählt: muted bei normalem Gewicht + Klammerzusatz im Label durch den Aufrufer. */
+.fbnm-subnav__item--inactive { font-weight: 400; opacity: 0.85; }
+
+.fbnm-subnav__item:focus-visible {
+  outline: 2px solid var(--fbnm-blue-700);
+  outline-offset: -2px;
+  border-radius: var(--fbnm-radius-sm);
+}
+</style>

@@ -1,0 +1,153 @@
+---
+interface PeriodRow {
+  team: string
+  /** Punkte je Abschnitt (Länge = Anzahl Achtel/Viertel) */
+  scores: number[]
+  total: number
+  /** true = FBNM-Zeile (wird hervorgehoben) */
+  isFBNM?: boolean
+}
+
+interface Props {
+  rows: PeriodRow[]
+  /** 'Achtel' für Mini-Basketball (bis U12), 'Viertel' ab U14 */
+  mode?: 'Achtel' | 'Viertel'
+  class?: string
+}
+
+const { rows, mode = 'Achtel', class: className } = Astro.props
+
+const periodLabel = mode === 'Viertel' ? 'Vierteln' : 'Achteln'
+const periodCount = rows[0]?.scores.length ?? 0
+const headers = Array.from({ length: periodCount }, (_, i) => String(i + 1))
+---
+
+<section class:list={['fbnm-period-table', className]}>
+  <h2 class="fbnm-period-table__title">Ergebnis nach {periodLabel}</h2>
+  <div class="fbnm-period-table__card">
+    <div class="fbnm-period-table__scroll">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" class="fbnm-period-table__team-col">Mannschaft</th>
+            {headers.map(h => <th scope="col">{h}</th>)}
+            <th scope="col" class="fbnm-period-table__total-col">Endstand</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map(row => (
+            <tr class:list={{ 'fbnm-period-table__row--fbnm': row.isFBNM }}>
+              <td class="fbnm-period-table__team">
+                {row.isFBNM && (
+                  <>
+                    {/* WCAG 1.4.1: nicht-farblicher Marker + sr-only-Label */}
+                    <span class="fbnm-period-table__marker" aria-hidden="true">&#9679;</span>
+                    <span class="sr-only">(Fibalon Baskets Neumarkt)</span>
+                  </>
+                )}
+                {row.team}
+              </td>
+              {row.scores.map(sc => <td class="fbnm-period-table__num">{sc}</td>)}
+              <td class="fbnm-period-table__total">{row.total}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+.fbnm-period-table__title {
+  font-family: var(--fbnm-font-display);
+  text-transform: uppercase;
+  font-size: var(--fbnm-text-2xl);
+  color: var(--fbnm-blue-800);
+  margin-bottom: var(--fbnm-space-3);
+}
+
+.fbnm-period-table__card {
+  background: var(--fbnm-white);
+  border-radius: var(--fbnm-radius-md);
+  overflow: hidden;
+  box-shadow: var(--fbnm-shadow-sm);
+}
+
+.fbnm-period-table__scroll { overflow-x: auto; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-sm);
+}
+
+/* WCAG 1.4.3: blue-800 auf hellblau-grau ≈ 9:1 AAA */
+thead th {
+  background: color-mix(in srgb, var(--fbnm-blue-900) 5%, var(--fbnm-white));
+  padding: var(--fbnm-space-2) var(--fbnm-space-3);
+  font-family: var(--fbnm-font-body);
+  font-weight: 700;
+  font-size: var(--fbnm-text-xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fbnm-blue-800);
+  text-align: center;
+  width: 44px;
+  white-space: nowrap;
+}
+
+.fbnm-period-table__team-col { text-align: left; width: auto; }
+.fbnm-period-table__total-col { width: 64px; }
+
+tbody td {
+  padding: var(--fbnm-space-3);
+  text-align: center;
+  border-bottom: 1px solid var(--fbnm-color-border);
+  color: var(--fbnm-color-text);
+}
+
+tbody tr:last-child td { border-bottom: none; }
+
+.fbnm-period-table__team {
+  text-align: left;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-2);
+}
+
+/* WCAG 1.4.3: cyan auf weiß failt → blue-800 (10.3:1 AAA) für den Marker */
+.fbnm-period-table__marker { color: var(--fbnm-blue-800); font-size: 0.625rem; }
+
+/* WCAG 1.4.3: muted-text-Token (#545454) = 7.14:1 AAA auf weiß */
+.fbnm-period-table__num {
+  color: var(--fbnm-color-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.fbnm-period-table__total {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-lg);
+  color: var(--fbnm-blue-800);
+  font-variant-numeric: tabular-nums;
+}
+
+/* WCAG 1.4.1: FBNM-Zeile = Hintergrund + Marker + sr-only (nicht nur Farbe) */
+.fbnm-period-table__row--fbnm {
+  background: color-mix(in srgb, var(--fbnm-cyan-500) 10%, var(--fbnm-white));
+}
+.fbnm-period-table__row--fbnm .fbnm-period-table__team { font-weight: 700; }
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+</style>

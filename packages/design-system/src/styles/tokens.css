@@ -52,6 +52,15 @@
   --fbnm-color-background-dark: var(--fbnm-blue-900);
   --fbnm-color-surface:         var(--fbnm-white);
 
+  /* Hellblaue Flächen (dekorativ, für Hover/Tints auf Weiß). Kein Text-BG ohne Kontrastprüfung. */
+  --fbnm-color-surface-tint:    #eef3f7;  /* dezenter Blau-Tint (Hover-Flächen, Zitatboxen) */
+  --fbnm-color-surface-muted:   #f2f4f6;  /* Tabellen-Kopf-Hintergrund */
+  /* Secondary-Button (hellblau): Text blue-800 auf #e9eff4 = 8.6:1 AAA */
+  --fbnm-color-secondary:       #e9eff4;
+  --fbnm-color-secondary-hover: #d8e3ec;
+  --fbnm-color-secondary-active:#c9d7e3;
+  --fbnm-color-secondary-border:#c3d2df;
+
   /* WCAG 1.4.11 Non-text Contrast: UI borders need 3:1 against adjacent color. */
   /* border-ui uses blue-700 (9.1:1 on white) for form inputs.                  */
   --fbnm-color-border:          color-mix(in srgb, var(--fbnm-blue-700) 25%, transparent); /* decorative */

@@ -56,6 +56,18 @@ const Tag = href ? 'a' : 'button'
   cursor: not-allowed;
 }
 
+/* WCAG 2.4.7: sichtbarer Fokus — Cyan-Outline (3:1 gegen die meisten Hintergründe) */
+.fbnm-btn:focus-visible {
+  outline: 3px solid var(--fbnm-cyan-500);
+  outline-offset: 2px;
+}
+
+/* WCAG 2.5.5: kein „springen" beim Klick stört Touch nicht; subtiler Press-Effekt */
+.fbnm-btn:active:not(:disabled) { transform: translateY(1px); }
+@media (prefers-reduced-motion: reduce) {
+  .fbnm-btn:active:not(:disabled) { transform: none; }
+}
+
 .fbnm-btn--sm { padding: var(--fbnm-space-2) var(--fbnm-space-4); font-size: var(--fbnm-text-sm); }
 .fbnm-btn--md { padding: var(--fbnm-space-3) var(--fbnm-space-6); font-size: var(--fbnm-text-base); }
 .fbnm-btn--lg { padding: var(--fbnm-space-4) var(--fbnm-space-8); font-size: var(--fbnm-text-lg); }
@@ -70,16 +82,24 @@ const Tag = href ? 'a' : 'button'
   background-color: var(--fbnm-color-primary-light);
   border-color: var(--fbnm-color-primary-light);
 }
-
-/* WCAG 1.4.3/1.4.6: white on blue-900 (#002751) = 15.2:1 AAA */
-.fbnm-btn--secondary {
+.fbnm-btn--primary:active:not(:disabled) {
   background-color: var(--fbnm-color-primary-dark);
-  color: var(--fbnm-white);
   border-color: var(--fbnm-color-primary-dark);
 }
+
+/* Angeglichen an Claude-Design-Export: helle Sekundär-Variante.
+   WCAG 1.4.3/1.4.6: blue-800 (#004174) auf #e9eff4 = 8.6:1 AAA */
+.fbnm-btn--secondary {
+  background-color: var(--fbnm-color-secondary);
+  color: var(--fbnm-color-primary);
+  border-color: var(--fbnm-color-secondary-border);
+}
 .fbnm-btn--secondary:hover:not(:disabled) {
-  background-color: var(--fbnm-color-primary);
-  border-color: var(--fbnm-color-primary);
+  background-color: var(--fbnm-color-secondary-hover);
+  border-color: var(--fbnm-color-secondary-border);
+}
+.fbnm-btn--secondary:active:not(:disabled) {
+  background-color: var(--fbnm-color-secondary-active);
 }
 
 /* WCAG 1.4.3/1.4.6: blue-800 on white = 10.3:1 AAA */
@@ -91,5 +111,9 @@ const Tag = href ? 'a' : 'button'
 .fbnm-btn--ghost:hover:not(:disabled) {
   background-color: var(--fbnm-color-primary);
   color: var(--fbnm-white);
+}
+.fbnm-btn--ghost:active:not(:disabled) {
+  background-color: var(--fbnm-color-primary-dark);
+  border-color: var(--fbnm-color-primary-dark);
 }
 </style>

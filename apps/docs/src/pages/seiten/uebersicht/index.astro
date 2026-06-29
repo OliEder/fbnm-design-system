@@ -1,0 +1,120 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import Navigation from '@ds/components/Navigation/Navigation.astro'
+import Subnav from '@ds/components/Subnav/Subnav.astro'
+import Footer from '@ds/components/Footer/Footer.astro'
+import GameCard from '@ds/components/GameCard/GameCard.astro'
+
+// Mega-Menü-Daten (aus Claude-Design-Export "FBNM Nav")
+const mega = {
+  herren: [
+    { name: 'Herren 1', sub: 'Bayernliga Herren Mitte' },
+    { name: 'Herren 2', sub: 'Bezirksliga' },
+    { name: 'U20 männlich', sub: 'Landesliga U20 Nord' },
+    { name: 'U18 männlich', sub: 'Bayer. Meisterschaft U18m' },
+  ],
+  damen: [
+    { name: 'Damen', sub: 'Kein Ligabetrieb', inactive: true },
+    { name: 'U14 weiblich', sub: 'Kein Ligabetrieb', inactive: true },
+  ],
+  jugend: [
+    { name: 'U16 männlich', sub: 'Bezirksliga' },
+    { name: 'U16 männlich II', sub: 'Bezirksoberliga' },
+    { name: 'U14 männlich', sub: 'Bezirksoberliga' },
+    { name: 'U10 mix', sub: 'Bezirksliga' },
+  ],
+  nextGames: [
+    { type: 'H', date: '18.04.', time: '19:30', team: 'Senioren', opp: 'vs. FC Tegernheim' },
+    { type: 'H', date: '19.04.', time: '12:45', team: 'U18', opp: 'vs. TV Vach' },
+    { type: 'A', date: '25.04.', time: '15:00', team: 'U16 II', opp: '@ Amberg-Sulzbach 2' },
+  ],
+  news: [
+    { tag: 'Spielbericht', date: '15. Feb 2026', title: 'U10 vs. DJK Pressath – Defensive-Lektion trotz Teamgeist' },
+    { tag: 'Spielbericht', date: '15. Feb 2026', title: 'U10 Triumph bei sicherem 74:24 Sieg!' },
+    { tag: 'News', date: '25. Sep 2024', title: 'Einladung erster Heimspieltag am 29.09.' },
+  ],
+}
+
+const navItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Teams', href: '/team/', mega: true },
+  { label: 'Spielplan', href: '/spielplan/' },
+  { label: 'Tabelle', href: '/tabelle/' },
+  { label: 'News', href: '/news/' },
+  { label: 'Verein', href: '/verein/' },
+  { label: 'Kontakt', href: '/kontakt/' },
+]
+
+const teamTabs = [
+  { label: 'Alle Teams', active: true },
+  { label: 'Herren 1' }, { label: 'Herren 2' }, { label: 'Damen', inactive: true },
+  { label: 'U20' }, { label: 'U18' }, { label: 'U16' }, { label: 'U14' }, { label: 'U10' },
+]
+---
+
+<DocsLayout title="Übersicht (Club-Hub)">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Seiten</p>
+      <h1 class="docs-page__title">Übersicht — Club-Hub</h1>
+      <p class="docs-page__desc">
+        Startseiten-Layout: Hauptnavigation mit <strong>Mega-Menü</strong> (Teams),
+        <strong>Subnav</strong> (Mannschaften-Switcher), nächste Spiele und Team-Überblick.
+        Aus dem Claude-Design-Export <code>FBNM Übersicht</code> &amp; <code>FBNM Nav</code>.
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        Mega-Menü: <code>aria-haspopup</code>/<code>aria-expanded</code>, Escape schließt,
+        Klick-außerhalb &amp; Fokus-Verlust schließen · „Kein Ligabetrieb"-Teams in
+        accent-text (7.55:1 AAA) statt grauem FAIL-Wert.
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Live-Vorschau</h2>
+    <div class="demo">
+      <div class="demo__canvas demo__canvas--full" style="padding:0; background:#f4f6f8;">
+        <Navigation items={navItems} mega={mega} logoSrc="/fbnm-design-system/images/logo.svg" />
+        <Subnav items={teamTabs} />
+
+        <div style="max-width:1280px; margin:0 auto; padding:2.5rem 1.5rem;">
+          <p style="font-family:var(--fbnm-font-body); font-size:0.8rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--fbnm-color-text-muted); text-align:center;">Saison 2025/26</p>
+          <h2 style="font-family:var(--fbnm-font-display); text-transform:uppercase; font-size:3rem; color:var(--fbnm-blue-900); text-align:center; margin:0.25rem 0 2rem;">Fibalon Baskets Neumarkt</h2>
+
+          <h3 style="font-family:var(--fbnm-font-display); text-transform:uppercase; font-size:1.5rem; color:var(--fbnm-blue-800); margin-bottom:1rem;">Nächste Spiele</h3>
+          <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:1rem;">
+            <GameCard homeTeam="Herren 1" awayTeam="FC Tegernheim" date={new Date('2026-04-18')} time="19:30" location="Große Jurahalle" competition="Bayernliga" isHome={true} />
+            <GameCard homeTeam="U18" awayTeam="TV Vach" date={new Date('2026-04-19')} time="12:45" location="Große Jurahalle" competition="U18m Bayern" isHome={true} />
+            <GameCard homeTeam="Amberg-Sulzbach 2" awayTeam="U16 II" date={new Date('2026-04-25')} time="15:00" location="Auswärts" competition="Bezirksoberliga" isHome={false} />
+          </div>
+        </div>
+
+        <Footer logoSrc="/fbnm-design-system/images/logo.svg" />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Verwendung — Navigation mit Mega-Menü</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import Navigation from '@fbnm/design-system/components/Navigation/Navigation.astro'
+
+const mega = {
+  herren: [{ name: 'Herren 1', sub: 'Bayernliga Mitte', href: '/team/h1/' }, …],
+  damen:  [{ name: 'Damen', sub: 'Kein Ligabetrieb', inactive: true }, …],
+  jugend: [{ name: 'U16 männlich', sub: 'Bezirksliga' }, …],
+  nextGames: [{ type: 'H', date: '18.04.', time: '19:30', team: 'Senioren', opp: 'vs. FC Tegernheim' }],
+  news:   [{ tag: 'Spielbericht', date: '15. Feb 2026', title: '…', href: '/news/…' }],
+  spielplanHref: '/spielplan/', newsHref: '/news/',
+}
+const items = [
+  { label: 'Home', href: '/' },
+  { label: 'Teams', href: '/team/', mega: true },   // mega:true → Dropdown
+  { label: 'Spielplan', href: '/spielplan/' }, …
+]
+---
+<Navigation items={items} mega={mega} />`} />
+    </div>
+  </div>
+</DocsLayout>

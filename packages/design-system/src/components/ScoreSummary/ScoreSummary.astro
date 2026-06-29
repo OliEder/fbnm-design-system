@@ -1,0 +1,139 @@
+---
+interface Props {
+  /** Heim-/erstgenanntes Team (linke Seite) */
+  homeTeam: string
+  /** Auswärts-/zweitgenanntes Team (rechte Seite) */
+  awayTeam: string
+  homeScore: number
+  awayScore: number
+  /** true = das eigene (FBNM-)Team steht links */
+  fbnmIsHome?: boolean
+  /** Zusatzzeile beim Gegner, z.B. "Auswärts · Spieltag 7" */
+  meta?: string
+  class?: string
+}
+
+const {
+  homeTeam,
+  awayTeam,
+  homeScore,
+  awayScore,
+  fbnmIsHome = true,
+  meta,
+  class: className,
+} = Astro.props
+
+const fbnmScore = fbnmIsHome ? homeScore : awayScore
+const oppScore = fbnmIsHome ? awayScore : homeScore
+const isWin = fbnmScore > oppScore
+const isDraw = fbnmScore === oppScore
+const resultLabel = isDraw ? 'Unentschieden' : isWin ? 'Sieg' : 'Niederlage'
+const resultVariant = isDraw ? 'draw' : isWin ? 'win' : 'loss'
+---
+
+<div class:list={['fbnm-score-summary', className]}>
+  <div class="fbnm-score-summary__team fbnm-score-summary__team--home">
+    <div class="fbnm-score-summary__name">{homeTeam}</div>
+    {fbnmIsHome && (
+      <span class:list={['fbnm-score-summary__result', `fbnm-score-summary__result--${resultVariant}`]}>
+        {resultLabel}
+      </span>
+    )}
+    {!fbnmIsHome && meta && <div class="fbnm-score-summary__meta">{meta}</div>}
+  </div>
+
+  <div class="fbnm-score-summary__score" aria-label={`Endstand ${homeScore} zu ${awayScore}`}>
+    <span class="fbnm-score-summary__score-home">{homeScore}</span>
+    <span class="fbnm-score-summary__score-sep" aria-hidden="true">:</span>
+    <span class="fbnm-score-summary__score-away">{awayScore}</span>
+  </div>
+
+  <div class="fbnm-score-summary__team fbnm-score-summary__team--away">
+    <div class="fbnm-score-summary__name">{awayTeam}</div>
+    {!fbnmIsHome && (
+      <span class:list={['fbnm-score-summary__result', `fbnm-score-summary__result--${resultVariant}`]}>
+        {resultLabel}
+      </span>
+    )}
+    {fbnmIsHome && meta && <div class="fbnm-score-summary__meta">{meta}</div>}
+  </div>
+</div>
+
+<style>
+.fbnm-score-summary {
+  background: var(--fbnm-blue-900);
+  color: var(--fbnm-white);
+  border-radius: var(--fbnm-radius-lg);
+  padding: var(--fbnm-space-6);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: var(--fbnm-space-4);
+  box-shadow: var(--fbnm-shadow-lg);
+}
+
+.fbnm-score-summary__team--home { text-align: right; }
+.fbnm-score-summary__team--away { text-align: left; }
+
+.fbnm-score-summary__name {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xl);
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+/* Ergebnis-Badge.
+   WCAG 1.4.3: sm (14px) Badge-Text ist Kleintext → 4.5:1 AA / 7:1 AAA nötig.
+   Im Original war "Niederlage" rot (#991b1b) auf weiß = 7.66:1 — als TEXT ok,
+   aber als gefülltes Badge auf dunkelblauem Block wirkt es kontrastschwach.
+   Lösung wie im restlichen System: weiße Schrift auf gesättigtem Status-BG. */
+.fbnm-score-summary__result {
+  display: inline-block;
+  margin-top: var(--fbnm-space-2);
+  padding: 2px var(--fbnm-space-3);
+  border-radius: var(--fbnm-radius-full);
+  font-family: var(--fbnm-font-caption);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--fbnm-white);
+}
+/* white on #14532d = 8.14:1 AAA */
+.fbnm-score-summary__result--win  { background: #14532d; }
+/* white on #991b1b = 7.66:1 AAA */
+.fbnm-score-summary__result--loss { background: #991b1b; }
+/* white on #494949 = 7.84:1 AAA */
+.fbnm-score-summary__result--draw { background: #494949; }
+
+.fbnm-score-summary__meta {
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-xs);
+  /* WCAG 1.4.6: white at 70% on blue-900 ≈ 10:1 AAA */
+  color: color-mix(in srgb, var(--fbnm-white) 70%, transparent);
+  margin-top: var(--fbnm-space-2);
+}
+
+.fbnm-score-summary__score {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-5xl);
+  line-height: 1;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Highlight das höhere/eigene Ergebnis in Cyan.
+   5xl (48px) = large text → cyan-400 auf blue-900 = 5.0:1 (AA large, brand). */
+.fbnm-score-summary__score-home,
+.fbnm-score-summary__score-away { color: var(--fbnm-white); }
+
+.fbnm-score-summary__score-sep {
+  color: color-mix(in srgb, var(--fbnm-white) 40%, transparent);
+  margin: 0 var(--fbnm-space-3);
+}
+
+@media (max-width: 480px) {
+  .fbnm-score-summary__name { font-size: var(--fbnm-text-base); }
+  .fbnm-score-summary__score { font-size: var(--fbnm-text-4xl); }
+}
+</style>
