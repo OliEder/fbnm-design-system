@@ -10,6 +10,17 @@ export { default as PlayerCard } from './components/PlayerCard/PlayerCard.astro'
 export { default as StatsTable } from './components/StatsTable/StatsTable.astro'
 export { default as LiveTicker } from './components/LiveTicker/LiveTicker.astro'
 
+// Spielbericht (Match Report) — Komposition + Teilkomponenten
+export { default as Spielbericht } from './components/Spielbericht/Spielbericht.astro'
+export { default as ScoreSummary } from './components/ScoreSummary/ScoreSummary.astro'
+export { default as PeriodTable } from './components/PeriodTable/PeriodTable.astro'
+export { default as BoxScore } from './components/BoxScore/BoxScore.astro'
+export { default as LeagueStandings } from './components/LeagueStandings/LeagueStandings.astro'
+
+// Navigation-Ergänzungen + reiche Spieltag-Statistik
+export { default as Subnav } from './components/Subnav/Subnav.astro'
+export { default as MatchStats } from './components/MatchStats/MatchStats.astro'
+
 // Tokens
 export * from './tokens/index'
 

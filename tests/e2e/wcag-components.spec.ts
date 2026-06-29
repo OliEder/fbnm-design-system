@@ -345,6 +345,151 @@ test.describe('WCAG 2.2 Komponenten-Checks', () => {
     await expect(schedule1.getByRole('tab', { name: /Alle/i })).toHaveAttribute('aria-selected', 'true')
   })
 
+  // ── Mega-Menü (Navigation) ───────────────────────────────────────────────
+  test('Mega-Menü: Trigger hat aria-haspopup, aria-expanded, aria-controls (WCAG 4.1.2)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Mega-Trigger im Hamburger-Flow auf Mobile')
+    await page.goto(`${BASE}/seiten/uebersicht/`)
+    const trigger = page.locator('[data-mega-trigger]').first()
+    await expect(trigger).toBeVisible()
+    await expect(trigger).toHaveAttribute('aria-haspopup', 'true')
+    await expect(trigger).toHaveAttribute('aria-expanded', 'false')
+    await expect(trigger).toHaveAttribute('aria-controls')
+  })
+
+  test('Mega-Menü: Klick öffnet Panel und setzt aria-expanded=true (WCAG 4.1.3)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Mega-Trigger im Hamburger-Flow auf Mobile')
+    await page.goto(`${BASE}/seiten/uebersicht/`)
+    const trigger = page.locator('[data-mega-trigger]').first()
+    const panel = page.locator('[data-mega-panel]').first()
+
+    await expect(panel).toBeHidden()
+    await trigger.click()
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true')
+    await expect(panel).toBeVisible()
+  })
+
+  test('Mega-Menü: Escape schließt und gibt Fokus an den Trigger zurück (WCAG 2.1.2)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Mega-Trigger im Hamburger-Flow auf Mobile')
+    await page.goto(`${BASE}/seiten/uebersicht/`)
+    const trigger = page.locator('[data-mega-trigger]').first()
+    const panel = page.locator('[data-mega-panel]').first()
+
+    await trigger.click()
+    await expect(panel).toBeVisible()
+    await page.keyboard.press('Escape')
+    await expect(panel).toBeHidden()
+    await expect(trigger).toBeFocused()
+  })
+
+  test('Mega-Menü: öffnet per CSS-Hover auch ohne JS (progressive enhancement)', async ({ browser, isMobile }) => {
+    test.skip(isMobile, 'Hover-Pfad nur Desktop')
+    const ctx = await browser.newContext({ javaScriptEnabled: false })
+    const page = await ctx.newPage()
+    await page.goto(`${BASE}/seiten/uebersicht/`)
+    const trigger = page.locator('[data-mega-trigger]').first()
+    const panel = page.locator('[data-mega-panel]').first()
+    await expect(panel).toBeHidden()
+    await trigger.hover()
+    await expect(panel, 'Mega-Menü muss ohne JS per Hover öffnen').toBeVisible()
+    await ctx.close()
+  })
+
+  test('Mega-Menü: Panel hat role=region mit aria-label (WCAG 1.3.1)', async ({ page, isMobile }) => {
+    test.skip(isMobile, 'Mega-Trigger im Hamburger-Flow auf Mobile')
+    await page.goto(`${BASE}/seiten/uebersicht/`)
+    const panel = page.locator('[data-mega-panel]').first()
+    await expect(panel).toHaveAttribute('role', 'region')
+    await expect(panel).toHaveAttribute('aria-label')
+  })
+
+  // ── Subnav (Mannschaften-Switcher) ──────────────────────────────────────
+  test('Subnav: <nav> mit aria-label und aktivem Unterstrich (WCAG 1.3.1 + 1.4.1)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const subnav = page.locator('.fbnm-subnav').first()
+    await expect(subnav).toBeVisible()
+    await expect(subnav).toHaveAttribute('aria-label')
+
+    const active = page.locator('.fbnm-subnav__item--active').first()
+    await expect(active).toBeVisible()
+    const borderWidth = await active.evaluate(el => parseFloat(getComputedStyle(el).borderBottomWidth))
+    expect(borderWidth, 'Aktives Subnav-Item braucht border-bottom ≥3px').toBeGreaterThanOrEqual(3)
+  })
+
+  test('Subnav: aktives Item hat aria-current=page (WCAG 4.1.2)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const active = page.locator('.fbnm-subnav__item--active').first()
+    await expect(active).toHaveAttribute('aria-current', 'page')
+  })
+
+  // ── MatchStats (reiche Spieltag-Statistik, CSS-only Tabs) ───────────────
+  test('MatchStats: CSS-only Tabs (Radio + Label), erstes Panel initial offen', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const stats = page.locator('.fbnm-matchstats').first()
+    const radios = stats.locator('.fbnm-matchstats__radio')
+    const labels = stats.locator('label.fbnm-matchstats__tab')
+
+    const count = await labels.count()
+    expect(count, 'MatchStats erwartet ≥2 Tabs').toBeGreaterThanOrEqual(2)
+    // Jedes Label verweist per for auf ein Radio (native Verknüpfung)
+    for (let i = 0; i < count; i++) {
+      await expect(labels.nth(i)).toHaveAttribute('for')
+    }
+    // Erstes Radio initial gecheckt → erstes Panel sichtbar
+    await expect(radios.nth(0)).toBeChecked()
+    await expect(stats.locator('.fbnm-matchstats__panel--stats')).toBeVisible()
+  })
+
+  test('MatchStats: Label-Klick schaltet Panel um — ohne JS (WCAG 4.1.3)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const stats = page.locator('.fbnm-matchstats').first()
+
+    await expect(stats.locator('.fbnm-matchstats__panel--stats')).toBeVisible()
+    await stats.locator('label.fbnm-matchstats__tab', { hasText: 'Aufstellung' }).click()
+    await expect(stats.locator('.fbnm-matchstats__panel--lineup')).toBeVisible()
+    await expect(stats.locator('.fbnm-matchstats__panel--stats')).toBeHidden()
+  })
+
+  test('MatchStats: Tabs funktionieren auch mit deaktiviertem JS (CSS-only)', async ({ browser }) => {
+    const ctx = await browser.newContext({ javaScriptEnabled: false })
+    const page = await ctx.newPage()
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const stats = page.locator('.fbnm-matchstats').first()
+    await stats.locator('label.fbnm-matchstats__tab', { hasText: 'Aufstellung' }).click()
+    await expect(stats.locator('.fbnm-matchstats__panel--lineup')).toBeVisible()
+    await ctx.close()
+  })
+
+  test('MatchStats: Radios per Tastatur fokussierbar, Pfeiltasten wechseln (native Radiogroup)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const radios = page.locator('.fbnm-matchstats').first().locator('.fbnm-matchstats__radio')
+    await radios.nth(0).focus()
+    await expect(radios.nth(0)).toBeFocused()
+    await page.keyboard.press('ArrowDown')
+    await expect(radios.nth(1)).toBeChecked()
+  })
+
+  test('MatchStats: Tab-Labels ≥44px Touch-Target (WCAG 2.5.8)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const labels = page.locator('.fbnm-matchstats').first().locator('label.fbnm-matchstats__tab')
+    const count = await labels.count()
+    for (let i = 0; i < count; i++) {
+      const box = await labels.nth(i).boundingBox()
+      if (!box) continue
+      expect(box.height, `MatchStats-Tab ${i + 1}: Höhe ${box.height.toFixed(1)}px < 44px`).toBeGreaterThanOrEqual(44)
+    }
+  })
+
+  test('MatchStats: "bester Liga-Rang" hat sr-only-Hinweis (WCAG 1.4.1 — nicht nur Farbe)', async ({ page }) => {
+    await page.goto(`${BASE}/seiten/team-seite/`)
+    const stats = page.locator('.fbnm-matchstats').first()
+    // Saison-Tab öffnen (Label-Klick, CSS-only)
+    await stats.locator('label.fbnm-matchstats__tab', { hasText: 'Saison-Schnitt' }).click()
+    const best = stats.locator('.fbnm-matchstats__rank--best').first()
+    await expect(best).toBeVisible()
+    const srOnly = best.locator('.sr-only')
+    await expect(srOnly, 'Bester Rang braucht sr-only-Hinweis').toBeAttached()
+  })
+
   // ── Docs-Sidebar Kontrast ────────────────────────────────────────────────
   test('Sidebar-Gruppen-Labels erfüllen WCAG AA Kontrast (≥4.5:1)', async ({ page }) => {
     await page.goto(`${BASE}/`)

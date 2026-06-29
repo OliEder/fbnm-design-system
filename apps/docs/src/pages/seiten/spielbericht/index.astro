@@ -1,0 +1,160 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import Spielbericht from '@ds/components/Spielbericht/Spielbericht.astro'
+
+// Beispieldaten aus dem Claude-Design-Export "FBNM Spielbericht"
+// (U10 vs. DJK Pressath, 15.02.2026).
+
+const periods = [
+  { team: 'DJK Pressath',             scores: [14, 8, 8, 6, 13, 8, 14, 16], total: 87 },
+  { team: 'Fibalon Baskets Neumarkt', scores: [0, 4, 2, 2, 0, 0, 2, 6],     total: 16, isFBNM: true },
+]
+
+const players = [
+  { nr: 5,  name: 'Levin Klemm',   pos: '–', pts: 0,  fgm: 0, ftm: 0, fta: 0 },
+  { nr: 6,  name: 'Mona Gaßner',   pos: '–', pts: 0,  fgm: 0, ftm: 0, fta: 0 },
+  { nr: 7,  name: 'Lennard Klemm', pos: '–', pts: 10, fgm: 5, ftm: 0, fta: 2, top: true },
+  { nr: 12, name: 'Ben Gieritz',   pos: '–', pts: 2,  fgm: 1, ftm: 0, fta: 0 },
+  { nr: 13, name: 'Franz Eder',    pos: '–', pts: 2,  fgm: 1, ftm: 0, fta: 0 },
+  { nr: 14, name: 'Karlson Bader', pos: '–', pts: 2,  fgm: 1, ftm: 0, fta: 0 },
+]
+
+const details = [
+  { label: 'Datum', value: '15. Februar 2026' },
+  { label: 'Spielzeit', value: "40'" },
+  { label: 'Liga', value: 'U10 mixed Bezirksliga' },
+  { label: 'Saison', value: '2025 / 2026' },
+  { label: 'Spieltag', value: '7' },
+]
+
+const standings = [
+  { rank: 1, team: 'DJK Pressath',             initials: 'DJK', logoBg: '#1a4b76', games: 10, gp: 20, wins: 10, losses: 0,  gb: '–',   diff: 459 },
+  { rank: 2, team: 'Regensburg Baskets 1',     initials: 'RB',  logoBg: '#7a1f1f', games: 11, gp: 18, wins: 9,  losses: 2,  gb: '1.5', diff: 462 },
+  { rank: 3, team: 'DJK Neustadt a. d. W. 1',  initials: 'NEU', logoBg: '#494949', games: 11, gp: 16, wins: 8,  losses: 3,  gb: '2.5', diff: 146 },
+  { rank: 4, team: 'TB Weiden Basketball',     initials: 'TBW', logoBg: '#14532d', games: 10, gp: 12, wins: 6,  losses: 4,  gb: '4',   diff: -155 },
+  { rank: 5, team: 'Fibalon Baskets Neumarkt', initials: 'NM',  logoBg: '#004174', games: 13, gp: 6,  wins: 3,  losses: 10, gb: '8.5', diff: -276, isFBNM: true },
+  { rank: 6, team: 'Regensburg Baskets 2',     initials: 'RB',  logoBg: '#7a1f1f', games: 10, gp: 5,  wins: 3,  losses: 7,  gb: '7',   diff: -224 },
+  { rank: 7, team: 'TSV 1880 Schwandorf',      initials: 'TSV', logoBg: '#5a3a1f', games: 11, gp: 5,  wins: 3,  losses: 8,  gb: '7.5', diff: -80 },
+  { rank: 8, team: 'TV Amberg-Sulzbach BSG 2', initials: 'AS',  logoBg: '#1a4b76', games: 10, gp: 2,  wins: 1,  losses: 9,  gb: '9',   diff: -332 },
+]
+---
+
+<DocsLayout title="Spielbericht">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Seiten</p>
+      <h1 class="docs-page__title">Spielbericht</h1>
+      <p class="docs-page__desc">
+        Vollständige Spielbericht-Seite: Hero mit Datum & Kategorie, Endstand,
+        Achtel-/Viertel-Tabelle, redaktioneller Artikel (Slot), Statistik mit
+        Tabs (Spielerstatistik / Aufstellung), Spieldetails und Liga-Tabelle.
+        Komponiert aus <code>ScoreSummary</code>, <code>PeriodTable</code>,
+        <code>BoxScore</code> und <code>LeagueStandings</code>.
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        Alle Farben aus <code>--fbnm-</code>-Tokens · FBNM-Zeilen dreifach markiert
+        (Hintergrund + Marker + <code>sr-only</code>) · Status-Badges in AAA-Kontrast ·
+        Tabs nach WAI-ARIA-Pattern mit Pfeiltasten-Navigation und sichtbarem Fokus.
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Live-Vorschau — Achtel (Mini-Basketball, bis U12)</h2>
+    <div class="demo">
+      <div class="demo__canvas demo__canvas--full" style="padding:0;">
+        <Spielbericht
+          title="U10 vs. DJK Pressath — Defensive-Lektion trotz Teamgeist"
+          day="15"
+          month="Feb"
+          year="2026"
+          tags={['Spielbericht', 'Jugend · U10']}
+          author="Oliver-Marcus Eder"
+          byline="Lesedauer 1 Min · U10 mixed Bezirksliga 2025/26"
+          homeTeam="Fibalon Baskets U10"
+          awayTeam="DJK Pressath"
+          homeScore={16}
+          awayScore={87}
+          fbnmIsHome={true}
+          scoreMeta="Auswärts · Spieltag 7"
+          mode="Achtel"
+          periods={periods}
+          players={players}
+          coach="Oliver-Marcus Eder"
+          details={details}
+          standings={standings}
+          standingsTitle="U10 mixed Bezirksliga"
+          standingsNote="Offizielle Tabelle · Ranking nach GB"
+        >
+          <p>
+            Ohne zwei unserer Top-Spieler trat unsere U10 beim Tabellenführer
+            <strong>DJK Pressath</strong> an. Über 40 Minuten zeigte das Team
+            <strong>Einsatz, Leidenschaft und Zusammenhalt</strong> — doch die
+            fehlende Defensive ließ Pressath viel zu leicht punkten. Endstand: 16:87.
+          </p>
+          <p>
+            Offensiv ragte <strong>Lennard Klemm</strong> mit 10 Punkten (5 Zweier)
+            heraus. <strong>Karlson Bader</strong>, <strong>Ben Gieritz</strong>
+            (per Offensiv-Rebound) und <strong>Franz Eder</strong> trafen je einen
+            Korb. Das letzte Achtel wurde mit 6:16 zum Highlight — nie aufgegeben.
+          </p>
+          <blockquote>
+            <p>
+              „Defensive muss jetzt unser Fokus sein, besonders gegen Pressing.
+              Aber der Teamgeist ist Weltklasse — bis zum Schluss kämpfen, im
+              letzten Achtel zulegen. Ich glaube an dieses Team."
+            </p>
+            <footer>— Oliver Eder, Trainer U10</footer>
+          </blockquote>
+          <p>
+            Trotz der 87:16-Schlappe: als Einheit gekämpft, motiviert angefeuert.
+            Mit vollem Kader und defensivem Training holen wir in der Bezirksliga
+            den dritten Sieg.
+          </p>
+        </Spielbericht>
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Verwendung</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import Spielbericht from '@fbnm/design-system/components/Spielbericht/Spielbericht.astro'
+---
+
+<Spielbericht
+  title="U10 vs. DJK Pressath …"
+  day="15" month="Feb" year="2026"
+  tags={['Spielbericht', 'Jugend · U10']}
+  author="Oliver-Marcus Eder"
+  byline="Lesedauer 1 Min · U10 mixed Bezirksliga 2025/26"
+  homeTeam="Fibalon Baskets U10" awayTeam="DJK Pressath"
+  homeScore={16} awayScore={87}
+  fbnmIsHome={true} scoreMeta="Auswärts · Spieltag 7"
+  mode="Achtel"           {/* 'Achtel' bis U12, 'Viertel' ab U14 */}
+  periods={periods}        {/* PeriodRow[] */}
+  players={players}        {/* PlayerStat[] */}
+  coach="Oliver-Marcus Eder"
+  details={details}        {/* { label, value }[] */}
+  standings={standings}    {/* StandingRow[] */}
+  standingsTitle="U10 mixed Bezirksliga"
+  standingsNote="Offizielle Tabelle · Ranking nach GB"
+>
+  <p>Artikeltext … <strong>fett</strong> …</p>
+  <blockquote><p>Zitat …</p><footer>— Trainer</footer></blockquote>
+</Spielbericht>`} />
+    </div>
+
+    <h2 class="docs-heading">Teilkomponenten</h2>
+    <p style="font-size:0.9rem; color:#475569; line-height:1.8;">
+      Jeder Block ist auch einzeln verwendbar:
+    </p>
+    <ul style="font-size:0.9rem; color:#475569; line-height:1.8; padding-left:1.25rem;">
+      <li><code>ScoreSummary</code> — Endstand-Block mit Ergebnis-Badge</li>
+      <li><code>PeriodTable</code> — Achtel-/Viertel-Tabelle (dynamische Spalten)</li>
+      <li><code>BoxScore</code> — Statistik mit Tabs (interaktiv, ARIA)</li>
+      <li><code>LeagueStandings</code> — Liga-Tabelle mit GP/GB/+− und Team-Logos</li>
+    </ul>
+  </div>
+</DocsLayout>

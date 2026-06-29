@@ -1,0 +1,410 @@
+---
+interface BoxRow {
+  nr: number
+  name: string
+  min: number
+  pkt: number
+  reb: number
+  ast: number
+  stl: number
+  blk: number
+  /** Dreier (3-Punkte-Würfe) */
+  tp: number
+  /** hebt Top-Performer hervor */
+  top?: boolean
+}
+interface LineupRow {
+  nr: number
+  name: string
+  pos: string
+  /** Körpergröße, z.B. "1,88 m" */
+  height: string
+}
+interface SeasonRow {
+  /** Kategorie, z.B. "Punkte / Spiel" */
+  cat: string
+  /** Saison-Schnitt-Wert */
+  val: string
+  /** Liga-Rang, z.B. "1." */
+  rank: string
+  /** true = bester Rang (grün hervorgehoben) */
+  best?: boolean
+}
+
+interface Props {
+  /** Box-Score-Zeilen (Spielerstatistik) */
+  box: BoxRow[]
+  /** Aufstellung: Starting Five */
+  starters?: LineupRow[]
+  /** Aufstellung: Bank */
+  bench?: LineupRow[]
+  /** Saison-Schnitt-Zeilen */
+  season?: SeasonRow[]
+  /** Header-Titel, z.B. "Spieltag-Statistik" */
+  title?: string
+  /** eigenes Team (links im Score) */
+  homeTeam?: string
+  awayTeam?: string
+  homeScore?: number
+  awayScore?: number
+  class?: string
+}
+
+const {
+  box,
+  starters = [],
+  bench = [],
+  season = [],
+  title = 'Spieltag-Statistik',
+  homeTeam,
+  awayTeam,
+  homeScore,
+  awayScore,
+  class: className,
+} = Astro.props
+
+const hasScore = homeScore !== undefined && awayScore !== undefined
+const hasLineup = starters.length > 0 || bench.length > 0
+const hasSeason = season.length > 0
+
+const totals = box.reduce(
+  (a, p) => ({
+    min: a.min + p.min, pkt: a.pkt + p.pkt, reb: a.reb + p.reb, ast: a.ast + p.ast,
+    stl: a.stl + p.stl, blk: a.blk + p.blk, tp: a.tp + p.tp,
+  }),
+  { min: 0, pkt: 0, reb: 0, ast: 0, stl: 0, blk: 0, tp: 0 },
+)
+
+const uid = `fbnm-ms-${Math.random().toString(36).slice(2, 9)}`
+const groupName = `${uid}-tabs`
+
+// Tab-Liste dynamisch — nur vorhandene Panels.
+const tabs = [
+  { key: 'stats', label: 'Spielerstatistik', show: true },
+  { key: 'lineup', label: 'Aufstellung', show: hasLineup },
+  { key: 'season', label: 'Saison-Schnitt', show: hasSeason },
+].filter(t => t.show)
+
+// CSS-only: pro Instanz scoped Regeln, die das gecheckte Radio mit „seinem"
+// Label (aktiv-Style) und „seinem" Panel (sichtbar) verknüpfen — robust bei
+// variabler Tab-Anzahl, ohne nth-of-type-Fragilität.
+const scopedCss = tabs
+  .map(t => `
+#${uid} #${uid}-r-${t.key}:checked ~ .fbnm-matchstats__tabs label[for="${uid}-r-${t.key}"] {
+  color: var(--fbnm-blue-800); font-weight: 700; border-bottom-color: var(--fbnm-cyan-500);
+}
+#${uid} #${uid}-r-${t.key}:focus-visible ~ .fbnm-matchstats__tabs label[for="${uid}-r-${t.key}"] {
+  outline: 2px solid var(--fbnm-blue-700); outline-offset: -2px; border-radius: var(--fbnm-radius-sm);
+}
+#${uid} #${uid}-r-${t.key}:checked ~ .fbnm-matchstats__panel--${t.key} { display: block; }`)
+  .join('\n')
+---
+
+<section id={uid} class:list={['fbnm-matchstats', className]}>
+  <div class="fbnm-matchstats__head">
+    <div class="fbnm-matchstats__head-title">{title}</div>
+    {hasScore && (
+      <div class="fbnm-matchstats__head-score">
+        <span>{homeTeam}</span>
+        <span class="fbnm-matchstats__head-result">{homeScore} : {awayScore}</span>
+        <span class="fbnm-matchstats__head-opp">{awayTeam}</span>
+      </div>
+    )}
+  </div>
+
+  {/* CSS-only Tabs: versteckte Radios + Labels. Kein JS. */}
+  {tabs.map((t, i) => (
+    <input
+      type="radio"
+      name={groupName}
+      id={`${uid}-r-${t.key}`}
+      class="fbnm-matchstats__radio"
+      checked={i === 0}
+    />
+  ))}
+
+  <div class="fbnm-matchstats__tabs" role="radiogroup" aria-label={title}>
+    {tabs.map(t => (
+      <label for={`${uid}-r-${t.key}`} class="fbnm-matchstats__tab">{t.label}</label>
+    ))}
+  </div>
+
+  {/* Panel: Spielerstatistik */}
+  <div class="fbnm-matchstats__panel fbnm-matchstats__panel--stats">
+    <div class="fbnm-matchstats__scroll" tabindex="0" role="group" aria-label="Spielerstatistik">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" class="fbnm-matchstats__c">Nr</th>
+            <th scope="col" class="fbnm-matchstats__l">Spieler</th>
+            <th scope="col" title="Minuten">Min</th>
+            <th scope="col" title="Punkte">Pkt</th>
+            <th scope="col" title="Rebounds">Reb</th>
+            <th scope="col" title="Assists">Ast</th>
+            <th scope="col" title="Steals">Stl</th>
+            <th scope="col" title="Blocks">Blk</th>
+            <th scope="col" title="Dreier">3er</th>
+          </tr>
+        </thead>
+        <tbody>
+          {box.map(p => (
+            <tr class:list={{ 'fbnm-matchstats__row--top': p.top }}>
+              <td class="fbnm-matchstats__nr">{p.nr}</td>
+              <td class="fbnm-matchstats__name">{p.name}</td>
+              <td class="fbnm-matchstats__muted">{p.min}</td>
+              <td class="fbnm-matchstats__pkt">{p.pkt}</td>
+              <td class="fbnm-matchstats__num">{p.reb}</td>
+              <td class="fbnm-matchstats__num">{p.ast}</td>
+              <td class="fbnm-matchstats__num">{p.stl}</td>
+              <td class="fbnm-matchstats__num">{p.blk}</td>
+              <td class="fbnm-matchstats__num">{p.tp}</td>
+            </tr>
+          ))}
+          <tr class="fbnm-matchstats__total">
+            <td></td>
+            <td class="fbnm-matchstats__total-label">Gesamt</td>
+            <td class="fbnm-matchstats__total-num">{totals.min}</td>
+            <td class="fbnm-matchstats__total-num">{totals.pkt}</td>
+            <td class="fbnm-matchstats__total-num">{totals.reb}</td>
+            <td class="fbnm-matchstats__total-num">{totals.ast}</td>
+            <td class="fbnm-matchstats__total-num">{totals.stl}</td>
+            <td class="fbnm-matchstats__total-num">{totals.blk}</td>
+            <td class="fbnm-matchstats__total-num">{totals.tp}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {/* Panel: Aufstellung */}
+  {hasLineup && (
+    <div class="fbnm-matchstats__panel fbnm-matchstats__panel--lineup">
+      <div class="fbnm-matchstats__scroll" tabindex="0" role="group" aria-label="Aufstellung">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="fbnm-matchstats__c">Nr</th>
+              <th scope="col" class="fbnm-matchstats__l">Spieler</th>
+              <th scope="col" class="fbnm-matchstats__l">Position</th>
+              <th scope="col" class="fbnm-matchstats__r">Größe</th>
+            </tr>
+          </thead>
+          <tbody>
+            {starters.length > 0 && (
+              <tr><td colspan="4" class="fbnm-matchstats__group">Starting Five</td></tr>
+            )}
+            {starters.map(s => (
+              <tr>
+                <td class="fbnm-matchstats__nr">{s.nr}</td>
+                <td class="fbnm-matchstats__name"><strong>{s.name}</strong></td>
+                <td class="fbnm-matchstats__muted fbnm-matchstats__l">{s.pos}</td>
+                <td class="fbnm-matchstats__r fbnm-matchstats__num">{s.height}</td>
+              </tr>
+            ))}
+            {bench.length > 0 && (
+              <tr><td colspan="4" class="fbnm-matchstats__group">Bank</td></tr>
+            )}
+            {bench.map(b => (
+              <tr>
+                <td class="fbnm-matchstats__nr">{b.nr}</td>
+                <td class="fbnm-matchstats__name">{b.name}</td>
+                <td class="fbnm-matchstats__muted fbnm-matchstats__l">{b.pos}</td>
+                <td class="fbnm-matchstats__r fbnm-matchstats__num">{b.height}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )}
+
+  {/* Panel: Saison-Schnitt */}
+  {hasSeason && (
+    <div class="fbnm-matchstats__panel fbnm-matchstats__panel--season">
+      <div class="fbnm-matchstats__scroll" tabindex="0" role="group" aria-label="Saison-Schnitt">
+        <table>
+          <thead>
+            <tr>
+              <th scope="col" class="fbnm-matchstats__l">Kategorie</th>
+              <th scope="col" class="fbnm-matchstats__r">Saison-Schnitt</th>
+              <th scope="col" class="fbnm-matchstats__r">Liga-Rang</th>
+            </tr>
+          </thead>
+          <tbody>
+            {season.map(s => (
+              <tr>
+                <td class="fbnm-matchstats__name fbnm-matchstats__l">{s.cat}</td>
+                <td class="fbnm-matchstats__r fbnm-matchstats__pkt">{s.val}</td>
+                <td class:list={['fbnm-matchstats__r', s.best ? 'fbnm-matchstats__rank--best' : 'fbnm-matchstats__muted']}>
+                  {s.rank}{s.best && <span class="sr-only"> (bester Liga-Rang)</span>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )}
+</section>
+
+<style>
+.fbnm-matchstats {
+  background: var(--fbnm-white);
+  border-radius: var(--fbnm-radius-md);
+  overflow: hidden;
+  box-shadow: var(--fbnm-shadow-sm);
+}
+
+/* WCAG 1.4.3: weiß auf blue-800 = 10.3:1 AAA */
+.fbnm-matchstats__head {
+  background: var(--fbnm-blue-800);
+  color: var(--fbnm-white);
+  padding: var(--fbnm-space-4) var(--fbnm-space-6);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--fbnm-space-4);
+  flex-wrap: wrap;
+}
+.fbnm-matchstats__head-title {
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xl);
+  text-transform: uppercase;
+}
+.fbnm-matchstats__head-score {
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-3);
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-lg);
+}
+/* WCAG 1.4.3: 18px/normal zählt NICHT als large text → 4.5:1 nötig.
+   cyan-400 auf blue-800 = 3.89:1 (FAIL). Score in weiß = 10.3:1 AAA. */
+.fbnm-matchstats__head-result { color: var(--fbnm-white); font-weight: 700; }
+.fbnm-matchstats__head-opp { color: color-mix(in srgb, var(--fbnm-white) 75%, transparent); }
+
+/* Radios visuell versteckt, aber fokussierbar (kein display:none) */
+.fbnm-matchstats__radio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.fbnm-matchstats__tabs {
+  display: flex;
+  gap: var(--fbnm-space-1);
+  padding: 0 var(--fbnm-space-4);
+  border-bottom: 2px solid var(--fbnm-color-border);
+}
+.fbnm-matchstats__tab {
+  /* WCAG 2.5.8: 44px Touch-Target */
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  padding: var(--fbnm-space-3) var(--fbnm-space-4);
+  margin-bottom: -2px;
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-sm);
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fbnm-color-text-muted);
+  border-bottom: 3px solid transparent;
+  transition: color var(--fbnm-transition-fast), border-color var(--fbnm-transition-fast);
+}
+.fbnm-matchstats__tab:hover { color: var(--fbnm-blue-800); }
+/* aktiv-/fokus-/sichtbar-Regeln pro Instanz: siehe scopedCss (set:html unten) */
+
+/* Panels default versteckt — das gecheckte Radio blendet „sein" Panel ein */
+.fbnm-matchstats__panel { display: none; }
+
+.fbnm-matchstats__scroll { overflow-x: auto; }
+/* WCAG 2.4.7: scrollbarer Bereich fokussierbar → sichtbarer Fokus */
+.fbnm-matchstats__scroll:focus-visible {
+  outline: 2px solid var(--fbnm-blue-700);
+  outline-offset: -2px;
+}
+
+table { width: 100%; border-collapse: collapse; font-family: var(--fbnm-font-body); font-size: var(--fbnm-text-sm); }
+
+thead th {
+  background: var(--fbnm-color-surface-muted);
+  padding: var(--fbnm-space-2) var(--fbnm-space-3);
+  font-weight: 600;
+  font-size: var(--fbnm-text-xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fbnm-blue-800);
+  text-align: center;
+  white-space: nowrap;
+}
+.fbnm-matchstats__l { text-align: left; }
+.fbnm-matchstats__r { text-align: right; }
+.fbnm-matchstats__c { text-align: center; }
+
+tbody td {
+  padding: var(--fbnm-space-3);
+  text-align: center;
+  border-bottom: 1px solid var(--fbnm-color-border);
+  color: var(--fbnm-color-text);
+}
+
+.fbnm-matchstats__nr { font-family: var(--fbnm-font-display); color: var(--fbnm-blue-800); }
+.fbnm-matchstats__name { text-align: left; white-space: nowrap; }
+.fbnm-matchstats__muted { color: var(--fbnm-color-text-muted); }
+.fbnm-matchstats__num { font-variant-numeric: tabular-nums; }
+.fbnm-matchstats__pkt {
+  font-family: var(--fbnm-font-display);
+  font-weight: 700;
+  font-size: var(--fbnm-text-base);
+  color: var(--fbnm-blue-800);
+  font-variant-numeric: tabular-nums;
+}
+
+/* WCAG 1.4.1: Top-Performer = Hintergrund + Fettung */
+.fbnm-matchstats__row--top { background: color-mix(in srgb, var(--fbnm-cyan-500) 10%, var(--fbnm-white)); }
+.fbnm-matchstats__row--top .fbnm-matchstats__name { font-weight: 700; }
+
+.fbnm-matchstats__group {
+  text-align: left;
+  background: color-mix(in srgb, var(--fbnm-blue-800) 6%, var(--fbnm-white));
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-sm);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--fbnm-blue-800);
+  padding: var(--fbnm-space-2) var(--fbnm-space-3);
+}
+
+.fbnm-matchstats__total { background: color-mix(in srgb, var(--fbnm-blue-900) 7%, var(--fbnm-white)); }
+.fbnm-matchstats__total td { border-bottom: none; }
+.fbnm-matchstats__total-label {
+  text-align: left;
+  font-weight: 700;
+  font-size: var(--fbnm-text-xs);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--fbnm-blue-800);
+}
+.fbnm-matchstats__total-num {
+  font-family: var(--fbnm-font-display);
+  font-weight: 700;
+  color: var(--fbnm-blue-800);
+  font-variant-numeric: tabular-nums;
+}
+
+/* WCAG 1.4.3: #14532d = 8.7:1 AAA. „bester Rang" zusätzlich per sr-only ausgezeichnet. */
+.fbnm-matchstats__rank--best { color: #14532d; font-weight: 700; }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
+}
+</style>
+
+{/* Scoped Aktiv-/Sichtbar-Regeln je Instanz — verbindet Radio mit Label & Panel.
+    Kein JS: reine CSS-Steuerung. */}
+<style set:html={scopedCss}></style>

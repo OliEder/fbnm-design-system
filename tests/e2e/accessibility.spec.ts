@@ -20,6 +20,9 @@ const allPages = [
   { path: `${BASE}/komponenten/statstable/`,       name: 'Komponente: StatsTable' },
   { path: `${BASE}/komponenten/liveticker/`,       name: 'Komponente: LiveTicker' },
   { path: `${BASE}/seiten/`,                       name: 'Seiten: Startseite-Komposition' },
+  { path: `${BASE}/seiten/spielbericht/`,          name: 'Seiten: Spielbericht' },
+  { path: `${BASE}/seiten/uebersicht/`,            name: 'Seiten: Übersicht (Club-Hub)' },
+  { path: `${BASE}/seiten/team-seite/`,            name: 'Seiten: Team-Seite' },
 ]
 
 for (const { path, name } of allPages) {

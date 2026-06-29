@@ -1,0 +1,156 @@
+---
+import DocsLayout from '../../../layouts/DocsLayout.astro'
+import Navigation from '@ds/components/Navigation/Navigation.astro'
+import Subnav from '@ds/components/Subnav/Subnav.astro'
+import Footer from '@ds/components/Footer/Footer.astro'
+import GameCard from '@ds/components/GameCard/GameCard.astro'
+import MatchStats from '@ds/components/MatchStats/MatchStats.astro'
+import LeagueStandings from '@ds/components/LeagueStandings/LeagueStandings.astro'
+import GameSchedule from '@ds/components/GameSchedule/GameSchedule.astro'
+
+const navItems = [
+  { label: 'Home', href: '/' },
+  { label: 'Teams', href: '/team/', active: true },
+  { label: 'Spielplan', href: '/spielplan/' },
+  { label: 'Tabelle', href: '/tabelle/' },
+  { label: 'News', href: '/news/' },
+  { label: 'Verein', href: '/verein/' },
+  { label: 'Kontakt', href: '/kontakt/' },
+]
+const teamTabs = [
+  { label: 'Alle Teams' },
+  { label: 'Herren 1', active: true }, { label: 'Herren 2' }, { label: 'Damen', inactive: true },
+  { label: 'U20' }, { label: 'U18' }, { label: 'U16' }, { label: 'U14' }, { label: 'U10' },
+]
+
+// Reiche Spieltag-Statistik (aus Components-Katalog "Spieltag-Statistik")
+const box = [
+  { nr: 4,  name: 'Marko Stein',     min: 32, pkt: 22, reb: 5, ast: 6, stl: 2, blk: 0, tp: 4, top: true },
+  { nr: 7,  name: 'Lukas Berger',    min: 28, pkt: 16, reb: 8, ast: 3, stl: 1, blk: 1, tp: 1 },
+  { nr: 9,  name: 'Tim Hofer',       min: 30, pkt: 14, reb: 4, ast: 7, stl: 3, blk: 0, tp: 2 },
+  { nr: 12, name: 'Jonas Wagner',    min: 24, pkt: 11, reb: 9, ast: 1, stl: 0, blk: 2, tp: 0 },
+  { nr: 15, name: 'David Köhler',    min: 18, pkt: 8,  reb: 3, ast: 2, stl: 1, blk: 0, tp: 2 },
+  { nr: 21, name: 'Felix Mayer',     min: 14, pkt: 6,  reb: 2, ast: 1, stl: 0, blk: 0, tp: 0 },
+  { nr: 23, name: 'Paul Schmidt',    min: 12, pkt: 4,  reb: 1, ast: 0, stl: 1, blk: 0, tp: 0 },
+]
+const starters = [
+  { nr: 4,  name: 'Marko Stein',  pos: 'Point Guard',   height: '1,84 m' },
+  { nr: 7,  name: 'Lukas Berger', pos: 'Shooting Guard', height: '1,91 m' },
+  { nr: 9,  name: 'Tim Hofer',    pos: 'Small Forward',  height: '1,96 m' },
+  { nr: 12, name: 'Jonas Wagner', pos: 'Power Forward',  height: '2,01 m' },
+  { nr: 33, name: 'Erik Brandt',  pos: 'Center',         height: '2,06 m' },
+]
+const bench = [
+  { nr: 15, name: 'David Köhler', pos: 'Guard',   height: '1,88 m' },
+  { nr: 21, name: 'Felix Mayer',  pos: 'Forward', height: '1,93 m' },
+  { nr: 23, name: 'Paul Schmidt', pos: 'Guard',   height: '1,86 m' },
+]
+const season = [
+  { cat: 'Punkte / Spiel',   val: '78,4', rank: '2.', best: false },
+  { cat: 'Rebounds / Spiel', val: '38,1', rank: '1.', best: true },
+  { cat: 'Assists / Spiel',  val: '17,9', rank: '3.', best: false },
+  { cat: 'Field-Goal %',     val: '46,2 %', rank: '1.', best: true },
+]
+
+// Liga-Tabelle (GP/GB)
+const standings = [
+  { rank: 1, team: 'Fibalon Baskets NM',   initials: 'NM',  logoBg: '#004174', games: 14, gp: 26, wins: 12, losses: 2, gb: '–',   diff: 181, isFBNM: true },
+  { rank: 2, team: 'TV 1880 Augsburg',     initials: 'AUG', logoBg: '#1a4b76', games: 14, gp: 24, wins: 11, losses: 3, gb: '1',   diff: 127 },
+  { rank: 3, team: 'BBC Coburg',           initials: 'COB', logoBg: '#7a1f1f', games: 14, gp: 22, wins: 10, losses: 4, gb: '2',   diff: 61 },
+  { rank: 4, team: 'TSV Ansbach',          initials: 'ANS', logoBg: '#494949', games: 14, gp: 20, wins: 8,  losses: 6, gb: '4',   diff: 12 },
+  { rank: 5, team: 'FC Bayern II',         initials: 'FCB', logoBg: '#5a3a1f', games: 14, gp: 16, wins: 7,  losses: 7, gb: '5',   diff: -25 },
+  { rank: 6, team: 'TV Leinburg',          initials: 'LEI', logoBg: '#14532d', games: 14, gp: 12, wins: 5,  losses: 9, gb: '7',   diff: -93 },
+]
+
+// Spielplan
+const games = [
+  { uid: '1', date: new Date('2026-02-15'), time: '18:00', homeTeam: 'Fibalon Baskets NM', awayTeam: 'TV 1880 Augsburg', location: 'Große Jurahalle', competition: 'Bayernliga', isHome: true,  homeScore: 81, awayScore: 74 },
+  { uid: '2', date: new Date('2026-02-08'), time: '17:00', homeTeam: 'BBC Coburg',          awayTeam: 'Fibalon Baskets NM', location: 'Coburg',         competition: 'Bayernliga', isHome: false, homeScore: 68, awayScore: 72 },
+  { uid: '3', date: new Date('2026-04-18'), time: '19:30', homeTeam: 'Fibalon Baskets NM', awayTeam: 'FC Tegernheim',     location: 'Große Jurahalle', competition: 'Bayernliga', isHome: true },
+  { uid: '4', date: new Date('2026-04-25'), time: '15:00', homeTeam: 'TSV Ansbach',         awayTeam: 'Fibalon Baskets NM', location: 'Ansbach',        competition: 'Bayernliga', isHome: false },
+]
+---
+
+<DocsLayout title="Team-Seite">
+  <div class="docs-page">
+    <header class="docs-page__header">
+      <p class="docs-page__breadcrumb">Seiten</p>
+      <h1 class="docs-page__title">Team-Seite</h1>
+      <p class="docs-page__desc">
+        Mannschaftsseite: Team-Header, nächstes Spiel, <strong>reiche Spieltag-Statistik</strong>
+        (3 Tabs: Spielerstatistik / Aufstellung / Saison-Schnitt), Liga-Tabelle (GP/GB),
+        Spielplan und Kalender-Abo. Aus dem Export <code>FBNM Team-Seite</code> &amp; dem
+        <code>Spieltag-Statistik</code>-Block des Komponenten-Katalogs.
+      </p>
+    </header>
+
+    <div class="wcag">
+      <span class="wcag__icon">✅</span>
+      <span>
+        MatchStats-Tabs: WAI-ARIA mit Pfeiltasten/Home/End · „bester Liga-Rang" grün (8.7:1 AAA)
+        <strong>plus</strong> <code>sr-only</code>-Hinweis · alle Werte tokenbasiert.
+      </span>
+    </div>
+
+    <h2 class="docs-heading">Live-Vorschau</h2>
+    <div class="demo">
+      <div class="demo__canvas demo__canvas--full" style="padding:0; background:#f4f6f8;">
+        <Navigation items={navItems} logoSrc="/fbnm-design-system/images/logo.svg" />
+        <Subnav items={teamTabs} />
+
+        <div style="max-width:1100px; margin:0 auto; padding:2.5rem 1.5rem; display:flex; flex-direction:column; gap:2.25rem;">
+          <div>
+            <h2 style="font-family:var(--fbnm-font-display); text-transform:uppercase; font-size:2.5rem; color:var(--fbnm-blue-900); margin:0; line-height:1;">Herren 1</h2>
+            <p style="font-family:var(--fbnm-font-body); font-size:0.8rem; letter-spacing:0.06em; text-transform:uppercase; color:var(--fbnm-color-text-muted); margin-top:0.5rem;">Bayernliga Herren Mitte · Saison 2025/26</p>
+          </div>
+
+          <div>
+            <h3 style="font-family:var(--fbnm-font-display); text-transform:uppercase; font-size:1.5rem; color:var(--fbnm-blue-800); margin-bottom:0.75rem;">Nächstes Spiel</h3>
+            <GameCard homeTeam="Fibalon Baskets NM" awayTeam="FC Tegernheim" date={new Date('2026-04-18')} time="19:30" location="Große Jurahalle, Neumarkt" competition="Bayernliga Herren Mitte" isHome={true} />
+          </div>
+
+          <MatchStats
+            title="Spieltag-Statistik"
+            homeTeam="Fibalon Baskets"
+            awayTeam="Augsburg"
+            homeScore={81}
+            awayScore={74}
+            box={box}
+            starters={starters}
+            bench={bench}
+            season={season}
+          />
+
+          <LeagueStandings rows={standings} title="Bayernliga Herren Mitte" note="Offizielle Tabelle · Ranking nach GP" />
+
+          <GameSchedule
+            games={games}
+            title="Spielplan Herren 1"
+            ownTeam="Fibalon Baskets"
+            icsUrlAll="webcal://example.com/h1-all.ics"
+            icsUrlHome="webcal://example.com/h1-home.ics"
+            icsUrlAway="webcal://example.com/h1-away.ics"
+          />
+        </div>
+
+        <Footer logoSrc="/fbnm-design-system/images/logo.svg" />
+      </div>
+    </div>
+
+    <h2 class="docs-heading">Verwendung — MatchStats (reiche Statistik)</h2>
+    <div class="code-block">
+      <pre set:text={`---
+import MatchStats from '@fbnm/design-system/components/MatchStats/MatchStats.astro'
+---
+<MatchStats
+  title="Spieltag-Statistik"
+  homeTeam="Fibalon Baskets" awayTeam="Augsburg"
+  homeScore={81} awayScore={74}
+  box={box}            {/* BoxRow[]: nr,name,min,pkt,reb,ast,stl,blk,tp,top? */}
+  starters={starters}  {/* LineupRow[]: nr,name,pos,height */}
+  bench={bench}        {/* LineupRow[] */}
+  season={season}      {/* SeasonRow[]: cat,val,rank,best? */}
+/>`} />
+    </div>
+  </div>
+</DocsLayout>

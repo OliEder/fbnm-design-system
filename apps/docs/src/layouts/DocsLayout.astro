@@ -44,7 +44,12 @@ const navSections = [
   },
   {
     label: 'Seiten',
-    links: [{ label: 'Startseite', href: '/seiten/' }],
+    links: [
+      { label: 'Startseite', href: '/seiten/' },
+      { label: 'Spielbericht', href: '/seiten/spielbericht/' },
+      { label: 'Übersicht (Club-Hub)', href: '/seiten/uebersicht/' },
+      { label: 'Team-Seite', href: '/seiten/team-seite/' },
+    ],
   },
 ]
 
@@ -308,6 +313,12 @@ const currentPath = Astro.url.pathname
       overflow-x: auto;
       padding: 1rem 1.25rem;
       margin: 0.75rem 0 1.5rem;
+    }
+    /* WCAG 2.1.1: horizontal scrollbare Code-Blöcke werden per JS fokussierbar
+       gemacht (tabindex=0) — hier der sichtbare Fokus dazu. */
+    .code-block:focus-visible {
+      outline: 2px solid #38bdf8;
+      outline-offset: 2px;
     }
     .code-block pre {
       margin: 0;
@@ -630,5 +641,17 @@ const currentPath = Astro.url.pathname
       <slot />
     </main>
   </div>
+
+  <script>
+    // WCAG 2.1.1 (scrollable-region-focusable): Code-Blöcke, die horizontal
+    // überlaufen, müssen per Tastatur scrollbar — also fokussierbar — sein.
+    for (const el of document.querySelectorAll<HTMLElement>('.code-block')) {
+      if (el.scrollWidth > el.clientWidth) {
+        el.tabIndex = 0
+        el.setAttribute('role', 'region')
+        el.setAttribute('aria-label', 'Code-Beispiel (horizontal scrollbar)')
+      }
+    }
+  </script>
 </body>
 </html>

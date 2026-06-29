@@ -3,6 +3,38 @@ interface NavItem {
   label: string
   href: string
   active?: boolean
+  /** Öffnet beim Hover/Klick das Mega-Menü statt zu navigieren */
+  mega?: boolean
+}
+
+interface MegaTeam {
+  name: string
+  sub: string
+  href?: string
+  /** Mannschaft ohne aktiven Ligabetrieb */
+  inactive?: boolean
+}
+interface MegaGame {
+  type: string // "H" | "A"
+  date: string
+  time: string
+  team: string
+  opp: string
+}
+interface MegaNews {
+  tag: string
+  date: string
+  title: string
+  href?: string
+}
+interface MegaMenu {
+  herren?: MegaTeam[]
+  damen?: MegaTeam[]
+  jugend?: MegaTeam[]
+  nextGames?: MegaGame[]
+  news?: MegaNews[]
+  spielplanHref?: string
+  newsHref?: string
 }
 
 interface Props {
@@ -12,6 +44,8 @@ interface Props {
   /** Logo image src. Use BASE_URL prefix for GitHub Pages. Defaults to /images/logo.svg.
    *  Production: https://www.basketball-bund.net/media/team/{teamId}/logo */
   logoSrc?: string
+  /** Inhalt des Teams-Mega-Menüs. Wenn gesetzt, bekommt der NavItem mit `mega:true` ein Dropdown. */
+  mega?: MegaMenu
 }
 
 const defaultItems: NavItem[] = [
@@ -25,9 +59,17 @@ const defaultItems: NavItem[] = [
   { label: 'Kontakt', href: '/kontakt/' },
 ]
 
-const { items, links, logoSrc = '/images/logo.svg' } = Astro.props
+const { items, links, logoSrc = '/images/logo.svg', mega } = Astro.props
 const navItems = links ?? items ?? defaultItems
 const currentPath = Astro.url?.pathname ?? '/'
+
+const teamGroups = mega
+  ? [
+      { title: 'Herren', teams: mega.herren ?? [] },
+      { title: 'Damen', teams: mega.damen ?? [] },
+      { title: 'Jugend', teams: mega.jugend ?? [] },
+    ].filter(g => g.teams.length > 0)
+  : []
 ---
 
 <header class="fbnm-nav">
@@ -37,24 +79,94 @@ const currentPath = Astro.url?.pathname ?? '/'
     </a>
 
     <nav class="fbnm-nav__links" id="fbnm-nav-links" aria-label="Hauptnavigation">
-      {navItems.map(item => (
-        <a
-          href={item.href}
-          class:list={[
-            'fbnm-nav__link',
-            { 'fbnm-nav__link--active': item.active || (currentPath === '/' && item.href === '/') || (item.href !== '/' && currentPath.startsWith(item.href)) }
-          ]}
-          aria-current={(currentPath === item.href) ? 'page' : undefined}
-        >
-          {item.label}
-        </a>
-      ))}
+      {navItems.map(item => {
+        const active = item.active || (currentPath === '/' && item.href === '/') || (item.href !== '/' && currentPath.startsWith(item.href))
+        if (item.mega && mega) {
+          return (
+            <button
+              type="button"
+              class:list={['fbnm-nav__link', 'fbnm-nav__link--mega', { 'fbnm-nav__link--active': active }]}
+              aria-haspopup="true"
+              aria-expanded="false"
+              aria-controls="fbnm-mega"
+              data-mega-trigger
+            >
+              {item.label}
+              <span class="fbnm-nav__caret" aria-hidden="true"></span>
+            </button>
+          )
+        }
+        return (
+          <a
+            href={item.href}
+            class:list={['fbnm-nav__link', { 'fbnm-nav__link--active': active }]}
+            aria-current={(currentPath === item.href) ? 'page' : undefined}
+          >
+            {item.label}
+          </a>
+        )
+      })}
     </nav>
 
     <button class="fbnm-nav__burger" aria-label="Menue oeffnen" aria-expanded="false" aria-controls="fbnm-nav-links">
       <span></span><span></span><span></span>
     </button>
   </div>
+
+  {mega && (
+    <div id="fbnm-mega" class="fbnm-mega" role="region" aria-label="Teams" data-mega-panel>
+      <div class="fbnm-mega__inner">
+        <div class="fbnm-mega__col">
+          {teamGroups.map(group => (
+            <>
+              <div class="fbnm-mega__heading">{group.title}</div>
+              {group.teams.map(t => (
+                <a href={t.href ?? '#'} class="fbnm-mega__team">
+                  <span class:list={['fbnm-mega__team-name', { 'fbnm-mega__team-name--inactive': t.inactive }]}>
+                    {t.name}
+                    {t.inactive && <span class="fbnm-mega__pill">Pause</span>}
+                  </span>
+                  <span class="fbnm-mega__team-sub">{t.sub}</span>
+                </a>
+              ))}
+            </>
+          ))}
+        </div>
+
+        {mega.nextGames && mega.nextGames.length > 0 && (
+          <div class="fbnm-mega__col">
+            <div class="fbnm-mega__heading">Nächste Spiele</div>
+            {mega.nextGames.map(g => (
+              <a href="#" class="fbnm-mega__game">
+                <span class:list={['fbnm-mega__game-type', g.type === 'A' ? 'fbnm-mega__game-type--away' : 'fbnm-mega__game-type--home']}>{g.type}</span>
+                <span class="fbnm-mega__game-body">
+                  <span class="fbnm-mega__game-team">{g.team} <span class="fbnm-mega__game-opp">{g.opp}</span></span>
+                  <span class="fbnm-mega__game-date">{g.date} · {g.time} Uhr</span>
+                </span>
+              </a>
+            ))}
+            <a href={mega.spielplanHref ?? '#'} class="fbnm-mega__cta">Ganzer Spielplan →</a>
+          </div>
+        )}
+
+        {mega.news && mega.news.length > 0 && (
+          <div class="fbnm-mega__col">
+            <div class="fbnm-mega__heading">News &amp; Spielberichte</div>
+            {mega.news.map(a => (
+              <a href={a.href ?? '#'} class="fbnm-mega__news">
+                <span class="fbnm-mega__news-meta">
+                  <span class="fbnm-mega__news-tag">{a.tag}</span>
+                  <span class="fbnm-mega__news-date">{a.date}</span>
+                </span>
+                <span class="fbnm-mega__news-title">{a.title}</span>
+              </a>
+            ))}
+            <a href={mega.newsHref ?? '#'} class="fbnm-mega__cta">Alle Spielberichte →</a>
+          </div>
+        )}
+      </div>
+    </div>
+  )}
 </header>
 
 <style>
@@ -103,9 +215,40 @@ const currentPath = Astro.url?.pathname ?? '/'
               border-color var(--fbnm-transition-fast);
 }
 
+/* Button-Variante (Mega-Trigger) teilt das Aussehen mit den <a>-Links.
+   WICHTIG: <button> bringt einen UA-Default-Hintergrund (#efefef) mit —
+   muss zurückgesetzt werden, sonst failt der weiße Text den Kontrast. */
+.fbnm-nav__link--mega {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--fbnm-space-1);
+  background: transparent;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  cursor: pointer;
+  font-family: var(--fbnm-font-caption);
+}
+
+.fbnm-nav__caret {
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 5px solid currentColor;
+  transition: transform var(--fbnm-transition-fast);
+}
+.fbnm-nav__link--mega[aria-expanded='true'] .fbnm-nav__caret { transform: rotate(180deg); }
+
 .fbnm-nav__link:hover {
   color: var(--fbnm-white);
   background-color: color-mix(in srgb, var(--fbnm-white) 10%, transparent);
+}
+
+/* WCAG 2.4.7: sichtbarer Fokus auf dunklem Nav-Hintergrund → weiße Outline */
+.fbnm-nav__link:focus-visible {
+  outline: 2px solid var(--fbnm-white);
+  outline-offset: -2px;
 }
 
 /* WCAG 1.4.1: active state uses both color AND border-bottom (non-color indicator) */
@@ -163,6 +306,199 @@ const currentPath = Astro.url?.pathname ?? '/'
     padding-left: calc(var(--fbnm-space-3) - 1px);
   }
 }
+
+/* ===================== MEGA-MENÜ ===================== */
+.fbnm-mega {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 4rem;
+  background: var(--fbnm-white);
+  color: var(--fbnm-color-text);
+  box-shadow: var(--fbnm-shadow-lg);
+  border-top: 3px solid var(--fbnm-cyan-500);
+}
+
+/* CSS-first: Mega-Menü ist standardmäßig zu und öffnet OHNE JS —
+   per Hover (Maus) und :focus-within (Tastatur-Tab in Trigger/Panel).
+   Das JS-Enhancement (Escape, Klick-außerhalb, aria-expanded) ist optional. */
+.fbnm-mega { display: none; }
+.fbnm-nav:hover .fbnm-mega,
+.fbnm-nav:focus-within .fbnm-mega {
+  display: block;
+}
+/* JS-Enhancement: ist JS aktiv (data-mega-js am Header), steuert ausschließlich
+   aria-expanded — Hover/Focus-Auto-Open wird unterdrückt (kein „klebriges" Menü). */
+.fbnm-nav[data-mega-js]:hover .fbnm-mega,
+.fbnm-nav[data-mega-js]:focus-within .fbnm-mega { display: none; }
+.fbnm-nav[data-mega-js]:has(.fbnm-nav__link--mega[aria-expanded='true']) .fbnm-mega { display: block; }
+
+.fbnm-mega__inner {
+  max-width: var(--fbnm-container-max);
+  margin: 0 auto;
+  padding: var(--fbnm-space-8) var(--fbnm-container-padding);
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.1fr 1.2fr;
+  gap: var(--fbnm-space-8);
+}
+/* Erste Spalte trägt mehrere Gruppen (Herren/Damen/Jugend) untereinander */
+.fbnm-mega__col:first-child { grid-column: span 2; columns: 2; column-gap: var(--fbnm-space-8); }
+
+/* WCAG 1.4.3: muted-text = 7.14:1 AAA */
+.fbnm-mega__heading {
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--fbnm-color-text-muted);
+  padding-bottom: var(--fbnm-space-2);
+  margin-bottom: var(--fbnm-space-2);
+  border-bottom: 1px solid var(--fbnm-color-border);
+  break-inside: avoid;
+}
+.fbnm-mega__heading + .fbnm-mega__team { break-before: avoid; }
+
+.fbnm-mega__team,
+.fbnm-mega__game,
+.fbnm-mega__news {
+  display: block;
+  text-decoration: none;
+  padding: var(--fbnm-space-2) var(--fbnm-space-3);
+  margin: 0 calc(-1 * var(--fbnm-space-3)) 2px;
+  border-radius: var(--fbnm-radius-md);
+  break-inside: avoid;
+}
+.fbnm-mega__team:hover,
+.fbnm-mega__game:hover,
+.fbnm-mega__news:hover { background: var(--fbnm-color-surface-tint); }
+
+.fbnm-mega__team:focus-visible,
+.fbnm-mega__game:focus-visible,
+.fbnm-mega__news:focus-visible,
+.fbnm-mega__cta:focus-visible {
+  outline: 2px solid var(--fbnm-blue-700);
+  outline-offset: 2px;
+}
+
+/* WCAG 1.4.3: blue-800 (#004174) = 10.3:1 AAA */
+.fbnm-mega__team-name {
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-2);
+  font-family: var(--fbnm-font-body);
+  font-weight: 700;
+  font-size: var(--fbnm-text-sm);
+  color: var(--fbnm-blue-800);
+}
+/* „kein Ligabetrieb" — accent-text #005a87 = 7.55:1 AAA statt export #6b7c8f (FAIL) */
+.fbnm-mega__team-name--inactive { color: var(--fbnm-color-accent-text); font-weight: 400; }
+
+.fbnm-mega__pill {
+  flex: none;
+  padding: 1px var(--fbnm-space-2);
+  border-radius: var(--fbnm-radius-full);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--fbnm-blue-700) 12%, var(--fbnm-white));
+  color: var(--fbnm-color-text-muted);
+}
+
+/* WCAG 1.4.3: muted-text = 7.14:1 AAA (export nutzte #818080 = FAIL) */
+.fbnm-mega__team-sub {
+  display: block;
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-color-text-muted);
+  margin-top: 1px;
+}
+
+.fbnm-mega__game { display: flex; align-items: center; gap: var(--fbnm-space-3); }
+.fbnm-mega__game-type {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--fbnm-radius-md);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--fbnm-font-display);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-white);
+}
+/* white on blue-800 = 10.3:1 AAA / white on #494949 = 7.84:1 AAA */
+.fbnm-mega__game-type--home { background: var(--fbnm-blue-800); }
+.fbnm-mega__game-type--away { background: #494949; }
+.fbnm-mega__game-body { flex: 1; min-width: 0; }
+.fbnm-mega__game-team {
+  display: block;
+  font-family: var(--fbnm-font-body);
+  font-weight: 700;
+  font-size: var(--fbnm-text-sm);
+  color: var(--fbnm-color-text);
+}
+.fbnm-mega__game-opp { color: var(--fbnm-color-text-muted); font-weight: 400; }
+.fbnm-mega__game-date {
+  display: block;
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-color-text-muted);
+}
+
+.fbnm-mega__news-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--fbnm-space-2);
+  margin-bottom: 2px;
+}
+/* WCAG 1.4.3: accent-text #005a87 = 7.55:1 AAA */
+.fbnm-mega__news-tag {
+  flex: none;
+  padding: 2px var(--fbnm-space-2);
+  border-radius: var(--fbnm-radius-full);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  background: color-mix(in srgb, var(--fbnm-blue-800) 10%, var(--fbnm-white));
+  color: var(--fbnm-color-accent-text);
+}
+.fbnm-mega__news-date {
+  font-family: var(--fbnm-font-body);
+  font-size: var(--fbnm-text-xs);
+  color: var(--fbnm-color-text-muted);
+}
+.fbnm-mega__news-title {
+  display: block;
+  font-family: var(--fbnm-font-body);
+  font-weight: 700;
+  font-size: var(--fbnm-text-sm);
+  line-height: 1.3;
+  color: var(--fbnm-color-text);
+}
+
+/* WCAG 1.4.3: accent-text #005a87 = 7.55:1 AAA */
+.fbnm-mega__cta {
+  display: inline-block;
+  margin-top: var(--fbnm-space-2);
+  font-family: var(--fbnm-font-body);
+  font-weight: 700;
+  font-size: var(--fbnm-text-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--fbnm-color-accent-text);
+  text-decoration: none;
+}
+.fbnm-mega__cta:hover { text-decoration: underline; }
+
+/* Mobil: Mega-Menü als normale Liste im Burger-Flow */
+@media (max-width: 768px) {
+  .fbnm-mega { position: static; box-shadow: none; }
+  .fbnm-mega__inner { grid-template-columns: 1fr; gap: var(--fbnm-space-6); }
+  .fbnm-mega__col:first-child { grid-column: auto; columns: 1; }
+}
 </style>
 
 <script>
@@ -173,4 +509,41 @@ burger?.addEventListener('click', () => {
   const isOpen = links.classList.toggle('is-open')
   burger.setAttribute('aria-expanded', String(isOpen))
 })
+
+// --- Mega-Menü: optionales JS-Enhancement ---
+// Ohne JS öffnet das Menü per CSS (:hover / :focus-within). Ist JS aktiv,
+// markieren wir den Header mit data-mega-js → CSS übergibt die Steuerung an
+// aria-expanded, und wir ergänzen Klick-Toggle, Escape und Klick-außerhalb.
+const megaTrigger = document.querySelector('[data-mega-trigger]') as HTMLButtonElement | null
+const megaNav = megaTrigger?.closest('.fbnm-nav') as HTMLElement | null
+
+if (megaTrigger && megaNav) {
+  megaNav.setAttribute('data-mega-js', '')
+
+  const isOpen = (): boolean => megaTrigger.getAttribute('aria-expanded') === 'true'
+  const setMega = (open: boolean): void =>
+    megaTrigger.setAttribute('aria-expanded', String(open))
+
+  megaTrigger.addEventListener('click', () => setMega(!isOpen()))
+
+  // Escape schließt und gibt Fokus zurück
+  megaNav.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && isOpen()) {
+      setMega(false)
+      megaTrigger.focus()
+    }
+  })
+
+  // Klick außerhalb schließt
+  document.addEventListener('click', e => {
+    if (isOpen() && !megaNav.contains(e.target as Node)) setMega(false)
+  })
+
+  // Fokus verlässt die Nav → schließen
+  megaNav.addEventListener('focusout', () => {
+    requestAnimationFrame(() => {
+      if (isOpen() && !megaNav.contains(document.activeElement)) setMega(false)
+    })
+  })
+}
 </script>

@@ -32,6 +32,15 @@ a.fbnm-card:hover {
   transform: translateY(-2px);
 }
 
+/* WCAG 2.4.7: sichtbarer Fokus für verlinkte Cards */
+a.fbnm-card:focus-visible {
+  outline: 3px solid var(--fbnm-cyan-500);
+  outline-offset: 2px;
+}
+@media (prefers-reduced-motion: reduce) {
+  a.fbnm-card:hover { transform: none; }
+}
+
 .fbnm-card--default {
   background-color: var(--fbnm-white);
   border: 1px solid var(--fbnm-color-border);
