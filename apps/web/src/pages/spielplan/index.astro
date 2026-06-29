@@ -1,7 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro'
-import GameCard from '../../../../packages/design-system/src/components/GameCard/GameCard.astro'
-import { fetchGamesFromIcal, getUpcomingGames } from '../../../../packages/design-system/src/lib/bbb-ical'
+import GameCard from '@ds/components/GameCard/GameCard.astro'
+import { fetchGamesFromIcal, getUpcomingGames } from '@ds/lib/bbb-ical'
 
 const herrenUrl = import.meta.env.ICAL_URL_HERREN
 const damenUrl = import.meta.env.ICAL_URL_DAMEN

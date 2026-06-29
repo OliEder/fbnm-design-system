@@ -9,6 +9,6 @@
   },
   "dependencies": {
     "@fbnm/design-system": "workspace:*",
-    "astro": "^4.16.0"
+    "astro": "^7.0.0"
   }
 }
