@@ -63,7 +63,8 @@ const { name, number, position, imageUrl, stats } = Astro.props
   height: 100%;
   font-family: var(--fbnm-font-display);
   font-size: var(--fbnm-text-6xl);
-  color: var(--fbnm-blue-700);
+  /* rgba(255,255,255,0.4) on #002751 → 3.5:1 (WCAG AA large text) */
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* WCAG 1.4.3: cyan-400 on blue-900 = 5.94:1 (AA, not AAA) → white = 21:1 AAA */
