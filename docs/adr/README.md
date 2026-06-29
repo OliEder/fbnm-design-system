@@ -22,3 +22,4 @@ mehr verändert, sobald sie „Accepted" ist — spätere Änderungen entstehen 
 | [0001](0001-rendering-und-datenarchitektur.md) | Rendering- & Datenarchitektur (SSG aus der BBB-API) | Accepted |
 | [0002](0002-persistenz-spieldaten.md) | Persistenz von Spieldaten (MariaDB als System of Record) | Accepted |
 | [0003](0003-live-daten-transport.md) | Live-Daten-Transport (PHP-Polling, kein WASM/WebSocket) | Accepted |
+| [0004](0004-umgang-mit-lueckenhaften-statistikdaten.md) | Umgang mit lückenhaften Statistikdaten (Breitensport) | Accepted |

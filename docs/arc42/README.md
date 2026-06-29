@@ -56,6 +56,7 @@ Spielberichtsseiten.
 | Geringe Komplexität | Statische Auslieferung; DB nur intern; dünner PHP-Rand | ADR-0001/0002 |
 | Datenhistorie | **MariaDB als System of Record**; Fakten speichern, Aggregate ableiten | ADR-0002 |
 | Live ohne Server | **PHP-Polling** aus MariaDB; kein WASM/WebSocket | ADR-0003 |
+| Datenlücken (Breitensport) | Werte `null`-fähig; erfasste Spalten dynamisch zeigen; robuste abgeleitete Metriken | ADR-0004 |
 | Barrierefreiheit | CSS-only-Interaktion, WCAG-Tests in CI | Kap. 8 |
 
 ## 5. Bausteinsicht
@@ -106,6 +107,10 @@ Stand aus MariaDB → aktualisiert `LiveTicker`.
   Farb-/Spacing-/Typo-Quelle.
 - **Datenfluss-Prinzip:** Fakten persistieren, Aggregate ableiten; Daten als
   Props, kein Browser-`fetch` (außer Live).
+- **Datenqualität (Breitensport):** Scouting-Werte sind oft lückenhaft. Statistik-
+  Werte sind `null`-fähig; `null` (nicht erfasst) ≠ `0` (null erzielt). Komponenten
+  blenden nicht erfasste Spalten dynamisch aus. Abgeleitete Metriken (GB, ±, Form,
+  Punkte-Schnitte) werden nur bei vorhandenen Eingaben berechnet. Siehe ADR-0004.
 
 ## 9. Architekturentscheidungen (ADRs)
 
@@ -114,6 +119,7 @@ Stand aus MariaDB → aktualisiert `LiveTicker`.
 | [0001](../adr/0001-rendering-und-datenarchitektur.md) | Rendering- & Datenarchitektur (SSG aus der BBB-API) | Accepted |
 | [0002](../adr/0002-persistenz-spieldaten.md) | Persistenz von Spieldaten (MariaDB als System of Record) | Accepted |
 | [0003](../adr/0003-live-daten-transport.md) | Live-Daten-Transport (PHP-Polling, kein WASM/WebSocket) | Accepted |
+| [0004](../adr/0004-umgang-mit-lueckenhaften-statistikdaten.md) | Umgang mit lückenhaften Statistikdaten (Breitensport) | Accepted |
 
 ## 10. Qualitätsanforderungen
 
@@ -128,6 +134,10 @@ Stand aus MariaDB → aktualisiert `LiveTicker`.
 
 - **BBB-API-Granularität unklar:** Liefert sie Box-Scores je Spieler? Bestimmt,
   welche Statistiken überhaupt möglich sind. *(offen)*
+- **Lückenhafte Scouting-Daten (Breitensport):** Reb/Ast/Stl/Blk/Min meist nicht
+  erfasst; verlässlich nur Endstände + oft Punkte/Spieler. Modell/UI darauf
+  ausgelegt (ADR-0004). `MatchStats`/`BoxScore` müssen noch auf dynamische
+  Spalten + `null`-Semantik umgestellt werden.
 - **BBB-API-Änderungen:** treffen den Ingest (nicht die ausgelieferte Seite) →
   Mapping-Schicht kapseln.
 - **Schema noch offen:** MariaDB-Datenmodell (ADR-0002) ist noch zu entwerfen.

@@ -70,5 +70,7 @@ BBB-API ──(PHP-Cron, Ingest)──► MariaDB (System of Record)
 
 - Rendering/SSG: ADR-0001
 - Live-Daten/PHP: ADR-0003
+- **Datenqualität/Null-Semantik:** ADR-0004 — Statistik-Werte sind `null`-fähig
+  (`null` = nicht erfasst ≠ `0`); Aggregate schließen `null` aus. Prägt das Schema.
 - Offen (später): konkretes Schema, BBB-API-Granularität (Box-Score je Spieler?),
   Umfang (Mannschaften/Saisons).
