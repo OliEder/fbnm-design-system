@@ -324,6 +324,27 @@ test.describe('WCAG 2.2 Komponenten-Checks', () => {
     }
   })
 
+  // ── GameSchedule Multi-Instance Isolation ───────────────────────────────
+  test('GameSchedule: Tab-Klick im zweiten Schedule beeinflusst nicht den ersten', async ({ page }) => {
+    await page.goto(`${BASE}/komponenten/spielplan/`)
+
+    const schedules = page.locator('.fbnm-schedule')
+    await expect(schedules).toHaveCount(2)
+
+    const schedule1 = schedules.nth(0)
+    const schedule2 = schedules.nth(1)
+
+    // Click "Heim" tab in the second schedule only
+    await schedule2.getByRole('tab', { name: /Heim/i }).click()
+
+    // Second schedule: Heim-Panel must be visible
+    await expect(schedule2.getByRole('tabpanel', { name: /Heim/i })).toBeVisible()
+    // First schedule: Alle-Panel must still be visible (untouched)
+    await expect(schedule1.getByRole('tabpanel', { name: /Alle/i })).toBeVisible()
+    // First schedule: Alle-Tab must still be aria-selected
+    await expect(schedule1.getByRole('tab', { name: /Alle/i })).toHaveAttribute('aria-selected', 'true')
+  })
+
   // ── Docs-Sidebar Kontrast ────────────────────────────────────────────────
   test('Sidebar-Gruppen-Labels erfüllen WCAG AA Kontrast (≥4.5:1)', async ({ page }) => {
     await page.goto(`${BASE}/`)
